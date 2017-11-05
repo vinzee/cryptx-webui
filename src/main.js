@@ -8,6 +8,13 @@ import Notifications from './components/UIComponents/NotificationPlugin'
 import SideBar from './components/UIComponents/SidebarPlugin'
 import App from './App'
 
+import store from './vuex.config.js'
+import VeeValidate from 'vee-validate'
+import VueKindergarten from 'vue-kindergarten'
+import profilePerimeter from './perimeters/profilePerimeter.js'
+import VueCookie from 'vue-cookie'
+import VueResource from 'vue-resource'
+
 // router setup
 import routes from './routes/routes'
 
@@ -24,6 +31,15 @@ Vue.use(GlobalDirectives)
 Vue.use(Notifications)
 Vue.use(SideBar)
 
+Vue.use(VeeValidate)
+Vue.use(VueKindergarten, {
+  child: (store) => {
+    return store.state.user
+  }
+})
+Vue.use(VueCookie)
+Vue.use(VueResource)
+
 // configure router
 const router = new VueRouter({
   routes, // short for routes: routes
@@ -37,12 +53,18 @@ Object.defineProperty(Vue.prototype, '$Chartist', {
   }
 })
 
+Vue.config.productionTip = false
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  render: h => h(App),
   router,
+  store,
+  perimeters: [
+    profilePerimeter
+  ],
   data: {
     Chartist: Chartist
-  }
+  },
+  render: h => h(App)
 })
