@@ -22,8 +22,7 @@ const store = new Vuex.Store({
     logout (state) {
       state.logged_in = false
       state.user = null
-    },
-
+    }
   }
 })
 
