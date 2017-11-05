@@ -93,7 +93,7 @@
     "webpack-merge": "^2.6.1"
   },
   "engines": {
-    "node": ">= 8.1.2",
+    "node": "8.x",
     "npm": ">= 5.5.1"
   }
 }
