@@ -9,7 +9,7 @@
             <i :class="stats.icon"></i>
           </div>
           <div class="numbers" slot="content">
-            <p>{{stats.title}}</p>
+            <p style="font-size: 15px">{{stats.title}}</p>
             {{stats.value}}
           </div>
           <div class="stats" slot="footer">
@@ -38,8 +38,8 @@
 
       <div class="col-md-6 col-xs-12">
         <chart-card :chart-data="preferencesChart.data"  chart-type="Pie">
-          <h4 class="title" slot="title">Email Statistics</h4>
-          <span slot="subTitle"> Last campaign performance</span>
+          <h4 class="title" slot="title">User Investments</h4>
+          <span slot="subTitle">  performance</span>
           <span slot="footer">
             <i class="ti-timer"></i> Campaign set 2 days ago</span>
           <div slot="legend">
@@ -52,13 +52,13 @@
 
       <div class="col-md-6 col-xs-12">
         <chart-card :chart-data="activityChart.data" :chart-options="activityChart.options">
-          <h4 class="title" slot="title">2015 Sales</h4>
+          <h4 class="title" slot="title">Currency Prices</h4>
           <span slot="subTitle"> All products including Taxes</span>
           <span slot="footer">
             <i class="ti-check"></i> Data information certified</span>
           <div slot="legend">
-            <i class="fa fa-circle text-info"></i> Tesla Model S
-            <i class="fa fa-circle text-warning"></i> BMW 5 Series
+            <i class="fa fa-circle text-info"></i> Bitcoin
+            <i class="fa fa-circle text-warning"></i> Litecoin
           </div>
         </chart-card>
       </div>
@@ -81,14 +81,14 @@
     data () {
       return {
         statsCards: [
-          // {
-          //   type: 'warning',
-          //   icon: 'ti-server',
-          //   title: 'Capacity',
-          //   value: '105GB',
-          //   footerText: 'Updated now',
-          //   footerIcon: 'ti-reload'
-          // },
+          {
+            type: 'warning',
+            icon: 'ti-server',
+            title: 'Capacity',
+            value: '105GB',
+            footerText: 'Updated now',
+            footerIcon: 'ti-reload'
+          },
           {
             type: 'success',
             icon: 'ti-wallet',
@@ -96,23 +96,23 @@
             value: '$1,345',
             footerText: 'Last day',
             footerIcon: 'ti-calendar'
+          },
+          {
+            type: 'danger',
+            icon: 'ti-stats-up',
+            title: 'Top Currency',
+            value: '23',
+            footerText: 'Updated now',
+            footerIcon: 'ti-timer'
+          },
+          {
+            type: 'info',
+            icon: 'ti-stats-down',
+            title: 'Worst Currency',
+            value: '-45',
+            footerText: 'Updated now',
+            footerIcon: 'ti-reload'
           }
-          // ,{
-          //   type: 'danger',
-          //   icon: 'ti-pulse',
-          //   title: 'Errors',
-          //   value: '23',
-          //   footerText: 'In the last hour',
-          //   footerIcon: 'ti-timer'
-          // },
-          // {
-          //   type: 'info',
-          //   icon: 'ti-twitter-alt',
-          //   title: 'Followers',
-          //   value: '+45',
-          //   footerText: 'Updated now',
-          //   footerIcon: 'ti-reload'
-          // }
         ],
         usersChart: {
           data: {

@@ -2,10 +2,10 @@
   <div class="card">
     <div class="content">
       <div class="row">
-        <div class="col-xs-5">
+        <div class="col-xs-4">
           <slot name="header"></slot>
         </div>
-        <div class="col-xs-7">
+        <div class="col-xs-8">
           <slot name="content"></slot>
         </div>
       </div>
@@ -14,7 +14,7 @@
         <slot name="footer"></slot>
       </div>
     </div>
-  
+
   </div>
 </template>
 <script>
@@ -24,5 +24,5 @@
 
 </script>
 <style>
-  
+
 </style>
