@@ -11,7 +11,7 @@ const SidebarStore = {
     {
       name: 'User Profile',
       icon: 'ti-user',
-      path: '/stats'
+      path: '/settings'
     },
     {
       name: 'Table List',

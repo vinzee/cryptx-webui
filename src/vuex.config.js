@@ -7,7 +7,14 @@ const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
     logged_in: false,
-    user: {}
+    user: {
+      firstName: 'Vineet',
+      lastName: 'Ahirkar',
+      email: 'vinzee93@gmail.com',
+      address: 'Maryland, US',
+      city: 'baltimore',
+      postalCode: '21227'
+    }
   },
   getters: {
     currentUser: state => {

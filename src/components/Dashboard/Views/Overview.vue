@@ -92,7 +92,7 @@
           {
             type: 'success',
             icon: 'ti-wallet',
-            title: 'Revenue',
+            title: 'My Wallet',
             value: '$1,345',
             footerText: 'Last day',
             footerIcon: 'ti-calendar'

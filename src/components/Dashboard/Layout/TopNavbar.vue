@@ -12,10 +12,20 @@
       </div>
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
-          <drop-down title="UserName" icon="fa fa-user">
+          <drop-down v-bind:title="user.email" icon="fa fa-user">
             <li>
-              <a href="#" class="btn-rotate">
+              <a href="#/settings" class="btn-rotate">
                 <i class="fa fa-gear" aria-hidden="true"></i> Settings
+              </a>
+            </li>
+            <li>
+              <a href="#/register" class="btn-rotate">
+                <i class="fa fa-sign-out" aria-hidden="true"></i> Register
+              </a>
+            </li>
+            <li>
+              <a href="#/login" class="btn-rotate">
+                <i class="fa fa-sign-out" aria-hidden="true"></i> LogIn
               </a>
             </li>
             <li>
@@ -27,7 +37,7 @@
             <!-- <li class="open">
               <a href="#" class="dropdown-toggle btn-magnify" data-toggle="dropdown">
                 <i class="ti-panel"></i>
-                <p>Stats</p>
+                <p>Settings</p>
               </a>
             </li> -->
           </drop-down>
@@ -39,15 +49,18 @@
 </template>
 <script>
   export default {
+    data () {
+      return {
+        activeNotifications: false
+      }
+    },
     computed: {
       routeName () {
         const {name} = this.$route
         return this.capitalizeFirstLetter(name)
-      }
-    },
-    data () {
-      return {
-        activeNotifications: false
+      },
+      user () {
+        return this.$store.state.user
       }
     },
     methods: {

@@ -5,6 +5,8 @@ import NotFound from '../components/GeneralViews/NotFoundPage.vue'
 // Admin pages
 import Overview from 'src/components/Dashboard/Views/Overview.vue'
 import UserProfile from 'src/components/Dashboard/Views/UserProfile.vue'
+import Register from 'src/components/Dashboard/Views/Register.vue'
+import Login from 'src/components/Dashboard/Views/Login.vue'
 import Notifications from 'src/components/Dashboard/Views/Notifications.vue'
 import Icons from 'src/components/Dashboard/Views/Icons.vue'
 // import Maps from 'src/components/Dashboard/Views/Maps.vue'
@@ -23,8 +25,18 @@ const routes = [
         component: Overview
       },
       {
-        path: 'stats',
-        name: 'stats',
+        path: 'login',
+        name: 'login',
+        component: Login
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: Register
+      },
+      {
+        path: 'settings',
+        name: 'settings',
         component: UserProfile
       },
       {
