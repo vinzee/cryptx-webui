@@ -11,9 +11,10 @@
       <div class="logo">
         <a href="#" class="simple-text">
             <div class="logo-img">
-                <img src="static/img/vue-logo.png" alt="">
+              <!-- 42px -->
+                <img src="static/img/cryptx-logo.jpg" alt="">
             </div>
-          Paper Dashboard
+          Cryptx
         </a>
       </div>
       <slot>

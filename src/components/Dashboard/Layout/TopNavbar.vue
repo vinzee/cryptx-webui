@@ -12,27 +12,26 @@
       </div>
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
-          <li class="open">
-            <a href="#" class="dropdown-toggle btn-magnify" data-toggle="dropdown">
-              <i class="ti-panel"></i>
-              <p>Stats</p>
-            </a>
-          </li>
-             <drop-down title="5 Notifications" icon="ti-bell">
-               <li><a href="#">Notification 1</a></li>
-               <li><a href="#">Notification 2</a></li>
-               <li><a href="#">Notification 3</a></li>
-               <li><a href="#">Notification 4</a></li>
-               <li><a href="#">Another notification</a></li>
-             </drop-down>
-          <li>
-            <a href="#" class="btn-rotate">
-              <i class="ti-settings"></i>
-              <p>
-                Settings
-              </p>
-            </a>
-          </li>
+          <drop-down title="UserName" icon="fa fa-user">
+            <li>
+              <a href="#" class="btn-rotate">
+                <i class="fa fa-gear" aria-hidden="true"></i> Settings
+              </a>
+            </li>
+            <li>
+              <a href="#" class="btn-rotate">
+                <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+              </a>
+            </li>
+
+            <!-- <li class="open">
+              <a href="#" class="dropdown-toggle btn-magnify" data-toggle="dropdown">
+                <i class="ti-panel"></i>
+                <p>Stats</p>
+              </a>
+            </li> -->
+          </drop-down>
+
         </ul>
       </div>
     </div>
