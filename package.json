@@ -5,6 +5,7 @@
   "author": "cristian.jora <cristian.jora@corebuild.eu>",
   "private": true,
   "scripts": {
+    "start": "node server.js",
     "dev": "cross-env ENABLE_ESLINT=true node build/dev-server.js",
     "build": "cross-env ENABLE_ESLINT=true node build/build.js",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
@@ -52,7 +53,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "eventsource-polyfill": "^0.9.6",
-    "express": "^4.14.1",
+    "express": "^4.16.2",
     "extract-text-webpack-plugin": "^2.0.0-rc.2",
     "file-loader": "^0.10.0",
     "friendly-errors-webpack-plugin": "^1.1.3",
