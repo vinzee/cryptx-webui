@@ -20,11 +20,11 @@
       <div class="col-lg-3 col-sm-6">
         <stats-card>
           <div slot="header" class="icon-big text-center icon-warning">
-            <i class="ti-server"></i>
+            <i class="ti-briefcase"></i>
           </div>
           <div slot="content" class="numbers">
-            <p style="font-size: 15px;">Capacity</p>
-            105GB
+            <p style="font-size: 15px;">Net Worth</p>
+            $2,303
           </div>
           <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
           </div>
@@ -32,7 +32,7 @@
       </div>
       <div class="col-lg-3 col-sm-6">
         <stats-card>
-          <div slot="header" class="icon-big text-center icon-danger"><i class="ti-stats-up"></i></div>
+          <div slot="header" class="icon-big text-center icon-info"><i class="ti-stats-up"></i></div>
           <div slot="content" class="numbers">
             <p style="font-size: 15px;">Top Currency</p>
             23
@@ -43,7 +43,7 @@
       </div>
       <div class="col-lg-3 col-sm-6">
         <stats-card>
-          <div slot="header" class="icon-big text-center icon-info"><i class="ti-stats-down"></i></div>
+          <div slot="header" class="icon-big text-center icon-danger"><i class="ti-stats-down"></i></div>
           <div slot="content" class="numbers">
             <p style="font-size: 15px;">Worst Currency</p>
             -45
@@ -193,7 +193,7 @@
     },
     computed: {
       virtual_wallet_balance () {
-        return this.$store.state.user.virtual_wallet.balance
+        return this.$store.getters.virtual_wallet_balance
       }
     }
   }

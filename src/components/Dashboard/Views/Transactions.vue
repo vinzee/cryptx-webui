@@ -28,7 +28,7 @@
     },
     data () {
       return {
-        columns: ['Buy/Sell', 'Currency', 'Amount', 'Date']
+        columns: ['Type', 'Currency', 'Amount', 'Date']
       }
     },
     computed: {

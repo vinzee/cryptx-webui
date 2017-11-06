@@ -69,7 +69,7 @@
     },
     computed: {
       virtual_wallet_balance () {
-        return this.$store.state.user.virtual_wallet.balance
+        return this.$store.getters.virtual_wallet_balance
       }
     }
   }

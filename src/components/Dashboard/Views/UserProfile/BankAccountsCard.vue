@@ -23,7 +23,7 @@
 
               <div class="col-xs-3 text-right">
                 <button class="btn btn-sm btn-success btn-icon">
-                  <i class="fa fa-money"></i>
+                  <i class="fa fa-credit-card"></i>
                 </button>
               </div>
             </div>

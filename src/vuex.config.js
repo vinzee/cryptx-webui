@@ -23,25 +23,33 @@ const store = new Vuex.Store({
         name: 'Bank of America',
         account_number: '1234',
         type: 'credit' // credit / debit,
-      }]
+      }],
+      currencies: {
+        bitcoin: {
+          amount: 1.7
+        },
+        litecoin: {
+          amount: 1.3
+        }
+      }
     },
     transactions: [{
-      'buy/sell': 'Buy',
+      'type': 'Buy',
       currency: 'bitcoin',
       amount: '$36.738',
       date: new Date()
     }, {
-      'buy/sell': 'Buy',
+      'type': 'Buy',
       currency: 'bitcoin',
       amount: '$36.738',
       date: new Date()
     }, {
-      'buy/sell': 'Buy',
+      'type': 'Buy',
       currency: 'bitcoin',
       amount: '$36.738',
       date: new Date()
     }, {
-      'buy/sell': 'Buy',
+      'type': 'Buy',
       currency: 'bitcoin',
       amount: '$36.738',
       date: new Date()
@@ -50,14 +58,16 @@ const store = new Vuex.Store({
   getters: {
     currentUser: state => {
       return state.user
+    },
+    transactions: state => {
+      return state.transactions
+    },
+    virtual_wallet_balance: state => {
+      return state.user.virtual_wallet.balance
+    },
+    currencies: state => {
+      return state.user.virtual_wallet.currencies
     }
-    // ,transactions: state => {
-    //   let out = []
-    //   return _.each(state.transactions, function (transaction) {
-    //     let transaction_dup = ;
-    //     transaction.date = moment(transaction.date).format('MMMM Do YYYY, h:mm:ss a') // this.$config.momentFormat
-    //   })
-    // }
   },
   mutations: {
     login (state, user) {
