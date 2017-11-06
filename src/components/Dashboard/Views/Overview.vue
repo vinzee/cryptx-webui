@@ -24,7 +24,7 @@
 
       <div class="col-xs-12">
         <chart-card :chart-data="usersChart.data" :chart-options="usersChart.options">
-          <h4 class="title" slot="title">Users behavior</h4>
+          <h4 class="title" slot="title">User Portfolio</h4>
           <span slot="subTitle"> 24 Hours performance</span>
           <span slot="footer">
             <i class="ti-reload"></i> Updated 3 minutes ago</span>

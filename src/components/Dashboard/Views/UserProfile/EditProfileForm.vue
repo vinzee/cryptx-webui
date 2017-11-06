@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="header">
-      <h4 class="title">Edit Profile</h4>
+      <h4 class="title">User Profile</h4>
     </div>
     <div class="content">
       <form>
@@ -14,6 +14,20 @@
                       v-model="user.email">
             </fg-input>
           </div>
+          <div class="col-md-4">
+            <fg-input type="password"
+                      label="Password"
+                      placeholder="Password"
+                      v-model="user.password">
+            </fg-input>
+          </div>
+          <div class="col-md-4">
+            <fg-input type="password"
+                      label="Password Confirmation"
+                      placeholder="Password Confirmation">
+            </fg-input>
+          </div>
+
         </div>
 
         <div class="row">

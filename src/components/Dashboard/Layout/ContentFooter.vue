@@ -8,7 +8,6 @@
         <a href="#" target="_blank">Pranav</a>
         <a href="#" target="_blank">Ved</a>
         <a href="#" target="_blank">Prasad</a>
-        .
       </div>
     </div>
   </footer>

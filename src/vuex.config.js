@@ -18,9 +18,8 @@ const store = new Vuex.Store({
       postalCode: '21227',
       bank_accounts: [{
         name: 'Bank of America',
-        account_no: '1234',
+        account_number: '1234',
         type: 'credit' // credit / debit,
-
       }]
     },
     transactions: [{
