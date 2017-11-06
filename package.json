@@ -2,10 +2,9 @@
   "name": "cryptx-webui",
   "version": "1.0.0",
   "description": "A sample admin dashboard based on paper dashboard UI template",
-  "author": "cristian.jora <cristian.jora@corebuild.eu>",
+  "author": "vineet ahirkar <vinzee93@gmail.com>",
   "private": true,
   "scripts": {
-    "start": "node build/dev-server.js",
     "dev": "cross-env ENABLE_ESLINT=true node build/dev-server.js",
     "build": "cross-env ENABLE_ESLINT=true node build/build.js",
     "stage": "node build/stage.js",
