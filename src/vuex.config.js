@@ -16,6 +16,9 @@ const store = new Vuex.Store({
       address: 'Maryland, US',
       city: 'baltimore',
       postalCode: '21227',
+      virtual_wallet: {
+        balance: 1234
+      },
       bank_accounts: [{
         name: 'Bank of America',
         account_number: '1234',

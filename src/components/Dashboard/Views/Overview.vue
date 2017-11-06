@@ -3,17 +3,52 @@
 
     <!--Stats cards-->
     <div class="row">
-      <div class="col-lg-3 col-sm-6" v-for="stats in statsCards">
+      <div class="col-lg-3 col-sm-6">
         <stats-card>
-          <div class="icon-big text-center" :class="`icon-${stats.type}`" slot="header">
-            <i :class="stats.icon"></i>
+          <div class="icon-big text-center icon-success" slot="header">
+            <i class="ti-wallet"></i>
           </div>
           <div class="numbers" slot="content">
-            <p style="font-size: 15px">{{stats.title}}</p>
-            {{stats.value}}
+            <p style="font-size: 15px">Virtual Wallet</p>
+            ${{virtual_wallet_balance}}
           </div>
-          <div class="stats" slot="footer">
-            <i :class="stats.footerIcon"></i> {{stats.footerText}}
+          <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
+          </div>
+        </stats-card>
+      </div>
+
+      <div class="col-lg-3 col-sm-6">
+        <stats-card>
+          <div slot="header" class="icon-big text-center icon-warning">
+            <i class="ti-server"></i>
+          </div>
+          <div slot="content" class="numbers">
+            <p style="font-size: 15px;">Capacity</p>
+            105GB
+          </div>
+          <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
+          </div>
+        </stats-card>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <stats-card>
+          <div slot="header" class="icon-big text-center icon-danger"><i class="ti-stats-up"></i></div>
+          <div slot="content" class="numbers">
+            <p style="font-size: 15px;">Top Currency</p>
+            23
+          </div>
+          <div slot="footer" class="stats"><i class="ti-timer"></i> Updated now
+          </div>
+        </stats-card>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <stats-card>
+          <div slot="header" class="icon-big text-center icon-info"><i class="ti-stats-down"></i></div>
+          <div slot="content" class="numbers">
+            <p style="font-size: 15px;">Worst Currency</p>
+            -45
+          </div>
+          <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
           </div>
         </stats-card>
       </div>
@@ -39,7 +74,7 @@
       <div class="col-md-6 col-xs-12">
         <chart-card :chart-data="preferencesChart.data"  chart-type="Pie">
           <h4 class="title" slot="title">User Investments</h4>
-          <span slot="subTitle">  performance</span>
+          <span slot="subTitle">Investments till now</span>
           <span slot="footer">
             <i class="ti-timer"></i> Campaign set 2 days ago</span>
           <div slot="legend">
@@ -88,14 +123,6 @@
             value: '105GB',
             footerText: 'Updated now',
             footerIcon: 'ti-reload'
-          },
-          {
-            type: 'success',
-            icon: 'ti-wallet',
-            title: 'My Wallet',
-            value: '$1,345',
-            footerText: 'Last day',
-            footerIcon: 'ti-calendar'
           },
           {
             type: 'danger',
@@ -162,6 +189,11 @@
           options: {}
         }
 
+      }
+    },
+    computed: {
+      virtual_wallet_balance () {
+        return this.$store.state.user.virtual_wallet.balance
       }
     }
   }

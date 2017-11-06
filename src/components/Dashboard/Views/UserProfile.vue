@@ -14,7 +14,7 @@
             </div>
             <div class="numbers" slot="content">
               <p style="font-size: 15px">Virtual Wallet</p>
-              $1,345
+              ${{virtual_wallet_balance}}
             </div>
             <div class="stats" slot="footer">
               <button type="button" class="btn btn-sm btn-info btn-fill" data-toggle="modal" data-target="#addMoneyModal">
@@ -65,6 +65,11 @@
     methods: {
       add_money () {
 
+      }
+    },
+    computed: {
+      virtual_wallet_balance () {
+        return this.$store.state.user.virtual_wallet.balance
       }
     }
   }
