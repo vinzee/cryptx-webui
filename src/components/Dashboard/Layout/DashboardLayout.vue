@@ -6,7 +6,7 @@
     <notifications>
 
     </notifications>
-    <div class="main-panel">
+    <div class="main-panel" v-bind:class="{ 'disable-sidebar' : isSidebarDisabled }" ref="mainPanel">
       <top-navbar></top-navbar>
 
       <dashboard-content @click.native="toggleSidebar">
@@ -17,9 +17,7 @@
     </div>
   </div>
 </template>
-<style lang="scss">
 
-</style>
 <script>
   import TopNavbar from './TopNavbar.vue'
   import ContentFooter from './ContentFooter.vue'
@@ -29,6 +27,11 @@
       TopNavbar,
       ContentFooter,
       DashboardContent
+    },
+    computed: {
+      isSidebarDisabled () {
+        return this.$route.path === '/login'
+      }
     },
     methods: {
       toggleSidebar () {
@@ -40,3 +43,10 @@
   }
 
 </script>
+
+<style>
+.main-panel.disable-sidebar{
+  float: none !important;
+  width: 100% !important;
+}
+</style>

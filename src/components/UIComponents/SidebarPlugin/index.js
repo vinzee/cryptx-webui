@@ -14,9 +14,9 @@ const SidebarStore = {
       path: '/settings'
     },
     {
-      name: 'Table List',
-      icon: 'ti-view-list-alt',
-      path: '/table-list'
+      name: 'Transactions',
+      icon: 'ti-money',
+      path: '/transactions'
     },
     {
       name: 'Typography',

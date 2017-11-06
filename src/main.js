@@ -15,6 +15,9 @@ import profilePerimeter from './perimeters/profilePerimeter.js'
 import VueCookie from 'vue-cookie'
 import VueResource from 'vue-resource'
 
+import VueConfig from 'vue-config'
+import configs from './vue.configs.js'
+
 // router setup
 import routes from './routes/routes'
 
@@ -39,6 +42,7 @@ Vue.use(VueKindergarten, {
 })
 Vue.use(VueCookie)
 Vue.use(VueResource)
+Vue.use(VueConfig, configs)
 
 // configure router
 const router = new VueRouter({

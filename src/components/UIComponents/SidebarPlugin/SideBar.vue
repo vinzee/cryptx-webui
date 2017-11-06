@@ -9,7 +9,7 @@
     <!-- -->
     <div class="sidebar-wrapper" id="style-3">
       <div class="logo">
-        <a href="#" class="simple-text">
+        <a href="#/" class="simple-text">
             <div class="logo-img">
               <!-- 42px -->
                 <img src="static/img/cryptx-logo.jpg" alt="">

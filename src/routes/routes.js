@@ -11,7 +11,7 @@ import Notifications from 'src/components/Dashboard/Views/Notifications.vue'
 import Icons from 'src/components/Dashboard/Views/Icons.vue'
 // import Maps from 'src/components/Dashboard/Views/Maps.vue'
 import Typography from 'src/components/Dashboard/Views/Typography.vue'
-import TableList from 'src/components/Dashboard/Views/TableList.vue'
+import Transactions from 'src/components/Dashboard/Views/Transactions.vue'
 
 const routes = [
   {
@@ -60,9 +60,9 @@ const routes = [
         component: Typography
       },
       {
-        path: 'table-list',
-        name: 'table-list',
-        component: TableList
+        path: 'transactions',
+        name: 'transactions',
+        component: Transactions
       }
     ]
   },

@@ -54,9 +54,3 @@
   }
 
 </script>
-<style>
-.main-panel{
-  float: none !important;
-  width: 100% !important;
-}
-</style>
