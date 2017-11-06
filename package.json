@@ -5,7 +5,6 @@
   "author": "cristian.jora <cristian.jora@corebuild.eu>",
   "private": true,
   "scripts": {
-    // "start": "node server.js",
     "start": "node build/dev-server.js",
     "dev": "cross-env ENABLE_ESLINT=true node build/dev-server.js",
     "build": "cross-env ENABLE_ESLINT=true node build/build.js",
