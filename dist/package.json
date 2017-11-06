@@ -1,7 +1,7 @@
 {
   "name": "cryptx-webui",
   "version": "1.0.0",
-  "description": "A sample admin dashboard based on paper dashboard UI template",
+  "description": "cryptx-webui",
   "author": "vineet ahirkar <vinzee93@gmail.com>",
   "private": true,
   "scripts": {
