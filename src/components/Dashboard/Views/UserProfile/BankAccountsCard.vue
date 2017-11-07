@@ -44,17 +44,67 @@
     <div class="modal" id="addAccountModal" tabindex="-1" role="dialog" aria-labelledby="addAccountModal" aria-hidden="true" data-backdrop="false">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
+          <form @submit.stop.prevent="add_bank_account">
+
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="myModalLabel">Add Account</h4>
+            <h4 class="modal-title" id="myModalLabel">Add Bank Account</h4>
           </div>
+
           <div class="modal-body">
-            <h3>Add Account</h3>
+
+            <div class="row">
+              <div class="col-md-6">
+                <fg-input type="text"
+                          label="Bank Name"
+                          placeholder="Bank Name"
+                          v-model="add_bank_account_details.name">
+                </fg-input>
+              </div>
+              <div class="col-md-6">
+                <fg-input type="text"
+                          label="Address"
+                          placeholder="Address"
+                          v-model="add_bank_account_details.address">
+                </fg-input>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Account Number</label>
+                  <input v-validate="'required'" class="form-control border-input" type="number" name="account_number" label="Amount" placeholder="Amount" v-model="add_bank_account_details.account_number">
+                  <span v-show="errors.has('account_number')" class="text-danger">{{ errors.first('account_number') }}</span>
+
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Account Number</label>
+                  <input v-validate="'required'" class="form-control border-input" type="number" name="account_number" label="Amount" placeholder="Amount" v-model="add_bank_account_details.account_number">
+                  <span v-show="errors.has('account_number')" class="text-danger">{{ errors.first('account_number') }}</span>
+
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Account Number</label>
+                  <input v-validate="'required'" class="form-control border-input" type="number" name="account_number" label="Amount" placeholder="Amount" v-model="add_bank_account_details.account_number">
+                  <span v-show="errors.has('account_number')" class="text-danger">{{ errors.first('account_number') }}</span>
+
+                </div>
+              </div>
+            </div>
+
           </div>
+
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click.prevent="add_account">Add Account</button>
+            <button type="button" class="btn btn-primary" @click.prevent="add_bank_account">Add Bank Account</button>
           </div>
+
+        </form>
         </div>
       </div>
     </div>
@@ -64,14 +114,45 @@
 </template>
 <script>
   export default {
+    data () {
+      return {
+        add_bank_account_details: {
+          name: '',
+          account_no: '',
+          card_number: ''
+        }
+      }
+    },
     computed: {
       bank_accounts () {
         return this.$store.state.user.bank_accounts
       }
     },
     methods: {
-      add_account () {
+      add_bank_account () {
+        console.log('add_bank_account', this.add_bank_account_details)
 
+        this.$validator.validateAll()
+        .then((isValidated) => {
+          if (isValidated) {
+            this.$store.commit('add_bank_account', self.add_bank_account_details)
+            this.$notifications.notify({
+              message: 'Added ' + this.add_bank_account_details.name + ' sucessfully !',
+              icon: 'ti-bank',
+              horizontalAlign: 'right',
+              verticalAlign: 'top',
+              type: 'success'
+            })
+          } else {
+            this.$notifications.notify({
+              message: 'Error in adding bank !',
+              icon: 'ti-bank',
+              horizontalAlign: 'right',
+              verticalAlign: 'top',
+              type: 'danger'
+            })
+          }
+        })
       }
     }
   }

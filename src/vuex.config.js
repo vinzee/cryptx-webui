@@ -15,6 +15,7 @@ const store = new Vuex.Store({
       email: 'vinzee93@gmail.com',
       address: 'Maryland, US',
       city: 'baltimore',
+      country: 'United States',
       postalCode: '21227',
       virtual_wallet: {
         balance: 1234
@@ -86,6 +87,9 @@ const store = new Vuex.Store({
     },
     add_money_to_virtual_wallet (state, data) {
       Vue.set(state.user.virtual_wallet, 'balance', state.user.virtual_wallet.balance + data.amount)
+    },
+    add_bank_account (state, data) {
+      state.user.bank_accounts.push(data)
     }
   }
 })

@@ -29,6 +29,15 @@
           <button type="submit" class="btn btn-info btn-fill btn-wd" @click.prevent="login">
             Log In
           </button>
+
+        </div>
+
+        <br><br>
+        <div class="text-center">
+          Not registered yet ?<br>
+          <a href="#/register" class="btn-rotate btn btn-default btn-fill btn-wd">
+            <i class="fa fa-sign-in" aria-hidden="true"></i> Register
+          </a>
         </div>
         <div class="clearfix"></div>
       </form>

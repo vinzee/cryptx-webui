@@ -96,6 +96,14 @@
             Register
           </button>
         </div>
+
+        <br><br>
+        <div class="text-center">
+          Already a user ?<br>
+          <a href="#/login" class="btn-rotate btn btn-default btn-fill btn-wd">
+            <i class="fa fa-sign-in" aria-hidden="true"></i> Login
+          </a>
+        </div>
         <div class="clearfix"></div>
       </form>
     </div>
