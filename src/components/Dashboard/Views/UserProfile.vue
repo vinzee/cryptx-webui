@@ -81,6 +81,7 @@
   import UserCard from './UserProfile/UserCard.vue'
   import BankAccountsCard from './UserProfile/BankAccountsCard.vue'
   import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
+  import $ from 'jquery'
 
   export default {
     components: {
@@ -120,14 +121,16 @@
               verticalAlign: 'top',
               type: 'success'
             })
-          } else {
-            this.$notifications.notify({
-              message: 'Error in adding money to virtual wallet !',
-              icon: 'ti-money',
-              horizontalAlign: 'right',
-              verticalAlign: 'top',
-              type: 'danger'
-            })
+
+            $('#addMoneyModal').modal('hide')
+
+            // this.$notifications.notify({
+            //   message: 'Error in adding money to virtual wallet !',
+            //   icon: 'ti-money',
+            //   horizontalAlign: 'right',
+            //   verticalAlign: 'top',
+            //   type: 'danger'
+            // })
           }
         })
       }
