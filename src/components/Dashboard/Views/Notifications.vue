@@ -50,10 +50,10 @@
           </div>
         </div>
       </div>
-  
+
       <br>
       <br>
-  
+
       <div class="places-buttons">
         <div class="row">
           <div class="col-md-9">
@@ -83,7 +83,7 @@
           <div class="col-md-3">
             <button class="btn btn-default btn-block" @click="notifyVue('bottom', 'right')">Bottom Right</button>
           </div>
-  
+
         </div>
       </div>
     </div>
@@ -120,5 +120,5 @@
 
 </script>
 <style>
-  
+
 </style>

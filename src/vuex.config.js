@@ -20,9 +20,15 @@ const store = new Vuex.Store({
         balance: 1234
       },
       bank_accounts: [{
+        id: '1',
         name: 'Bank of America',
         account_number: '1234',
-        type: 'credit' // credit / debit,
+        type: 'credit'
+      }, {
+        id: '2',
+        name: 'PNC',
+        account_number: '6789',
+        type: 'debit'
       }],
       currencies: {
         bitcoin: {
@@ -77,6 +83,9 @@ const store = new Vuex.Store({
     logout (state) {
       state.logged_in = false
       state.user = null
+    },
+    add_money_to_virtual_wallet (state, data) {
+      Vue.set(state.user.virtual_wallet, 'balance', state.user.virtual_wallet.balance + data.amount)
     }
   }
 })

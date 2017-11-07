@@ -31,17 +31,44 @@
       <div class="modal" id="addMoneyModal" tabindex="-1" role="dialog" aria-labelledby="addMoneyModal" aria-hidden="true" data-backdrop="false">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
+            <form @submit.stop.prevent="add_money">
+
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title" id="myModalLabel">Add Money</h4>
+              <h4 class="modal-title" id="myModalLabel">Add Money to Virtual Wallet</h4>
             </div>
             <div class="modal-body">
-              <h3>Add Money</h3>
+
+
+                <div class="row">
+                  <div class="col-md-4 col-md-offset-4">
+
+                    <div class="form-group">
+                      <label>Amount ($)</label>
+                      <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="virtual_wallet_add_money.amount" min="10" step="10">
+                      <span v-show="errors.has('amount')" class="text-danger">{{ errors.first('amount') }}</span>
+
+                    </div>
+
+                    <div class="form-group">
+                      <label>Bank Account</label>
+                      <select v-validate="'required'" class="form-control" v-model="virtual_wallet_add_money.bank_id" name="bank_account">
+                        <option v-for="bank_account in bank_accounts" :value="bank_account.id">{{bank_account.name}}</option>
+                      </select>
+                      <span v-show="errors.has('bank_account')" class="text-danger">{{ errors.first('bank_account') }}</span>
+                    </div>
+
+                  </div>
+                </div>
+
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" @click.prevent="add_money">Add Money</button>
+              <button type="submit" class="btn btn-primary">Add Money</button>
             </div>
+
+            </form>
           </div>
         </div>
       </div>
@@ -62,14 +89,47 @@
       BankAccountsCard,
       StatsCard
     },
-    methods: {
-      add_money () {
-
+    data () {
+      return {
+        virtual_wallet_add_money: {
+          amount: 100,
+          bank_id: 1
+        }
       }
     },
     computed: {
       virtual_wallet_balance () {
         return this.$store.getters.virtual_wallet_balance
+      },
+      bank_accounts () {
+        return this.$store.state.user.bank_accounts
+      }
+    },
+    methods: {
+      add_money () {
+        console.log('add_money', this.virtual_wallet_add_money.amount, this.virtual_wallet_add_money.bank_id)
+
+        this.$validator.validateAll()
+        .then((isValidated) => {
+          if (isValidated) {
+            this.$store.commit('add_money_to_virtual_wallet', {amount: this.virtual_wallet_add_money.amount})
+            this.$notifications.notify({
+              message: 'Added $' + this.virtual_wallet_add_money.amount + ' to virtual wallet successfully from !',
+              icon: 'ti-money',
+              horizontalAlign: 'right',
+              verticalAlign: 'top',
+              type: 'success'
+            })
+          } else {
+            this.$notifications.notify({
+              message: 'Error in adding money to virtual wallet !',
+              icon: 'ti-money',
+              horizontalAlign: 'right',
+              verticalAlign: 'top',
+              type: 'danger'
+            })
+          }
+        })
       }
     }
   }

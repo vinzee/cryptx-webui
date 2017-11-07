@@ -10,7 +10,7 @@
             <div class="row" v-for="bank_account in bank_accounts">
               <div class="col-xs-3">
                 <div class="avatar">
-                  <img src="static/img/faces/face-1.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+                  <img src="static/img/bank-logo.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
                 </div>
               </div>
               <div class="col-xs-6">

@@ -62,7 +62,7 @@ Object.defineProperty(Vue.prototype, '$Chartist', {
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-new Vue({
+window.vue = new Vue({
   el: '#app',
   router,
   store,
