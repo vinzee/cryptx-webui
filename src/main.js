@@ -64,7 +64,7 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 window.vue = new Vue({
   el: '#app',
-  router,
+  router: router,
   store,
   perimeters: [
     profilePerimeter

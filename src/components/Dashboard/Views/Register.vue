@@ -79,18 +79,6 @@
           </div>
         </div>
 
-        <!-- <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>About Me</label>
-              <textarea rows="5" class="form-control border-input"
-                        placeholder="Here can be your description"
-                        v-model="user.aboutMe">
-
-              </textarea>
-            </div>
-          </div>
-        </div> -->
         <div class="text-center">
           <button type="submit" class="btn btn-info btn-fill btn-wd" @click.prevent="register">
             Register
@@ -113,16 +101,19 @@
   export default {
     data () {
       return {
-      }
-    },
-    computed: {
-      user () {
-        return this.$store.state.user
+        user: {
+
+        }
       }
     },
     methods: {
       register () {
-        alert('Your data: ' + JSON.stringify(this.user))
+        this.$validator.validateAll()
+        .then((isValidated) => {
+          if (isValidated) {
+            this.$store.dispatch('register', this.user)
+          }
+        })
       }
     }
   }

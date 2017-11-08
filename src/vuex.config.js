@@ -74,6 +74,9 @@ const store = new Vuex.Store({
     },
     currencies: state => {
       return state.user.virtual_wallet.currencies
+    },
+    isLoggedIn: state => {
+      return !(state.user === undefined || state.user === null)
     }
   },
   mutations: {
@@ -90,6 +93,60 @@ const store = new Vuex.Store({
     },
     add_bank_account (state, data) {
       state.user.bank_accounts.push(data)
+    }
+  },
+  actions: {
+    add_bank_account ({ commit, state, dispatch }, accountData) {
+      if (accountData) {
+        dispatch('add_bank_account', accountData)
+
+        window.vue.$notifications.notify({
+          message: 'Added new bank account sucessfully !',
+          icon: 'ti-bank',
+          horizontalAlign: 'right',
+          verticalAlign: 'bottom',
+          type: 'success'
+        })
+      }
+    },
+    register ({ commit, state, dispatch }, user) {
+      if (user) {
+        dispatch('login', user)
+
+        window.vue.$notifications.notify({
+          message: 'User registered in sucessfully !',
+          icon: 'ti-bank',
+          horizontalAlign: 'right',
+          verticalAlign: 'bottom',
+          type: 'success'
+        })
+      }
+    },
+    login ({ commit, state }, user) {
+      if (user) {
+        commit('login', user)
+        window.vue.$router.push('/')
+
+        window.vue.$notifications.notify({
+          message: 'User logged in sucessfully !',
+          icon: 'ti-bank',
+          horizontalAlign: 'right',
+          verticalAlign: 'bottom',
+          type: 'success'
+        })
+      }
+    },
+    logout ({ commit, state }) {
+      window.vue.$router.push('/login')
+      commit('logout')
+
+      window.vue.$notifications.notify({
+        message: 'User logged out sucessfully !',
+        icon: 'ti-bank',
+        horizontalAlign: 'right',
+        verticalAlign: 'bottom',
+        type: 'success'
+      })
     }
   }
 })

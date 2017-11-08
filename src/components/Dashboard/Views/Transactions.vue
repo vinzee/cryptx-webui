@@ -7,15 +7,6 @@
           </paper-table>
         </div>
 
-        <div class="text-center">
-          <button type="submit" class="btn btn-success btn-fill btn-wd" @click.prevent="buy">
-            Buy
-          </button>
-          <button type="submit" class="btn btn-info btn-fill btn-wd" @click.prevent="sell">
-            Sell
-          </button>
-        </div>
-
       </div>
     </div>
 </template>

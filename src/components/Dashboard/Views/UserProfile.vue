@@ -118,7 +118,7 @@
               message: 'Added $' + this.virtual_wallet_add_money.amount + ' to virtual wallet successfully from !',
               icon: 'ti-money',
               horizontalAlign: 'right',
-              verticalAlign: 'top',
+              verticalAlign: 'bottom',
               type: 'success'
             })
 
@@ -128,7 +128,7 @@
             //   message: 'Error in adding money to virtual wallet !',
             //   icon: 'ti-money',
             //   horizontalAlign: 'right',
-            //   verticalAlign: 'top',
+            //   verticalAlign: 'bottom',
             //   type: 'danger'
             // })
           }

@@ -12,34 +12,28 @@
       </div>
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
-          <drop-down v-bind:title="user.email" icon="fa fa-user">
-            <li>
+
+          <drop-down v-bind:title="userEmail" icon="fa fa-user">
+            <li v-if="user">
               <a href="#/settings" class="btn-rotate">
                 <i class="fa fa-gear" aria-hidden="true"></i> Settings
               </a>
             </li>
-            <li>
-              <a href="#/register" class="btn-rotate">
-                <i class="fa fa-sign-out" aria-hidden="true"></i> Register
+            <li v-if="user">
+              <a href="#" class="btn-rotate" @click="logOut">
+                <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
               </a>
             </li>
-            <li>
+            <li v-if="!user">
               <a href="#/login" class="btn-rotate">
                 <i class="fa fa-sign-out" aria-hidden="true"></i> LogIn
               </a>
             </li>
-            <li>
-              <a href="#" class="btn-rotate">
-                <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+            <li v-if="!user">
+              <a href="#/register" class="btn-rotate">
+                <i class="fa fa-sign-out" aria-hidden="true"></i> Register
               </a>
             </li>
-
-            <!-- <li class="open">
-              <a href="#" class="dropdown-toggle btn-magnify" data-toggle="dropdown">
-                <i class="ti-panel"></i>
-                <p>Settings</p>
-              </a>
-            </li> -->
           </drop-down>
 
         </ul>
@@ -61,6 +55,9 @@
       },
       user () {
         return this.$store.state.user
+      },
+      userEmail () {
+        return this.user !== null ? this.user.email : 'Guest'
       }
     },
     methods: {
@@ -78,6 +75,9 @@
       },
       hideSidebar () {
         this.$sidebar.displaySidebar(false)
+      },
+      logOut () {
+        this.$store.dispatch('logout')
       }
     }
   }

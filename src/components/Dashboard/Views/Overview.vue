@@ -57,7 +57,7 @@
     <!--Charts-->
     <div class="row">
 
-      <div class="col-xs-12">
+      <div class="col-xs-11">
         <chart-card :chart-data="usersChart.data" :chart-options="usersChart.options">
           <h4 class="title" slot="title">User Portfolio</h4>
           <span slot="subTitle"> 24 Hours performance</span>
@@ -69,6 +69,18 @@
             <i class="fa fa-circle text-warning"></i> Click Second Time
           </div>
         </chart-card>
+      </div>
+
+      <div class="col-xs-1">
+        <div class="text-center">
+          <button type="submit" class="btn btn-success btn-fill" @click.prevent="buy">
+            Buy
+          </button>
+          <br><br>
+          <button type="submit" class="btn btn-info btn-fill" @click.prevent="sell">
+            Sell
+          </button>
+        </div>
       </div>
 
       <div class="col-md-6 col-xs-12">
