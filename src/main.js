@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
 
 // Plugins
 import GlobalComponents from './globalComponents'
@@ -8,20 +7,15 @@ import Notifications from './components/UIComponents/NotificationPlugin'
 import SideBar from './components/UIComponents/SidebarPlugin'
 import App from './App'
 
+import { sync } from 'vuex-router-sync'
 import store from './vuex.config.js'
-import VeeValidate from 'vee-validate'
-import VueKindergarten from 'vue-kindergarten'
-import profilePerimeter from './perimeters/profilePerimeter.js'
-import VueCookie from 'vue-cookie'
-import VueResource from 'vue-resource'
-
-import VueConfig from 'vue-config'
-import configs from './vue.configs.js'
-
 // router setup
-import routes from './routes/routes'
+import router from './routes/index'
 
 // library imports
+import VeeValidate from 'vee-validate'
+import VueConfig from 'vue-config'
+import configs from './vue.configs.js'
 import Chartist from 'chartist'
 
 import 'bootstrap/dist/js/bootstrap.min.js'
@@ -30,27 +24,14 @@ import './assets/sass/paper-dashboard.scss'
 import 'es6-promise/auto'
 
 // plugin setup
-Vue.use(VueRouter)
+Vue.use(VueConfig, configs)
 Vue.use(GlobalComponents)
 Vue.use(GlobalDirectives)
 Vue.use(Notifications)
 Vue.use(SideBar)
-
 Vue.use(VeeValidate)
-Vue.use(VueKindergarten, {
-  child: (store) => {
-    return store.state.user
-  }
-})
-Vue.use(VueCookie)
-Vue.use(VueResource)
-Vue.use(VueConfig, configs)
 
-// configure router
-const router = new VueRouter({
-  routes, // short for routes: routes
-  linkActiveClass: 'active'
-})
+sync(store, router)
 
 // global library setup
 Object.defineProperty(Vue.prototype, '$Chartist', {
@@ -66,9 +47,6 @@ window.vue = new Vue({
   el: '#app',
   router: router,
   store,
-  perimeters: [
-    profilePerimeter
-  ],
   data: {
     Chartist: Chartist
   },

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
+import vueAuth from './auth.js' // auth setup
 // import moment from 'moment'
 // import _ from 'lodash'
 
@@ -9,7 +9,6 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
-    logged_in: false,
     user: {
       firstName: 'Vineet',
       lastName: 'Ahirkar',
@@ -82,8 +81,9 @@ const store = new Vuex.Store({
     investments: state => {
       return state.user.investments
     },
-    isLoggedIn: state => {
-      return !(state.user === undefined || state.user === null)
+    isAuthenticated: state => {
+      console.log('yay !')
+      return this.$auth.isAuthenticated
     }
   },
   mutations: {
@@ -118,7 +118,7 @@ const store = new Vuex.Store({
     },
     register ({ commit, state, dispatch }, user) {
       if (user) {
-        axios.post('/user/signup').then((response) => {
+        Vue.axios.post('/user/signup').then((response) => {
           let user = response.data.user
           window.vue.$notifications.notify({
             message: 'User registered in sucessfully !',
@@ -133,23 +133,50 @@ const store = new Vuex.Store({
         })
       }
     },
-    login ({ commit, state }, user) {
-      if (user) {
-        axios.post('/user/login').then((response) => {
-          commit('login', user)
-          window.vue.$router.push('/')
+    isLoggedIn ({ commit, state, dispatch }, user) {
+      var session = this.$cookie.get('session')
 
-          window.vue.$notifications.notify({
-            message: 'User logged in sucessfully !',
-            icon: 'ti-bank',
-            horizontalAlign: 'right',
-            verticalAlign: 'bottom',
-            type: 'success'
-          })
-        }, (err) => {
-          console.log('Error in user registration', err)
+      if (session) {
+        Vue.axios.post('/user/info', {session: session})
+        .then(function (response) {
+          if (response.success) {
+            dispatch('login', response.user)
+          }
+        },
+        function (error) {
+          console.log('Failed to renew old session', error)
         })
       }
+    },
+    login ({ commit, state }, {user, requestOptions}) {
+      vueAuth.login(user, requestOptions).then((response) => {
+        commit('isAuthenticated', {
+          isAuthenticated: vueAuth.isAuthenticated()
+        })
+      })
+
+      // let self = this
+      // if (user) {
+      //   Vue.axios.post('/user/login').then((response) => {
+      //     if (response.success) {
+      //       self.$cookie.set('session', response.session, 30)
+      //       commit('login', user)
+      //       window.vue.$router.push('/')
+
+      //       window.vue.$notifications.notify({
+      //         message: 'User logged in sucessfully !',
+      //         icon: 'ti-bank',
+      //         horizontalAlign: 'right',
+      //         verticalAlign: 'bottom',
+      //         type: 'success'
+      //       })
+      //     } else {
+      //       console.log('User login failed', response)
+      //     }
+      //   }, (err) => {
+      //     console.log('Error in user registration', err)
+      //   })
+      // }
     },
     logout ({ commit, state }) {
       window.vue.$router.push('/login')

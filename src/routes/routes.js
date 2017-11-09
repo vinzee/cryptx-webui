@@ -15,24 +15,24 @@ import Transactions from 'src/components/Dashboard/Views/Transactions.vue'
 
 const routes = [
   {
+    path: 'login',
+    name: 'login',
+    component: Login
+  },
+  {
+    path: 'register',
+    name: 'register',
+    component: Register
+  },
+  {
     path: '/',
     component: DashboardLayout,
-    redirect: '/overview',
+    meta: { requiresAuth: true },
     children: [
       {
         path: 'overview',
         name: 'overview',
         component: Overview
-      },
-      {
-        path: 'login',
-        name: 'login',
-        component: Login
-      },
-      {
-        path: 'register',
-        name: 'register',
-        component: Register
       },
       {
         path: 'settings',
