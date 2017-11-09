@@ -19,3 +19,11 @@
 
 ## Documentation
 Link to [Documentation](https://cristijora.github.io/vue-paper-dashboard-docs/#/)
+
+
+/user/login - POST
+/user/logout - GET
+/user/signup - POST
+/user/:id - GET
+/transactions - GET
+/transaction/create - POST

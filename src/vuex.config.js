@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
 // import moment from 'moment'
 // import _ from 'lodash'
 
@@ -117,28 +118,36 @@ const store = new Vuex.Store({
     },
     register ({ commit, state, dispatch }, user) {
       if (user) {
-        dispatch('login', user)
-
-        window.vue.$notifications.notify({
-          message: 'User registered in sucessfully !',
-          icon: 'ti-bank',
-          horizontalAlign: 'right',
-          verticalAlign: 'bottom',
-          type: 'success'
+        axios.post('/user/signup').then((response) => {
+          let user = response.data.user
+          window.vue.$notifications.notify({
+            message: 'User registered in sucessfully !',
+            icon: 'ti-bank',
+            horizontalAlign: 'right',
+            verticalAlign: 'bottom',
+            type: 'success'
+          })
+          dispatch('login', user)
+        }, (err) => {
+          console.log('Error in user registration', err)
         })
       }
     },
     login ({ commit, state }, user) {
       if (user) {
-        commit('login', user)
-        window.vue.$router.push('/')
+        axios.post('/user/login').then((response) => {
+          commit('login', user)
+          window.vue.$router.push('/')
 
-        window.vue.$notifications.notify({
-          message: 'User logged in sucessfully !',
-          icon: 'ti-bank',
-          horizontalAlign: 'right',
-          verticalAlign: 'bottom',
-          type: 'success'
+          window.vue.$notifications.notify({
+            message: 'User logged in sucessfully !',
+            icon: 'ti-bank',
+            horizontalAlign: 'right',
+            verticalAlign: 'bottom',
+            type: 'success'
+          })
+        }, (err) => {
+          console.log('Error in user registration', err)
         })
       }
     },
