@@ -108,8 +108,6 @@
     },
     methods: {
       add_money () {
-        console.log('add_money', this.virtual_wallet_add_money.amount, this.virtual_wallet_add_money.bank_id)
-
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {

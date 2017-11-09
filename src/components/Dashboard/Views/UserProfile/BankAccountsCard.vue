@@ -157,13 +157,10 @@
         // if true, will log helpful messages for setting up Card
         debug: true // optional - default false
       })
-
-      console.log('card: ', card)
+      console.log(card)
     },
     methods: {
       add_bank_account () {
-        console.log('add_bank_account', this.add_bank_account_details)
-
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {

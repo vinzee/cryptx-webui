@@ -31,12 +31,18 @@ const store = new Vuex.Store({
         account_number: '6789',
         type: 'debit'
       }],
-      currencies: {
+      investments: {
         bitcoin: {
           amount: 1.7
         },
         litecoin: {
           amount: 1.3
+        },
+        etherium: {
+          amount: 0.5
+        },
+        ripple: {
+          amount: 1.5
         }
       }
     },
@@ -72,8 +78,8 @@ const store = new Vuex.Store({
     virtual_wallet_balance: state => {
       return state.user.virtual_wallet.balance
     },
-    currencies: state => {
-      return state.user.virtual_wallet.currencies
+    investments: state => {
+      return state.user.investments
     },
     isLoggedIn: state => {
       return !(state.user === undefined || state.user === null)

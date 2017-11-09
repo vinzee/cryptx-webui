@@ -84,15 +84,14 @@
       </div>
 
       <div class="col-md-6 col-xs-12">
-        <chart-card :chart-data="preferencesChart.data"  chart-type="Pie">
+        <chart-card :chart-data="investmentsChartData" :chart-options="investmentsChartOptions" chart-type="Pie">
           <h4 class="title" slot="title">User Investments</h4>
           <span slot="subTitle">Investments till now</span>
           <span slot="footer">
             <i class="ti-timer"></i> Campaign set 2 days ago</span>
           <div slot="legend">
-            <i class="fa fa-circle text-info"></i> Open
-            <i class="fa fa-circle text-danger"></i> Bounce
-            <i class="fa fa-circle text-warning"></i> Unsubscribe
+            <!-- investmentsChartData -->
+          <span v-for="currency in investmentsChartData.labels"><i class="fa fa-circle text-info"></i> {{currency}}</span>
           </div>
         </chart-card>
       </div>
@@ -117,6 +116,8 @@
 <script>
   import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
   import ChartCard from 'components/UIComponents/Cards/ChartCard.vue'
+  import _ from 'lodash'
+
   export default {
     components: {
       StatsCard,
@@ -127,32 +128,6 @@
      */
     data () {
       return {
-        statsCards: [
-          {
-            type: 'warning',
-            icon: 'ti-server',
-            title: 'Capacity',
-            value: '105GB',
-            footerText: 'Updated now',
-            footerIcon: 'ti-reload'
-          },
-          {
-            type: 'danger',
-            icon: 'ti-stats-up',
-            title: 'Top Currency',
-            value: '23',
-            footerText: 'Updated now',
-            footerIcon: 'ti-timer'
-          },
-          {
-            type: 'info',
-            icon: 'ti-stats-down',
-            title: 'Worst Currency',
-            value: '-45',
-            footerText: 'Updated now',
-            footerIcon: 'ti-reload'
-          }
-        ],
         usersChart: {
           data: {
             labels: ['9:00AM', '12:00AM', '3:00PM', '6:00PM', '9:00PM', '12:00PM', '3:00AM', '6:00AM'],
@@ -193,19 +168,36 @@
             height: '245px'
           }
         },
-        preferencesChart: {
-          data: {
-            labels: ['62%', '32%', '6%'],
-            series: [62, 32, 6]
-          },
-          options: {}
+        investmentsChartOptions: {
+          labelInterpolationFnc (value) {
+            return value
+          }
+          // showLabel: false,
+          // plugins: [
+          //   this.$Chartist.plugins.legend()
+          // ]
         }
-
       }
     },
     computed: {
       virtual_wallet_balance () {
         return this.$store.getters.virtual_wallet_balance
+      },
+      investments () {
+        return this.$store.getters.investments
+      },
+      investmentsChartData () {
+        let data = {
+          labels: [],
+          series: []
+        }
+
+        _.each(this.investments, function (v, k) {
+          data.labels.push(k)
+          data.series.push(v.amount)
+        })
+
+        return data
       }
     }
   }
