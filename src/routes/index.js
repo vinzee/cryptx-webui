@@ -12,12 +12,11 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log('router.beforeEach')
   if (to.matched.some(record => record.meta.requiresAuth) && !store.getters.isAuthenticated) {
-    console.log('user not authenticated, redirecting to login')
+    console.log('router.beforeEach: user not authenticated, redirecting to login')
     next({path: 'login', query: { redirect: to.fullPath }})
   } else {
-    console.log('user authenticated')
+    console.log('router.beforeEach: user authenticated')
     next()
   }
 })

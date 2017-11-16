@@ -4,7 +4,7 @@ import VueAuthenticate from 'vue-authenticate'
 import axios from 'axios'
 import VueCookie from 'vue-cookie'
 
-// axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true
 
 Vue.use(VueCookie)
 Vue.use(VueAxios, axios)
