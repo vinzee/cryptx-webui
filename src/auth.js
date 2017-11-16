@@ -1,17 +1,32 @@
 import Vue from 'vue'
 import VueAxios from 'vue-axios'
-import { VueAuthenticate } from 'vue-authenticate'
+import VueAuthenticate from 'vue-authenticate'
 import axios from 'axios'
 import VueCookie from 'vue-cookie'
-// import store from 'src/vuex.config.js'
 
 // axios.defaults.withCredentials = true
 
 Vue.use(VueCookie)
 Vue.use(VueAxios, axios)
+Vue.use(VueAuthenticate, {
+  baseUrl: 'http://localhost:3000', // Your API domain
+  bindRequestInterceptor: function () {
+    this.$http.interceptors.request.use((config) => {
+      if (this.isAuthenticated()) {
+        config.headers['Authorization'] = [
+          this.options.tokenType, this.getToken()
+        ].join(' ')
+      } else {
+        delete config.headers['Authorization']
+      }
+      return config
+    })
+  },
 
-export default new VueAuthenticate(Vue.prototype.$http, {
-  baseUrl: 'http://localhost:4000',
-  storageType: 'cookieStorage'
-  // tokenName: 'access_token',
+  bindResponseInterceptor: function () {
+    this.$http.interceptors.response.use((response) => {
+      this.setToken(response)
+      return response
+    })
+  }
 })

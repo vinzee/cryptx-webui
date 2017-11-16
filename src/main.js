@@ -17,6 +17,7 @@ import VeeValidate from 'vee-validate'
 import VueConfig from 'vue-config'
 import configs from './vue.configs.js'
 import Chartist from 'chartist'
+import 'mixins/index.js'
 
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.css'

@@ -15,34 +15,36 @@ import Transactions from 'src/components/Dashboard/Views/Transactions.vue'
 
 const routes = [
   {
-    path: 'login',
-    name: 'login',
-    component: Login
-  },
-  {
-    path: 'register',
-    name: 'register',
-    component: Register
-  },
-  {
     path: '/',
     component: DashboardLayout,
-    meta: { requiresAuth: true },
     children: [
       {
-        path: 'overview',
+        path: 'login',
+        name: 'login',
+        component: Login
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: Register
+      },
+      {
+        path: '/',
         name: 'overview',
-        component: Overview
+        component: Overview,
+        meta: { requiresAuth: true }
       },
       {
         path: 'settings',
         name: 'settings',
-        component: UserProfile
+        component: UserProfile,
+        meta: { requiresAuth: true }
       },
       {
         path: 'notifications',
         name: 'notifications',
-        component: Notifications
+        component: Notifications,
+        meta: { requiresAuth: true }
       },
       {
         path: 'icons',
@@ -62,7 +64,8 @@ const routes = [
       {
         path: 'transactions',
         name: 'transactions',
-        component: Transactions
+        component: Transactions,
+        meta: { requiresAuth: true }
       }
     ]
   },

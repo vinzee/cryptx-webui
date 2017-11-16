@@ -1,14 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import vueAuth from './auth.js' // auth setup
-// import moment from 'moment'
-// import _ from 'lodash'
+import './auth.js'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
+    isAuthenticated: true,
     user: {
       firstName: 'Vineet',
       lastName: 'Ahirkar',
@@ -82,17 +81,16 @@ const store = new Vuex.Store({
       return state.user.investments
     },
     isAuthenticated: state => {
-      console.log('yay !')
-      return this.$auth.isAuthenticated
+      return state.isAuthenticated
     }
   },
   mutations: {
     login (state, user) {
-      state.logged_in = true
+      state.isAuthenticated = true
       state.user = user
     },
     logout (state) {
-      state.logged_in = false
+      state.isAuthenticated = false
       state.user = null
     },
     add_money_to_virtual_wallet (state, data) {
@@ -149,11 +147,9 @@ const store = new Vuex.Store({
       }
     },
     login ({ commit, state }, {user, requestOptions}) {
-      vueAuth.login(user, requestOptions).then((response) => {
-        commit('isAuthenticated', {
-          isAuthenticated: vueAuth.isAuthenticated()
-        })
-      })
+      // vueAuth.login(user, requestOptions).then((response) => {
+      //   commit('login', user)
+      // })
 
       // let self = this
       // if (user) {
