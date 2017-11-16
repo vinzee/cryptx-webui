@@ -19,6 +19,12 @@ const routes = [
     component: DashboardLayout,
     children: [
       {
+        path: '/',
+        name: 'overview',
+        component: Overview,
+        meta: { requiresAuth: true }
+      },
+      {
         path: 'login',
         name: 'login',
         component: Login
@@ -27,12 +33,6 @@ const routes = [
         path: 'register',
         name: 'register',
         component: Register
-      },
-      {
-        path: '/',
-        name: 'overview',
-        component: Overview,
-        meta: { requiresAuth: true }
       },
       {
         path: 'settings',

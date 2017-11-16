@@ -59,7 +59,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Full Name</label>
-                  <input v-validate="'required'" class="form-control border-input" name="name" placeholder="Full Name" v-model="add_bank_account_details.name">
+                  <input v-validate="'required'" class="form-control border-input" name="name" placeholder="Full Name" v-model="new_bank_account_details.name">
                   <span v-show="errors.has('name')" class="text-danger">{{ errors.first('name') }}</span>
                 </div>
               </div>
@@ -67,7 +67,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Bank</label>
-                  <input v-validate="'required'" class="form-control border-input" name="bank" placeholder="Bank" v-model="add_bank_account_details.bank">
+                  <input v-validate="'required'" class="form-control border-input" name="bank" placeholder="Bank" v-model="new_bank_account_details.bank">
                   <span v-show="errors.has('bank')" class="text-danger">{{ errors.first('bank') }}</span>
                 </div>
               </div>
@@ -77,14 +77,14 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label>Card Number</label>
-                  <input v-validate="'required'" class="form-control border-input" name="number" placeholder="Amount" v-model="add_bank_account_details.number">
+                  <input v-validate="'required'" class="form-control border-input" name="number" placeholder="Amount" v-model="new_bank_account_details.number">
                   <span v-show="errors.has('number')" class="text-danger">{{ errors.first('number') }}</span>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <label>Expiry</label>
-                  <input v-validate="'required'" class="form-control border-input" name="expiry" placeholder="Amount" v-model="add_bank_account_details.expiry">
+                  <input v-validate="'required'" class="form-control border-input" name="expiry" placeholder="Amount" v-model="new_bank_account_details.expiry">
                   <span v-show="errors.has('expiry')" class="text-danger">{{ errors.first('expiry') }}</span>
 
                 </div>
@@ -92,7 +92,7 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label>CVC</label>
-                  <input v-validate="'required'" class="form-control border-input" name="cvc" placeholder="Amount" v-model="add_bank_account_details.cvc">
+                  <input v-validate="'required'" class="form-control border-input" name="cvc" placeholder="Amount" v-model="new_bank_account_details.cvc">
                   <span v-show="errors.has('cvc')" class="text-danger">{{ errors.first('cvc') }}</span>
 
                 </div>
@@ -121,7 +121,7 @@
   export default {
     data () {
       return {
-        add_bank_account_details: {
+        new_bank_account_details: {
           name: '',
           account_no: '',
           card_number: ''
@@ -164,24 +164,10 @@
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.$store.commit('add_bank_account', this.add_bank_account_details)
-            this.$notifications.notify({
-              message: 'Added new bank account sucessfully !',
-              icon: 'ti-bank',
-              horizontalAlign: 'right',
-              verticalAlign: 'top',
-              type: 'success'
-            })
-
+            this.$store.dispatch('add_bank_account', this.new_bank_account_details)
             $('#addAccountModal').modal('hide')
-
-            // this.$notifications.notify({
-            //   message: 'Error in adding bank !',
-            //   icon: 'ti-bank',
-            //   horizontalAlign: 'right',
-            //   verticalAlign: 'top',
-            //   type: 'danger'
-            // })
+            this.$notify('Added new bank account sucessfully !', 'ti-bank')
+            // this.$notify('Error in adding bank !', 'ti-bank', 'danger')
           }
         })
       }

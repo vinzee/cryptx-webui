@@ -1,4 +1,7 @@
 import Vue from 'vue'
+import VueConfig from 'vue-config'
+import configs from './vue.configs.js'
+import './utils/auth.js'
 
 // Plugins
 import GlobalComponents from './globalComponents'
@@ -14,15 +17,13 @@ import router from './routes/index'
 
 // library imports
 import VeeValidate from 'vee-validate'
-import VueConfig from 'vue-config'
-import configs from './vue.configs.js'
 import Chartist from 'chartist'
-import 'mixins/index.js'
 
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.css'
 import './assets/sass/paper-dashboard.scss'
 import 'es6-promise/auto'
+import 'mixins/index.js'
 
 // plugin setup
 Vue.use(VueConfig, configs)
@@ -43,13 +44,29 @@ Object.defineProperty(Vue.prototype, '$Chartist', {
 
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
-window.vue = new Vue({
-  el: '#app',
-  router: router,
-  store,
-  data: {
-    Chartist: Chartist
-  },
-  render: h => h(App)
-})
+function initializeApp () {
+  /* eslint-disable no-new */
+  window.vue = new Vue({
+    el: '#app',
+    router: router,
+    store,
+    data: {
+      Chartist: Chartist
+    },
+    beforeCreate () {
+      console.log('starting app...')
+    },
+    render: h => h(App)
+  })
+}
+
+let session = Vue.cookie.get('session') // {domain: Vue.config.baseURL}
+let isAuthenticated = session !== null && session !== undefined
+console.log('appInit: ', isAuthenticated, session)
+
+if (isAuthenticated) {
+  store.dispatch('login')
+  initializeApp()
+} else {
+  initializeApp()
+}

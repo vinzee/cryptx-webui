@@ -8,10 +8,12 @@ axios.defaults.withCredentials = true
 
 Vue.use(VueCookie)
 Vue.use(VueAxios, axios)
+
 Vue.use(VueAuthenticate, {
-  baseUrl: 'http://localhost:3000', // Your API domain
+  baseUrl: 'http://localhost:8080', // Your API domain
   bindRequestInterceptor: function () {
     this.$http.interceptors.request.use((config) => {
+      console.log('this.$http.interceptors', this.getToken(), config)
       if (this.isAuthenticated()) {
         config.headers['Authorization'] = [
           this.options.tokenType, this.getToken()
