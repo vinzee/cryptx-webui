@@ -134,6 +134,7 @@
       }
     },
     mounted () {
+      // eslint-disable-next-line
       var card = new Card({
         form: 'form[name="add_bank_account_form"]',
         container: '.card-wrapper',
@@ -157,7 +158,6 @@
         // if true, will log helpful messages for setting up Card
         debug: true // optional - default false
       })
-      console.log(card)
     },
     methods: {
       add_bank_account () {
