@@ -61,12 +61,13 @@ function initializeApp () {
 }
 
 let session = Vue.cookie.get('session') // {domain: Vue.config.baseURL}
-let isAuthenticated = session !== null && session !== undefined
-console.log('appInit: ', isAuthenticated, session)
+let isSessionPresent = session !== null && session !== undefined
+console.log('appInit: ', isSessionPresent, session)
 
-if (isAuthenticated) {
-  store.dispatch('login')
-  initializeApp()
+if (isSessionPresent) {
+  store.dispatch('authenticate').then(() => {
+    initializeApp()
+  })
 } else {
   initializeApp()
 }

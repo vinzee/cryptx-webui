@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import axios from 'axios'
+import axios from 'axios'
 
 Vue.use(Vuex)
 
@@ -63,7 +63,7 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    login ({ commit }) {
+    authenticate ({ commit }) {
       commit('setAuth', true)
       store.dispatch('fetchUserData')
     },
@@ -71,11 +71,13 @@ const store = new Vuex.Store({
       commit('setAuth', false)
     },
     fetchUserData ({ commit, state, dispatch }) {
-      // axios.get('/user/info').then((response) => {
-      //   commit('setUser', response.data.user)
-      // }, (err) => {
-      //   console.log(err)
-      // })
+      axios.get('/user/info').then((response) => {
+        console.log('axios.get /user/info: ', response)
+        // commit('setUser', response.data.user)
+      }, (err) => {
+        console.log(err)
+      })
+
       let userData = {
         firstName: 'Vineet',
         lastName: 'Ahirkar',

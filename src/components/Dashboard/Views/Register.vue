@@ -80,7 +80,7 @@
         </div>
 
         <div class="text-center">
-          <button type="submit" class="btn btn-info btn-fill btn-wd" @click.prevent="register">
+          <button type="submit" class="btn btn-info btn-fill btn-wd" @click.prevent="submitRegisterForm">
             Register
           </button>
         </div>
@@ -107,11 +107,11 @@
       }
     },
     methods: {
-      register () {
+      submitRegisterForm () {
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.$store.dispatch('register', this.user)
+            this.register(this.user)
           }
         })
       }

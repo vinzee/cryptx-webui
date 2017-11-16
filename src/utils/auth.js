@@ -11,6 +11,9 @@ Vue.use(VueAxios, axios)
 
 Vue.use(VueAuthenticate, {
   baseUrl: 'http://localhost:8080', // Your API domain
+  loginUrl: '/auth/login',
+  registerUrl: '/auth/register',
+
   bindRequestInterceptor: function () {
     this.$http.interceptors.request.use((config) => {
       console.log('this.$http.interceptors', this.getToken(), config)
