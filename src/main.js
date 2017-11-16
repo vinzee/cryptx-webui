@@ -65,7 +65,7 @@ let isSessionPresent = session !== null && session !== undefined
 console.log('appInit: ', isSessionPresent, session)
 
 if (isSessionPresent) {
-  store.dispatch('authenticate').then(() => {
+  store.dispatch('sessionAuthenticate').then(() => {
     initializeApp()
   })
 } else {

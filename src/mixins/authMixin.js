@@ -5,10 +5,51 @@ Vue.mixin({
     login (email, password) {
       // this.$auth.login({ email, password }).then((res) => {
       //   if (res.success) {
-      let res = {session: 'vineet'}
+      let res = {
+        session: 'vineet',
+        user: {
+          firstName: 'Vineet',
+          lastName: 'Ahirkar',
+          email: 'vinzee93@gmail.com',
+          address: 'Maryland, US',
+          city: 'baltimore',
+          country: 'United States',
+          postalCode: '21227',
+          virtual_wallet: {
+            balance: 1234
+          },
+          bank_accounts: [{
+            id: '1',
+            name: 'Bank of America',
+            account_number: '1234',
+            type: 'credit'
+          }, {
+            id: '2',
+            name: 'PNC',
+            account_number: '6789',
+            type: 'debit'
+          }],
+          investments: {
+            bitcoin: {
+              amount: 1.7
+            },
+            litecoin: {
+              amount: 1.3
+            },
+            etherium: {
+              amount: 0.5
+            },
+            ripple: {
+              amount: 1.5
+            }
+          }
+        }
+      }
+
       console.log('login successful !')
       this.$cookie.set('session', res.session, {expires: '1H'}) // , domain: this.$config.baseURL
-      this.$store.dispatch('authenticate', res.session).then(() => {
+      this.$store.dispatch('setUserData', res.user).then(() => {
+        this.$store.dispatch('login')
         this.$router.push('/')
         this.$notify('User logged in sucessfully !', 'ti-bank')
       })

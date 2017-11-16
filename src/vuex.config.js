@@ -63,17 +63,24 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    authenticate ({ commit }) {
+    sessionAuthenticate ({ commit }) {
+      store.dispatch('fetchUserData').then(() => {
+        store.dispatch('login')
+      })
+    },
+    login ({ commit }) {
       commit('setAuth', true)
-      store.dispatch('fetchUserData')
     },
     logout ({ commit }) {
       commit('setAuth', false)
     },
-    fetchUserData ({ commit, state, dispatch }) {
+    setUserData ({ commit }, userData) {
+      commit('setUser', userData)
+    },
+    fetchUserData ({ dispatch }) {
       axios.get('/user/info').then((response) => {
         console.log('axios.get /user/info: ', response)
-        // commit('setUser', response.data.user)
+        dispatch('setUserData', response.data.user)
       }, (err) => {
         console.log(err)
       })
@@ -115,8 +122,7 @@ const store = new Vuex.Store({
           }
         }
       }
-      commit('setUser', userData)
-      console.log('fetchUserData', userData)
+      dispatch('setUserData', userData)
     },
     add_bank_account ({ commit, state }, accountData) {
       if (accountData) {
