@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
+import _ from 'lodash'
 
 Vue.use(Vuex)
 
@@ -9,27 +9,8 @@ const store = new Vuex.Store({
   state: {
     isAuthenticated: false,
     user: null,
-    transactions: [{
-      'type': 'Buy',
-      currency: 'bitcoin',
-      amount: '$36.738',
-      date: new Date()
-    }, {
-      'type': 'Buy',
-      currency: 'bitcoin',
-      amount: '$36.738',
-      date: new Date()
-    }, {
-      'type': 'Buy',
-      currency: 'bitcoin',
-      amount: '$36.738',
-      date: new Date()
-    }, {
-      'type': 'Buy',
-      currency: 'bitcoin',
-      amount: '$36.738',
-      date: new Date()
-    }]
+    currencyData: null,
+    currencyDataMap: {}
   },
   getters: {
     currentUser: state => {
@@ -52,6 +33,12 @@ const store = new Vuex.Store({
     },
     isAuthenticated: state => {
       return state.isAuthenticated
+    },
+    currencyData: state => {
+      return state.currencyData
+    },
+    currencyDataMap: state => {
+      return state.currencyDataMap
     }
   },
   mutations: {
@@ -60,6 +47,23 @@ const store = new Vuex.Store({
     },
     setUser (state, user) {
       state.user = user
+    },
+    setCurrencyData (state, currencyData) {
+      state.currencyData = currencyData
+
+      _.each(currencyData, function (currency) {
+        state.currencyDataMap[currency.name] = currency
+      })
+
+      _.each(state.user.investments, function (investment) {
+        let currencyDetails = state.currencyDataMap[investment.currency]
+
+        if (currencyDetails !== undefined) {
+          investment.value = investment.amount * currencyDetails.price_usd
+        } else {
+          investment.value = 10
+        }
+      })
     },
     add_money_to_virtual_wallet (state, data) {
       Vue.set(state.user.virtual_wallet, 'balance', state.user.virtual_wallet.balance + data.amount)
@@ -70,7 +74,8 @@ const store = new Vuex.Store({
   },
   actions: {
     sessionAuthenticate ({ commit }) {
-      store.dispatch('fetchUserData').then(() => {
+      store.dispatch('setTempUserData').then(() => {
+      // store.dispatch('fetchUserData').then(() => {
         store.dispatch('login')
       })
     },
@@ -80,60 +85,63 @@ const store = new Vuex.Store({
     logout ({ commit }) {
       commit('setAuth', false)
     },
+    setTempUserData ({ commit }) {
+      /* eslint-disable object-property-newline  */
+      let userData = {
+        firstName: 'Vineet', lastName: 'Ahirkar', email: 'vinzee93@gmail.com',
+        address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
+        virtual_wallet: { balance: 1234 },
+        bank_accounts: [
+          { id: '1', name: 'Bank of America', account_number: '1234', type: 'credit' }, {id: '2', name: 'PNC', account_number: '6789', type: 'debit'}
+        ],
+        investments: [
+          { currency: 'Bitcoin', amount: 1.7 },
+          { currency: 'Litecoin', amount: 1.3 },
+          { currency: 'Ethereum', amount: 0.5 },
+          { currency: 'Ripple', amount: 1.5 }
+        ],
+        transactions: [
+          { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 },
+          { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 },
+          { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 },
+          { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 }
+        ]
+      }
+      commit('setUser', userData)
+    },
     setUserData ({ commit }, userData) {
       commit('setUser', userData)
     },
     fetchUserData ({ dispatch }) {
-      axios.get('/user/info').then((response) => {
+      Vue.axios.get('/user/info').then((response) => {
         console.log('axios.get /user/info: ', response)
         dispatch('setUserData', response.data.user)
       }, (err) => {
         console.log(err)
       })
-
-      let userData = {
-        firstName: 'Vineet',
-        lastName: 'Ahirkar',
-        email: 'vinzee93@gmail.com',
-        address: 'Maryland, US',
-        city: 'baltimore',
-        country: 'United States',
-        postalCode: '21227',
-        virtual_wallet: {
-          balance: 1234
-        },
-        bank_accounts: [{
-          id: '1',
-          name: 'Bank of America',
-          account_number: '1234',
-          type: 'credit'
-        }, {
-          id: '2',
-          name: 'PNC',
-          account_number: '6789',
-          type: 'debit'
-        }],
-        investments: {
-          bitcoin: {
-            amount: 1.7
-          },
-          litecoin: {
-            amount: 1.3
-          },
-          etherium: {
-            amount: 0.5
-          },
-          ripple: {
-            amount: 1.5
-          }
-        }
-      }
-      dispatch('setUserData', userData)
     },
-    add_bank_account ({ commit, state }, accountData) {
+    add_bank_account ({ commit }, accountData) {
       if (accountData) {
         commit('add_bank_account', accountData)
       }
+    },
+    getCoinPricingHistogram ({ commit }, data) {
+      // &e=CCCAGG&aggregate=3
+      Vue.axios.get(window.appConfig.CRYPTOCOMPARE_API_URL + '/data/histohour?fsym=' + data.coin + '&tsym=USD&limit=60').then((response) => {
+        console.log('cryptocompare currencyPrices: ', response.data)
+      })
+    },
+    getCurrencyData ({ commit }) {
+      // Vue.axios.get(window.appConfig.CRYPTOCOMPARE_URL + '/api/data/coinlist/')
+      return Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/?limit=5')
+        .then((response) => {
+          console.log('currencyData: ', response.data)
+          commit('setCurrencyData', response.data)
+          // this.coins = response.data
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     }
   }
 })

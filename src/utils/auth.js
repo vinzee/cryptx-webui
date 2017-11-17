@@ -4,15 +4,15 @@ import VueAuthenticate from 'vue-authenticate'
 import axios from 'axios'
 import VueCookie from 'vue-cookie'
 
-axios.defaults.withCredentials = true
+// axios.defaults.withCredentials = true
 
 Vue.use(VueCookie)
 Vue.use(VueAxios, axios)
 
 Vue.use(VueAuthenticate, {
-  baseUrl: 'http://localhost:8080', // Your API domain
-  loginUrl: '/auth/login',
-  registerUrl: '/auth/register',
+  baseUrl: window.appConfig.BASE_URL, // Your API domain
+  loginUrl: window.appConfig.LOGIN_URL,
+  registerUrl: window.appConfig.REGISTER_URL,
 
   bindRequestInterceptor: function () {
     this.$http.interceptors.request.use((config) => {

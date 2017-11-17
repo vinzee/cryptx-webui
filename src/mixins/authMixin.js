@@ -6,24 +6,14 @@ Vue.mixin({
       // this.$auth.login({ email, password }).then((res) => {
       //   if (res.success) {
       /* eslint-disable object-property-newline  */
-      let res = {
-        session: 'vineet',
-        user: {
-          firstName: 'Vineet', lastName: 'Ahirkar', email: 'vinzee93@gmail.com',
-          address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
-          virtual_wallet: { balance: 1234 },
-          bank_accounts: [ { id: '1', name: 'Bank of America', account_number: '1234', type: 'credit' }, {id: '2', name: 'PNC', account_number: '6789', type: 'debit'} ],
-          investments: {
-            bitcoin: { amount: 1.7 }, litecoin: { amount: 1.3 }, etherium: { amount: 0.5 }, ripple: { amount: 1.5 }
-          }
-        }
-      }
+      let res = { session: 'vineet' }
 
       console.log('login successful !')
-      this.$cookie.set('session', res.session, {expires: '1H'}) // , domain: this.$config.baseURL
+      this.$cookie.set('session', res.session, {expires: '1H'}) // , domain: this.$config.BASE_URL
       console.log(this.$route.query.redirect)
 
-      this.$store.dispatch('setUserData', res.user).then(() => {
+      // this.$store.dispatch('setUserData', res.user).then(() => {
+      this.$store.dispatch('setTempUserData').then(() => {
         this.$store.dispatch('login')
         let redirectPath = this.$route.query.redirect == null ? '/' : this.$route.query.redirect
         this.$router.push(redirectPath)
@@ -41,7 +31,7 @@ Vue.mixin({
       })
     },
     logout () {
-      this.$cookie.delete('session') // , {domain: this.$config.baseURL}
+      this.$cookie.delete('session') // , {domain: this.$config.BASE_URL}
 
       this.$store.dispatch('logout').then(() => {
         this.$router.push({ path: '/login' })

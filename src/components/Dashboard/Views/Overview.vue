@@ -1,8 +1,11 @@
 <template>
   <div>
+    <div class="loading" v-if="loading">
+      Loading...
+    </div>
 
     <!--Stats cards-->
-    <div class="row">
+    <div class="row" v-if="!loading">
       <div class="col-lg-3 col-sm-6">
         <stats-card>
           <div class="icon-big text-center icon-success" slot="header">
@@ -55,7 +58,7 @@
     </div>
 
     <!--Charts-->
-    <div class="row">
+    <div class="row" v-if="!loading">
 
       <div class="col-xs-11">
         <chart-card :chart-data="usersChart.data" :chart-options="usersChart.options">
@@ -87,13 +90,15 @@
         <chart-card :chart-data="investmentsChartData" :chart-options="investmentsChartOptions" chart-type="Pie">
           <h4 class="title" slot="title">User Investments</h4>
           <span slot="subTitle">Investments till now</span>
-          <span slot="footer">
-            <i class="ti-timer"></i> Last investment 2 days ago</span>
+          <span slot="footer"><i class="ti-timer"></i> Last investment 2 days ago</span>
+
           <div slot="legend">
             <!-- investmentsChartData -->
-          <span v-for="currency in investmentsChartData.labels"><i class="fa fa-circle text-info"></i> {{currency}}</span>
+            <span v-for="currency in investmentsChartData.labels"><i class="fa fa-circle text-info"></i> {{currency}}</span>
           </div>
         </chart-card>
+
+        <paper-table title="Investments" sub-title="List of crypocurrency investments" :data="investmentsTableData" :columns="investmentsTableColumns"></paper-table>
       </div>
 
       <div class="col-md-6 col-xs-12">
@@ -107,6 +112,8 @@
             <i class="fa fa-circle text-warning"></i> Litecoin
           </div>
         </chart-card>
+
+        <paper-table title="Current Prices" sub-title="List of current prices" :data="currentPricesTableData" :columns="currentPricesTableColumns"></paper-table>
       </div>
 
     </div>
@@ -116,19 +123,22 @@
 <script>
   import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
   import ChartCard from 'components/UIComponents/Cards/ChartCard.vue'
+  import PaperTable from 'components/UIComponents/PaperTable.vue'
   import _ from 'lodash'
   import { mapGetters } from 'vuex'
 
   export default {
     components: {
       StatsCard,
-      ChartCard
+      ChartCard,
+      PaperTable
     },
     /**
      * Chart data used to render stats, charts. Should be replaced with server data
      */
     data () {
       return {
+        loading: true,
         usersChart: {
           data: {
             labels: ['9:00AM', '12:00AM', '3:00PM', '6:00PM', '9:00PM', '12:00PM', '3:00AM', '6:00AM'],
@@ -177,7 +187,9 @@
           // plugins: [
           //   this.$Chartist.plugins.legend()
           // ]
-        }
+        },
+        investmentsTableColumns: ['Currency', 'Amount', 'Value', 'Actions'],
+        currentPricesTableColumns: ['Currency', 'Price']
       }
     },
     computed: {
@@ -187,23 +199,72 @@
           series: []
         }
 
-        _.each(this.investments, function (v, k) {
-          data.labels.push(k)
-          data.series.push(v.amount)
+        _.each(this.investments, function (investment) {
+          data.labels.push(investment.currency)
+          data.series.push(investment.amount)
         })
 
         return data
       },
+      investmentsTableData () {
+        let data = []
+
+        if (!this.loading) {
+          _.each(this.investments, function (investment) {
+            data.push({
+              currency: investment.currency,
+              amount: '$' + investment.amount,
+              value: '$' + investment.value
+            })
+          })
+        }
+
+        return data
+      },
+      currentPricesTableData () {
+        let temp = _.map(this.currencyData, function (currency) {
+          return {
+            currency: currency.name,
+            price: currency.price_usd
+          }
+        })
+
+        console.log('currentPricesTableData: ', temp)
+        return temp
+      },
       ...mapGetters([
         'virtual_wallet_balance',
         'portfolio_net_worth',
-        'investments'
+        'investments',
+        'currencyData',
+        'currencyDataMap'
       ])
     },
-    beforeRouteEnter (to, from, next) {
-      console.log('Overview beforeRouteEnter, do all the data loading here')
-      next()
+    created () {
+      this.fetchData()
+    },
+    watch: {
+      // call again the method if the route changes
+      '$route': 'fetchData'
+    },
+    methods: {
+      fetchData () {
+        let self = this
+
+        this.$store.dispatch('getCurrencyData').then(() => {
+          console.log('self.currencyDataMap: ', self.currencyDataMap)
+          self.loading = false
+        })
+      }
     }
+    // beforeRouteEnter (to, from, next) {
+    //   console.log('Overview beforeRouteEnter, do all the data loading here')
+
+    //   next(vm => {
+    //     // vm.$store.dispatch('getCoinPricingHistogram', {coin: 'BTC'})
+    //     vm.$store.dispatch('getCurrencyData')
+    //   })
+    // }
 
   }
 

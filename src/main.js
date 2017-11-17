@@ -62,7 +62,7 @@ function initializeApp () {
   })
 }
 
-let session = Vue.cookie.get('session') // {domain: Vue.config.baseURL}
+let session = Vue.cookie.get('session') // {domain: window.appConfig.BASE_URL}
 let isSessionPresent = session !== null && session !== undefined
 console.log('appInit: ', isSessionPresent, session)
 

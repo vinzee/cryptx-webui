@@ -36,3 +36,6 @@ https://codepen.io/takatama/pen/zoNeWP
 
 
 https://github.com/vuejs/vue-router/issues/1377
+
+
+https://dzone.com/articles/build-a-cryptocurrency-comparison-site-with-vuejs
