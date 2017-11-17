@@ -104,12 +104,10 @@
 
           <div class="row">
             <div class="col-xs-4 col-xs-offset-4 text-center">
-              <button type="button" class="btn btn-lg btn-block btn-info btn-fill" data-toggle="modal" data-target="#buySellCurrencyModal">Buy / Sell</button>
+              <button type="button" class="btn btn-lg btn-block btn-success btn-fill" data-toggle="modal" data-target="#buySellCurrencyModal">Buy / Sell</button>
               <br>
             </div>
           </div>
-
-          <!-- <div class="footer"></div> -->
 
           <!-- <paper-table title="Current Prices" sub-title="" :data="currentPricesTableData" :columns="currentPricesTableColumns"></paper-table> -->
 
@@ -144,7 +142,8 @@
 
                   <div class="form-group">
                     <label>Current Price: ${{selectedCurrencyPrice}} per unit</label>
-                    <label>Current Amount: {{selectedCurrencyAmount}} units</label>
+                    <label>Current Investment: {{selectedCurrencyAmount}} units</label>
+                    <label>Virtual Wallet Balance: ${{virtualWalletBalance}}</label>
                   </div>
 
                 </div>
@@ -152,20 +151,22 @@
                 <div class="col-md-4">
 
                   <div class="form-group">
-                    <label>Amount</label>
+                    <label>Amount (units)</label>
                     <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="buySellCurrency.amount" min="0.001" step="0.001">
                     <span v-show="errors.has('amount')" class="text-danger">{{ errors.first('amount') }}</span>
                   </div>
 
                   <div class="form-group">
-                    <label>Amount Value: ${{selectedCurrencyAmountValuation}}</label>
+                    <label>Total Cost ($)</label>
+                    <input class="form-control border-input" type="number" label="Amount" placeholder="Amount" v-model="buySellCurrency.value" min="0.001" step="0.001" disabled="disabled">
+
                   </div>
 
                   <div class="form-group">
-                    <input type="radio" id="buyCurrency" value="buy" v-model="buySellCurrency.transactionType">
+                    <input type="radio" id="buyCurrency" value="buy" v-model="buySellCurrency.type">
                     <label for="buyCurrency">Buy</label>
                     <br>
-                    <input type="radio" id="sellCurrency" value="sell" v-model="buySellCurrency.transactionType">
+                    <input type="radio" id="sellCurrency" value="sell" v-model="buySellCurrency.type">
                     <label for="sellCurrency">Sell</label>
                     <br>
                   </div>
@@ -210,7 +211,8 @@
         buySellCurrency: {
           amount: 0.05,
           currency: 'Bitcoin',
-          transactionType: 'buy'
+          type: 'buy',
+          value: 0
         },
         usersChart: {
           data: {
@@ -261,18 +263,21 @@
           //   this.$Chartist.plugins.legend()
           // ]
         },
-        investmentsTableColumns: ['Currency', 'Amount', 'Value'],
+        investmentsTableColumns: ['Currency', 'Amount', 'Price', 'Value'],
         currentPricesTableColumns: ['Currency', 'Price']
       }
     },
-    computed: {
-      selectedCurrencyAmountValuation () {
-        if (this.loading || this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
-          return 0
+    watch: {
+      '$route': 'fetchData',
+      'buySellCurrency.amount': function () {
+        if (this.loading) {
+          this.buySellCurrency.value = 0
         } else {
-          return _.round(this.investmentsMap[this.buySellCurrency.currency].price * this.buySellCurrency.amount, 3)
+          this.buySellCurrency.value = _.round(this.investmentsMap[this.buySellCurrency.currency].price * this.buySellCurrency.amount, 3)
         }
-      },
+      }
+    },
+    computed: {
       selectedCurrencyAmount () {
         if (this.loading || this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
           return 0
@@ -310,6 +315,7 @@
             data.push({
               currency: investment.currency,
               amount: investment.amount,
+              price: '$' + investment.price,
               value: '$' + investment.value
             })
           })
@@ -341,10 +347,6 @@
     created () {
       this.fetchData()
     },
-    watch: {
-      // call again the method if the route changes
-      '$route': 'fetchData'
-    },
     methods: {
       fetchData () {
         let self = this
@@ -353,11 +355,9 @@
           self.loading = false
         })
       },
-      buyCurrencySubmit () {
-        console.log('buyCurrencySubmit: ', this.buyCurrency)
-      },
       buySellCurrencySubmit () {
-        console.log('buySellCurrencySubmit: ', this.buyCurrency)
+        console.log('buySellCurrencySubmit: ', this.buySellCurrency)
+        this.$store.dispatch('commitTransaction', this.buySellCurrency)
       }
     }
   }

@@ -110,7 +110,7 @@
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.$store.dispatch('add_money_to_virtual_wallet', {amount: this.virtual_wallet_add_money.amount})
+            this.$store.dispatch('addMoneyToVirtualWallet', {amount: this.virtual_wallet_add_money.amount})
             this.$notify('Added $' + this.virtual_wallet_add_money.amount + ' to virtual wallet successfully from !', 'ti-money')
             $('#addMoneyModal').modal('hide')
 

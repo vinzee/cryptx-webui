@@ -11,6 +11,7 @@ const store = new Vuex.Store({
     user: null,
     currencyData: null,
     currencyDataMap: {},
+    currencyIconData: {},
     investmentsMap: {},
     topCurrency: {},
     worstCurrency: {}
@@ -98,11 +99,14 @@ const store = new Vuex.Store({
         }
       })
     },
-    add_money_to_virtual_wallet (state, data) {
+    addMoneyToVirtualWallet (state, data) {
       Vue.set(state.user.virtual_wallet, 'balance', state.user.virtual_wallet.balance + data.amount)
     },
-    add_bank_account (state, data) {
+    addBankAccount (state, data) {
       state.user.bank_accounts.push(data)
+    },
+    commitTransaction (state, data) {
+      console.log('commitTransaction: ', data)
     }
   },
   actions: {
@@ -153,9 +157,9 @@ const store = new Vuex.Store({
         console.log(err)
       })
     },
-    add_bank_account ({ commit }, accountData) {
+    addBankAccount ({ commit }, accountData) {
       if (accountData) {
-        commit('add_bank_account', accountData)
+        commit('addBankAccount', accountData)
       }
     },
     getCoinPricingHistogram ({ commit }, data) {
@@ -174,6 +178,9 @@ const store = new Vuex.Store({
         .catch((err) => {
           console.error(err)
         })
+    },
+    commitTransaction ({ commit }, data) {
+      commit('commitTransaction', data)
     }
   }
 })

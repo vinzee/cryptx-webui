@@ -44,7 +44,7 @@
     <div class="modal" id="addAccountModal" tabindex="-1" role="dialog" aria-labelledby="addAccountModal" aria-hidden="true" data-backdrop="false">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <form name="add_bank_account_form" @submit.stop.prevent="add_bank_account">
+          <form name="addBankAccount_form" @submit.stop.prevent="addBankAccount">
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -103,7 +103,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click.prevent="add_bank_account">Add Bank Account</button>
+            <button type="button" class="btn btn-primary" @click.prevent="addBankAccount">Add Bank Account</button>
           </div>
 
         </form>
@@ -137,7 +137,7 @@
     mounted () {
       // eslint-disable-next-line
       var card = new Card({
-        form: 'form[name="add_bank_account_form"]',
+        form: 'form[name="addBankAccount_form"]',
         container: '.card-wrapper',
         formSelectors: {
           numberInput: 'input[name="number"]',
@@ -161,11 +161,11 @@
       })
     },
     methods: {
-      add_bank_account () {
+      addBankAccount () {
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.$store.dispatch('add_bank_account', this.new_bank_account_details)
+            this.$store.dispatch('addBankAccount', this.new_bank_account_details)
             $('#addAccountModal').modal('hide')
             this.$notify('Added new bank account sucessfully !', 'ti-bank')
             // this.$notify('Error in adding bank !', 'ti-bank', 'danger')
