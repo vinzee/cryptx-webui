@@ -18,6 +18,8 @@ import router from './routes/index'
 // library imports
 import VeeValidate from 'vee-validate'
 import Chartist from 'chartist'
+// import 'chartist-plugin-legend'
+// import './assets/chartist.scss'
 
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.css'

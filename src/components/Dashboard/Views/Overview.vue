@@ -88,7 +88,7 @@
           <h4 class="title" slot="title">User Investments</h4>
           <span slot="subTitle">Investments till now</span>
           <span slot="footer">
-            <i class="ti-timer"></i> Campaign set 2 days ago</span>
+            <i class="ti-timer"></i> Last investment 2 days ago</span>
           <div slot="legend">
             <!-- investmentsChartData -->
           <span v-for="currency in investmentsChartData.labels"><i class="fa fa-circle text-info"></i> {{currency}}</span>
@@ -98,7 +98,7 @@
 
       <div class="col-md-6 col-xs-12">
         <chart-card :chart-data="activityChart.data" :chart-options="activityChart.options">
-          <h4 class="title" slot="title">Currency Prices</h4>
+          <h4 class="title" slot="title">Current Prices</h4>
           <span slot="subTitle"> All products including Taxes</span>
           <span slot="footer">
             <i class="ti-check"></i> Data information certified</span>
@@ -173,7 +173,7 @@
           labelInterpolationFnc (value) {
             return value
           }
-          // showLabel: false,
+          // ,showLabel: false,
           // plugins: [
           //   this.$Chartist.plugins.legend()
           // ]

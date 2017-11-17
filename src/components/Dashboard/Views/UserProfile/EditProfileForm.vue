@@ -104,7 +104,8 @@
   </div>
 </template>
 <script>
-  import { mapGetters } from 'vuex'
+  import _ from 'lodash'
+  // import { mapGetters } from 'vuex'
 
   export default {
     data () {
@@ -112,9 +113,9 @@
       }
     },
     computed: {
-      ...mapGetters([
-        'user'
-      ])
+      user () {
+        return _.cloneDeep(this.$store.getters.currentUser)
+      }
     },
     methods: {
       updateProfile () {
