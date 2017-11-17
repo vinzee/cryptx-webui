@@ -164,8 +164,7 @@
 
                   <div class="form-group">
                     <input type="radio" id="buyCurrency" value="buy" v-model="buySellCurrency.type">
-                    <label for="buyCurrency">Buy</label>
-                    <br>
+                    <label for="buyCurrency">Buy</label> &nbsp;
                     <input type="radio" id="sellCurrency" value="sell" v-model="buySellCurrency.type">
                     <label for="sellCurrency">Sell</label>
                     <br>
@@ -209,7 +208,7 @@
       return {
         loading: true,
         buySellCurrency: {
-          amount: 0.05,
+          amount: 0,
           currency: 'Bitcoin',
           type: 'buy',
           value: 0
