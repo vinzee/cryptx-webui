@@ -13,7 +13,7 @@
           </div>
           <div class="numbers" slot="content">
             <p style="font-size: 15px">Virtual Wallet</p>
-            ${{virtual_wallet_balance}}
+            ${{virtualWalletBalance}}
           </div>
           <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
           </div>
@@ -27,7 +27,7 @@
           </div>
           <div slot="content" class="numbers">
             <p style="font-size: 15px;">Net Worth</p>
-            ${{portfolio_net_worth}}
+            ${{portfolioNetWorth}}
           </div>
           <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
           </div>
@@ -38,9 +38,9 @@
           <div slot="header" class="icon-big text-center icon-info"><i class="ti-stats-up"></i></div>
           <div slot="content" class="numbers">
             <p style="font-size: 15px;">Top Currency</p>
-            23
+            {{topCurrency.name}}
           </div>
-          <div slot="footer" class="stats"><i class="ti-timer"></i> Updated now
+          <div slot="footer" class="stats"><i class="ti-money"></i> {{topCurrency.price_usd}}
           </div>
         </stats-card>
       </div>
@@ -49,9 +49,9 @@
           <div slot="header" class="icon-big text-center icon-danger"><i class="ti-stats-down"></i></div>
           <div slot="content" class="numbers">
             <p style="font-size: 15px;">Worst Currency</p>
-            -45
+            {{worstCurrency.name}}
           </div>
-          <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
+          <div slot="footer" class="stats"><i class="ti-money"></i> {{worstCurrency.price_usd}}
           </div>
         </stats-card>
       </div>
@@ -63,7 +63,7 @@
       <div class="col-xs-12">
         <chart-card :chart-data="usersChart.data" :chart-options="usersChart.options">
           <h4 class="title" slot="title">Portfolio</h4>
-          <span slot="subTitle"> 24 Hours performance</span>
+          <span slot="subTitle">Performance from beggining of time</span>
           <span slot="footer">
             <i class="ti-reload"></i> Updated 3 minutes ago</span>
           <div slot="legend">
@@ -77,9 +77,9 @@
       <div class="col-md-12 col-xs-12">
         <chart-card :chart-data="activityChart.data" :chart-options="activityChart.options">
           <h4 class="title" slot="title">Current Prices</h4>
-          <span slot="subTitle"> All products including Taxes</span>
+          <span slot="subTitle">USD</span>
           <span slot="footer">
-            <i class="ti-check"></i> Data information certified</span>
+            <i class="ti-check"></i> Data from <a href="http://www.cryptocompare.com">cryptocompare.com</a></span>
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> Bitcoin
             <i class="fa fa-circle text-warning"></i> Litecoin
@@ -107,15 +107,8 @@
           <paper-table title="Investments" sub-title="" :data="investmentsTableData" :columns="investmentsTableColumns"></paper-table>
 
           <div class="row">
-            <div class="col-xs-4 col-xs-offset-2 text-center">
-              <button type="submit" class="btn btn-lg btn-block btn-success btn-fill" @click.prevent="buy">
-                Buy
-              </button>
-            </div>
-            <div class="col-xs-4 text-center">
-              <button type="submit" class="btn btn-lg btn-block btn-info btn-fill" @click.prevent="sell">
-                Sell
-              </button>
+            <div class="col-xs-4 col-xs-offset-4 text-center">
+              <button type="button" class="btn btn-lg btn-block btn-info btn-fill" data-toggle="modal" data-target="#buySellCurrencyModal">Buy / Sell</button>
               <br>
             </div>
           </div>
@@ -128,6 +121,74 @@
       </div>
 
     </div> <!-- row -->
+
+    <!-- sell currency modal -->
+    <div class="modal" id="buySellCurrencyModal" tabindex="-1" role="dialog" aria-labelledby="buySellCurrencyModal" aria-hidden="true" data-backdrop="false">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <form @submit.stop.prevent="buySellCurrencySubmit">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="buySellCurrencyModalLabel">Buy / Sell Currency</h4>
+          </div>
+
+          <div class="modal-body">
+
+              <div class="row">
+                <div class="col-md-4 col-md-offset-2">
+
+                  <div class="form-group">
+                    <label>Currency</label>
+                    <select v-validate="'required'" class="form-control" v-model="buySellCurrency.currency" name="currency">
+                      <option v-for="investment in investments" :value="investment.currency">{{investment.currency}}</option>
+                    </select>
+                    <span v-show="errors.has('currency')" class="text-danger">{{ errors.first('currency') }}</span>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Current Price: ${{selectedCurrencyPrice}} per unit</label>
+                    <label>Current Amount: {{selectedCurrencyAmount}} units</label>
+                  </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                  <div class="form-group">
+                    <label>Amount</label>
+                    <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="buySellCurrency.amount" min="0.001" step="0.001">
+                    <span v-show="errors.has('amount')" class="text-danger">{{ errors.first('amount') }}</span>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Amount Value: ${{selectedCurrencyAmountValuation}}</label>
+                  </div>
+
+                  <div class="form-group">
+                    <input type="radio" id="buyCurrency" value="buy" v-model="buySellCurrency.transactionType">
+                    <label for="buyCurrency">Buy</label>
+                    <br>
+                    <input type="radio" id="sellCurrency" value="sell" v-model="buySellCurrency.transactionType">
+                    <label for="sellCurrency">Sell</label>
+                    <br>
+                  </div>
+
+                </div>
+              </div>
+
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Buy / Sell</button>
+          </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- end sell currency modal -->
 
   </div>
 </template>
@@ -150,6 +211,11 @@
     data () {
       return {
         loading: true,
+        buySellCurrency: {
+          amount: 0.05,
+          currency: 'Bitcoin',
+          transactionType: 'buy'
+        },
         usersChart: {
           data: {
             labels: ['9:00AM', '12:00AM', '3:00PM', '6:00PM', '9:00PM', '12:00PM', '3:00AM', '6:00AM'],
@@ -204,6 +270,27 @@
       }
     },
     computed: {
+      selectedCurrencyAmountValuation () {
+        if (this.loading || this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
+          return 0
+        } else {
+          return _.round(this.investmentsMap[this.buySellCurrency.currency].price * this.buySellCurrency.amount, 3)
+        }
+      },
+      selectedCurrencyAmount () {
+        if (this.loading || this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
+          return 0
+        } else {
+          return this.investmentsMap[this.buySellCurrency.currency].amount
+        }
+      },
+      selectedCurrencyPrice () {
+        if (this.loading || this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
+          return 0
+        } else {
+          return this.investmentsMap[this.buySellCurrency.currency].price
+        }
+      },
       investmentsChartData () {
         let data = {
           labels: [],
@@ -240,15 +327,17 @@
           }
         })
 
-        console.log('currentPricesTableData: ', temp)
         return temp
       },
       ...mapGetters([
-        'virtual_wallet_balance',
-        'portfolio_net_worth',
+        'virtualWalletBalance',
+        'portfolioNetWorth',
         'investments',
         'currencyData',
-        'currencyDataMap'
+        'currencyDataMap',
+        'investmentsMap',
+        'topCurrency',
+        'worstCurrency'
       ])
     },
     created () {
@@ -263,20 +352,16 @@
         let self = this
 
         this.$store.dispatch('getCurrencyData').then(() => {
-          console.log('self.currencyDataMap: ', self.currencyDataMap)
           self.loading = false
         })
+      },
+      buyCurrencySubmit () {
+        console.log('buyCurrencySubmit: ', this.buyCurrency)
+      },
+      buySellCurrencySubmit () {
+        console.log('buySellCurrencySubmit: ', this.buyCurrency)
       }
     }
-    // beforeRouteEnter (to, from, next) {
-    //   console.log('Overview beforeRouteEnter, do all the data loading here')
-
-    //   next(vm => {
-    //     // vm.$store.dispatch('getCoinPricingHistogram', {coin: 'BTC'})
-    //     vm.$store.dispatch('getCurrencyData')
-    //   })
-    // }
-
   }
 
 </script>

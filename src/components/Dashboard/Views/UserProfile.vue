@@ -14,7 +14,7 @@
             </div>
             <div class="numbers" slot="content">
               <p style="font-size: 15px">Virtual Wallet</p>
-              ${{virtual_wallet_balance}}
+              ${{virtualWalletBalance}}
             </div>
             <div class="stats" slot="footer">
               <button type="button" class="btn btn-sm btn-info btn-fill" data-toggle="modal" data-target="#addMoneyModal">
@@ -101,7 +101,7 @@
     },
     computed: {
       ...mapGetters([
-        'virtual_wallet_balance',
+        'virtualWalletBalance',
         'bank_accounts'
       ])
     },

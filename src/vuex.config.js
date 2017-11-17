@@ -10,7 +10,10 @@ const store = new Vuex.Store({
     isAuthenticated: false,
     user: null,
     currencyData: null,
-    currencyDataMap: {}
+    currencyDataMap: {},
+    investmentsMap: {},
+    topCurrency: {},
+    worstCurrency: {}
   },
   getters: {
     currentUser: state => {
@@ -22,14 +25,19 @@ const store = new Vuex.Store({
     bank_accounts: state => {
       return state.user.bank_accounts
     },
-    virtual_wallet_balance: state => {
+    virtualWalletBalance: state => {
       return state.user.virtual_wallet.balance
     },
-    portfolio_net_worth: state => {
-      return 2165
+    portfolioNetWorth: state => {
+      return _.round(_.reduce(state.user.investments, function (sum, investment) {
+        return sum + investment.value
+      }, 0))
     },
     investments: state => {
       return state.user.investments
+    },
+    investmentsMap: state => {
+      return state.investmentsMap
     },
     isAuthenticated: state => {
       return state.isAuthenticated
@@ -39,6 +47,12 @@ const store = new Vuex.Store({
     },
     currencyDataMap: state => {
       return state.currencyDataMap
+    },
+    topCurrency: state => {
+      return state.topCurrency
+    },
+    worstCurrency: state => {
+      return state.worstCurrency
     }
   },
   mutations: {
@@ -46,22 +60,42 @@ const store = new Vuex.Store({
       state.isAuthenticated = isAuthenticated
     },
     setUser (state, user) {
+      _.each(user.investments, function (investment) {
+        state.investmentsMap[investment.currency] = investment
+      })
+
       state.user = user
     },
     setCurrencyData (state, currencyData) {
-      state.currencyData = currencyData
+      let topCurrency = null
+      let worstCurrency = null
 
       _.each(currencyData, function (currency) {
         state.currencyDataMap[currency.name] = currency
+
+        console.log(currency.price)
+        if (topCurrency === null || topCurrency.price_usd < currency.price_usd) {
+          topCurrency = currency
+        }
+
+        if (worstCurrency === null || worstCurrency.price_usd > currency.price_usd) {
+          worstCurrency = currency
+        }
       })
+
+      state.topCurrency = topCurrency
+      state.worstCurrency = worstCurrency
+      state.currencyData = currencyData
 
       _.each(state.user.investments, function (investment) {
         let currencyDetails = state.currencyDataMap[investment.currency]
 
         if (currencyDetails !== undefined) {
-          investment.value = investment.amount * currencyDetails.price_usd
+          investment.value = _.round(investment.amount * currencyDetails.price_usd, 3)
+          investment.price = currencyDetails.price_usd
         } else {
-          investment.value = 10
+          investment.value = 0
+          investment.price = 0
         }
       })
     },
@@ -135,7 +169,6 @@ const store = new Vuex.Store({
       // Vue.axios.get(window.appConfig.CRYPTOCOMPARE_URL + '/api/data/coinlist/')
       return Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/?limit=5')
         .then((response) => {
-          console.log('currencyData: ', response.data)
           commit('setCurrencyData', response.data)
           // this.coins = response.data
         })

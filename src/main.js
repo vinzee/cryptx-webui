@@ -55,9 +55,6 @@ function initializeApp () {
     data: {
       Chartist: Chartist
     },
-    beforeCreate () {
-      console.log('starting app...')
-    },
     render: h => h(App)
   })
 }
