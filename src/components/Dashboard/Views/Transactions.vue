@@ -12,6 +12,7 @@
 </template>
 <script>
   import PaperTable from 'components/UIComponents/PaperTable.vue'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
@@ -23,10 +24,9 @@
       }
     },
     computed: {
-      transactions () {
-        // return this.$store.getters.transactions
-        return this.$store.state.transactions
-      }
+      ...mapGetters([
+        'transactions'
+      ])
     },
     methods: {
       buy () {

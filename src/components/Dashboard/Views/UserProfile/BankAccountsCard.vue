@@ -117,6 +117,7 @@
 <script>
   import Card from 'card'
   import $ from 'jquery'
+  import { mapGetters } from 'vuex'
 
   export default {
     data () {
@@ -129,9 +130,9 @@
       }
     },
     computed: {
-      bank_accounts () {
-        return this.$store.state.user.bank_accounts
-      }
+      ...mapGetters([
+        'bank_accounts'
+      ])
     },
     mounted () {
       // eslint-disable-next-line

@@ -99,12 +99,10 @@
       }
     },
     computed: {
-      virtual_wallet_balance () {
-        return this.$store.getters.virtual_wallet_balance
-      },
-      bank_accounts () {
-        return this.$store.state.user.bank_accounts
-      }
+      ...mapGetters([
+        'virtual_wallet_balance',
+        'bank_accounts'
+      ])
     },
     methods: {
       add_money () {

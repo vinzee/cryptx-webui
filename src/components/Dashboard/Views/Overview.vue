@@ -24,7 +24,7 @@
           </div>
           <div slot="content" class="numbers">
             <p style="font-size: 15px;">Net Worth</p>
-            $2,303
+            ${{portfolio_net_worth}}
           </div>
           <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
           </div>
@@ -117,6 +117,7 @@
   import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
   import ChartCard from 'components/UIComponents/Cards/ChartCard.vue'
   import _ from 'lodash'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
@@ -180,12 +181,6 @@
       }
     },
     computed: {
-      virtual_wallet_balance () {
-        return this.$store.getters.virtual_wallet_balance
-      },
-      investments () {
-        return this.$store.getters.investments
-      },
       investmentsChartData () {
         let data = {
           labels: [],
@@ -198,7 +193,12 @@
         })
 
         return data
-      }
+      },
+      ...mapGetters([
+        'virtual_wallet_balance',
+        'portfolio_net_worth',
+        'investments'
+      ])
     }
   }
 

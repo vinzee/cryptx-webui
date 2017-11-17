@@ -41,6 +41,9 @@ const store = new Vuex.Store({
     virtual_wallet_balance: state => {
       return state.user.virtual_wallet.balance
     },
+    portfolio_net_worth: state => {
+      return 2165
+    },
     investments: state => {
       return state.user.investments
     },

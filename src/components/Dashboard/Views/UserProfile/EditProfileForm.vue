@@ -104,15 +104,17 @@
   </div>
 </template>
 <script>
+  import { mapGetters } from 'vuex'
+
   export default {
     data () {
       return {
       }
     },
     computed: {
-      user () {
-        return this.$store.state.user
-      }
+      ...mapGetters([
+        'user'
+      ])
     },
     methods: {
       updateProfile () {
