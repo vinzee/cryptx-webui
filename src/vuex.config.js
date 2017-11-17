@@ -98,7 +98,7 @@ const store = new Vuex.Store({
           { currency: 'Bitcoin', amount: 1.7 },
           { currency: 'Litecoin', amount: 1.3 },
           { currency: 'Ethereum', amount: 0.5 },
-          { currency: 'Ripple', amount: 1.5 }
+          { currency: 'Ripple', amount: 0 }
         ],
         transactions: [
           { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 },

@@ -60,9 +60,9 @@
     <!--Charts-->
     <div class="row" v-if="!loading">
 
-      <div class="col-xs-11">
+      <div class="col-xs-12">
         <chart-card :chart-data="usersChart.data" :chart-options="usersChart.options">
-          <h4 class="title" slot="title">User Portfolio</h4>
+          <h4 class="title" slot="title">Portfolio</h4>
           <span slot="subTitle"> 24 Hours performance</span>
           <span slot="footer">
             <i class="ti-reload"></i> Updated 3 minutes ago</span>
@@ -74,34 +74,7 @@
         </chart-card>
       </div>
 
-      <div class="col-xs-1">
-        <div class="text-center">
-          <button type="submit" class="btn btn-success btn-fill" @click.prevent="buy">
-            Buy
-          </button>
-          <br><br>
-          <button type="submit" class="btn btn-info btn-fill" @click.prevent="sell">
-            Sell
-          </button>
-        </div>
-      </div>
-
-      <div class="col-md-6 col-xs-12">
-        <chart-card :chart-data="investmentsChartData" :chart-options="investmentsChartOptions" chart-type="Pie">
-          <h4 class="title" slot="title">User Investments</h4>
-          <span slot="subTitle">Investments till now</span>
-          <span slot="footer"><i class="ti-timer"></i> Last investment 2 days ago</span>
-
-          <div slot="legend">
-            <!-- investmentsChartData -->
-            <span v-for="currency in investmentsChartData.labels"><i class="fa fa-circle text-info"></i> {{currency}}</span>
-          </div>
-        </chart-card>
-
-        <paper-table title="Investments" sub-title="List of crypocurrency investments" :data="investmentsTableData" :columns="investmentsTableColumns"></paper-table>
-      </div>
-
-      <div class="col-md-6 col-xs-12">
+      <div class="col-md-12 col-xs-12">
         <chart-card :chart-data="activityChart.data" :chart-options="activityChart.options">
           <h4 class="title" slot="title">Current Prices</h4>
           <span slot="subTitle"> All products including Taxes</span>
@@ -112,11 +85,49 @@
             <i class="fa fa-circle text-warning"></i> Litecoin
           </div>
         </chart-card>
-
-        <paper-table title="Current Prices" sub-title="List of current prices" :data="currentPricesTableData" :columns="currentPricesTableColumns"></paper-table>
       </div>
 
     </div>
+
+    <div class="row" v-if="!loading">
+      <div class="col-md-6 col-xs-12">
+        <chart-card :chart-data="investmentsChartData" :chart-options="investmentsChartOptions" chart-type="Pie">
+          <h4 class="title" slot="title">Investments</h4>
+          <span slot="subTitle">Investments till now</span>
+          <span slot="footer"><i class="ti-timer"></i> Last investment 2 days ago</span>
+
+          <div slot="legend">
+            <!-- investmentsChartData -->
+            <span v-for="currency in investmentsChartData.labels"><i class="fa fa-circle text-info"></i> {{currency}}</span>
+          </div>
+        </chart-card>
+      </div>
+      <div class="col-md-6 col-xs-12">
+        <div class="card">
+          <paper-table title="Investments" sub-title="" :data="investmentsTableData" :columns="investmentsTableColumns"></paper-table>
+
+          <div class="row">
+            <div class="col-xs-4 col-xs-offset-2 text-center">
+              <button type="submit" class="btn btn-lg btn-block btn-success btn-fill" @click.prevent="buy">
+                Buy
+              </button>
+            </div>
+            <div class="col-xs-4 text-center">
+              <button type="submit" class="btn btn-lg btn-block btn-info btn-fill" @click.prevent="sell">
+                Sell
+              </button>
+              <br>
+            </div>
+          </div>
+
+          <!-- <div class="footer"></div> -->
+
+          <!-- <paper-table title="Current Prices" sub-title="" :data="currentPricesTableData" :columns="currentPricesTableColumns"></paper-table> -->
+
+        </div> <!-- card -->
+      </div>
+
+    </div> <!-- row -->
 
   </div>
 </template>
@@ -188,7 +199,7 @@
           //   this.$Chartist.plugins.legend()
           // ]
         },
-        investmentsTableColumns: ['Currency', 'Amount', 'Value', 'Actions'],
+        investmentsTableColumns: ['Currency', 'Amount', 'Value'],
         currentPricesTableColumns: ['Currency', 'Price']
       }
     },
@@ -213,7 +224,7 @@
           _.each(this.investments, function (investment) {
             data.push({
               currency: investment.currency,
-              amount: '$' + investment.amount,
+              amount: investment.amount,
               value: '$' + investment.value
             })
           })
