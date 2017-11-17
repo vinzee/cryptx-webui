@@ -82,6 +82,7 @@
   import BankAccountsCard from './UserProfile/BankAccountsCard.vue'
   import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
   import $ from 'jquery'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {

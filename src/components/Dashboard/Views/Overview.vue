@@ -199,7 +199,12 @@
         'portfolio_net_worth',
         'investments'
       ])
+    },
+    beforeRouteEnter (to, from, next) {
+      console.log('Overview beforeRouteEnter, do all the data loading here')
+      next()
     }
+
   }
 
 </script>
