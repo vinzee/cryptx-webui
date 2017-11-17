@@ -27,15 +27,6 @@
       ...mapGetters([
         'transactions'
       ])
-    },
-    methods: {
-      buy () {
-
-      },
-      sell () {
-
-      }
-
     }
   }
 

@@ -20,7 +20,7 @@ const store = new Vuex.Store({
       return state.user
     },
     transactions: state => {
-      return state.transactions
+      return state.user.transactions
     },
     bank_accounts: state => {
       return state.user.bank_accounts
@@ -73,12 +73,11 @@ const store = new Vuex.Store({
       _.each(currencyData, function (currency) {
         state.currencyDataMap[currency.name] = currency
 
-        console.log(currency.price)
-        if (topCurrency === null || topCurrency.price_usd < currency.price_usd) {
+        if (currency.rank === '1') {
           topCurrency = currency
         }
 
-        if (worstCurrency === null || worstCurrency.price_usd > currency.price_usd) {
+        if (worstCurrency === null || parseInt(worstCurrency.rank) < parseInt(currency.rank)) {
           worstCurrency = currency
         }
       })

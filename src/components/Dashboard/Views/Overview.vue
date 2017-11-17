@@ -79,7 +79,7 @@
           <h4 class="title" slot="title">Current Prices</h4>
           <span slot="subTitle">USD</span>
           <span slot="footer">
-            <i class="ti-check"></i> Data from <a href="http://www.cryptocompare.com">cryptocompare.com</a></span>
+            <i class="ti-check"></i> Data from <a target="_blank" href="http://www.cryptocompare.com">cryptocompare.com</a></span>
           <div slot="legend">
             <i class="fa fa-circle text-info"></i> Bitcoin
             <i class="fa fa-circle text-warning"></i> Litecoin
@@ -95,13 +95,9 @@
           <h4 class="title" slot="title">Investments</h4>
           <span slot="subTitle">Investments till now</span>
           <span slot="footer"><i class="ti-timer"></i> Last investment 2 days ago</span>
-
-          <div slot="legend">
-            <!-- investmentsChartData -->
-            <span v-for="currency in investmentsChartData.labels"><i class="fa fa-circle text-info"></i> {{currency}}</span>
-          </div>
         </chart-card>
       </div>
+
       <div class="col-md-6 col-xs-12">
         <div class="card">
           <paper-table title="Investments" sub-title="" :data="investmentsTableData" :columns="investmentsTableColumns"></paper-table>
@@ -257,9 +253,9 @@
           }
         },
         investmentsChartOptions: {
-          labelInterpolationFnc (value) {
-            return value
-          }
+          // labelInterpolationFnc (value) {
+          //   return value
+          // }
           // ,showLabel: false,
           // plugins: [
           //   this.$Chartist.plugins.legend()
@@ -298,8 +294,10 @@
         }
 
         _.each(this.investments, function (investment) {
-          data.labels.push(investment.currency)
-          data.series.push(investment.amount)
+          if (investment.amount > 0) {
+            data.labels.push(investment.currency)
+            data.series.push(investment.amount)
+          }
         })
 
         return data
