@@ -1,5 +1,7 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import VueConfig from 'vue-config'
+import configs from './vue.configs.js'
+import './utils/auth.js'
 
 // Plugins
 import GlobalComponents from './globalComponents'
@@ -8,49 +10,30 @@ import Notifications from './components/UIComponents/NotificationPlugin'
 import SideBar from './components/UIComponents/SidebarPlugin'
 import App from './App'
 
+import { sync } from 'vuex-router-sync'
 import store from './vuex.config.js'
-import VeeValidate from 'vee-validate'
-import VueKindergarten from 'vue-kindergarten'
-import profilePerimeter from './perimeters/profilePerimeter.js'
-import VueCookie from 'vue-cookie'
-import VueResource from 'vue-resource'
-
-import VueConfig from 'vue-config'
-import configs from './vue.configs.js'
-
 // router setup
-import routes from './routes/routes'
+import router from './routes/index'
 
 // library imports
+import VeeValidate from 'vee-validate'
 import Chartist from 'chartist'
 
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.css'
 import './assets/sass/paper-dashboard.scss'
 import 'es6-promise/auto'
+import 'mixins/index.js'
 
 // plugin setup
-Vue.use(VueRouter)
+Vue.use(VueConfig, configs)
 Vue.use(GlobalComponents)
 Vue.use(GlobalDirectives)
 Vue.use(Notifications)
 Vue.use(SideBar)
-
 Vue.use(VeeValidate)
-Vue.use(VueKindergarten, {
-  child: (store) => {
-    return store.state.user
-  }
-})
-Vue.use(VueCookie)
-Vue.use(VueResource)
-Vue.use(VueConfig, configs)
 
-// configure router
-const router = new VueRouter({
-  routes, // short for routes: routes
-  linkActiveClass: 'active'
-})
+sync(store, router)
 
 // global library setup
 Object.defineProperty(Vue.prototype, '$Chartist', {
@@ -61,16 +44,30 @@ Object.defineProperty(Vue.prototype, '$Chartist', {
 
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
-window.vue = new Vue({
-  el: '#app',
-  router: router,
-  store,
-  perimeters: [
-    profilePerimeter
-  ],
-  data: {
-    Chartist: Chartist
-  },
-  render: h => h(App)
-})
+function initializeApp () {
+  /* eslint-disable no-new */
+  window.vue = new Vue({
+    el: '#app',
+    router: router,
+    store,
+    data: {
+      Chartist: Chartist
+    },
+    beforeCreate () {
+      console.log('starting app...')
+    },
+    render: h => h(App)
+  })
+}
+
+let session = Vue.cookie.get('session') // {domain: Vue.config.baseURL}
+let isSessionPresent = session !== null && session !== undefined
+console.log('appInit: ', isSessionPresent, session)
+
+if (isSessionPresent) {
+  store.dispatch('sessionAuthenticate').then(() => {
+    initializeApp()
+  })
+} else {
+  initializeApp()
+}

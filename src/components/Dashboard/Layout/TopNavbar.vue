@@ -51,7 +51,7 @@
     computed: {
       routeName () {
         const {name} = this.$route
-        return this.capitalizeFirstLetter(name)
+        return name === undefined ? 'Dashboard' : this.capitalizeFirstLetter(name)
       },
       user () {
         return this.$store.state.user
@@ -77,7 +77,7 @@
         this.$sidebar.displaySidebar(false)
       },
       logOut () {
-        this.$store.dispatch('logout')
+        this.logout()
       }
     }
   }

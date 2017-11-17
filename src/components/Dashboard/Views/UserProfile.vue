@@ -111,24 +111,11 @@
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.$store.commit('add_money_to_virtual_wallet', {amount: this.virtual_wallet_add_money.amount})
-            this.$notifications.notify({
-              message: 'Added $' + this.virtual_wallet_add_money.amount + ' to virtual wallet successfully from !',
-              icon: 'ti-money',
-              horizontalAlign: 'right',
-              verticalAlign: 'bottom',
-              type: 'success'
-            })
-
+            this.$store.dispatch('add_money_to_virtual_wallet', {amount: this.virtual_wallet_add_money.amount})
+            this.$notify('Added $' + this.virtual_wallet_add_money.amount + ' to virtual wallet successfully from !', 'ti-money')
             $('#addMoneyModal').modal('hide')
 
-            // this.$notifications.notify({
-            //   message: 'Error in adding money to virtual wallet !',
-            //   icon: 'ti-money',
-            //   horizontalAlign: 'right',
-            //   verticalAlign: 'bottom',
-            //   type: 'danger'
-            // })
+            // this.$notify('Error in adding money to virtual wallet !', 'ti-money', 'danger')
           }
         })
       }

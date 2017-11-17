@@ -17,12 +17,12 @@ const routes = [
   {
     path: '/',
     component: DashboardLayout,
-    redirect: '/overview',
     children: [
       {
-        path: 'overview',
+        path: '/',
         name: 'overview',
-        component: Overview
+        component: Overview,
+        meta: { requiresAuth: true }
       },
       {
         path: 'login',
@@ -37,12 +37,14 @@ const routes = [
       {
         path: 'settings',
         name: 'settings',
-        component: UserProfile
+        component: UserProfile,
+        meta: { requiresAuth: true }
       },
       {
         path: 'notifications',
         name: 'notifications',
-        component: Notifications
+        component: Notifications,
+        meta: { requiresAuth: true }
       },
       {
         path: 'icons',
@@ -62,7 +64,8 @@ const routes = [
       {
         path: 'transactions',
         name: 'transactions',
-        component: Transactions
+        component: Transactions,
+        meta: { requiresAuth: true }
       }
     ]
   },

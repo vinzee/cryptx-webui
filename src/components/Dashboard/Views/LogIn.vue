@@ -19,14 +19,14 @@
           <div class="col-md-4 col-md-offset-4">
             <div class="form-group">
               <label>Password</label>
-              <input v-validate="'required'" class="form-control border-input" name="password" placeholder="Password" v-model="user.password">
+              <input v-validate="'required'" class="form-control border-input" name="password" type="password" placeholder="Password" v-model="user.password">
               <span v-show="errors.has('password')" class="text-danger">{{ errors.first('password') }}</span>
             </div>
           </div>
         </div>
 
         <div class="text-center">
-          <button type="submit" class="btn btn-info btn-fill btn-wd" @click.prevent="login">
+          <button type="submit" class="btn btn-info btn-fill btn-wd" @click.prevent="submitLoginForm">
             Log In
           </button>
 
@@ -54,11 +54,11 @@
       }
     },
     methods: {
-      login () {
+      submitLoginForm () {
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.$store.dispatch('login', this.user)
+            this.login()
           }
         })
       }

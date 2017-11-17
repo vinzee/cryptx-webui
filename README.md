@@ -27,3 +27,12 @@ Link to [Documentation](https://cristijora.github.io/vue-paper-dashboard-docs/#/
 /user/:id - GET
 /transactions - GET
 /transaction/create - POST
+
+https://forum-archive.vuejs.org/topic/3369/authentication-in-vue/3
+https://forum.vuejs.org/t/help-to-set-cookie-from-the-server-in-vue-js/3631
+https://github.com/dgrubelic/vue-authenticate
+axios.get('some api url', {withCredentials: true});
+https://codepen.io/takatama/pen/zoNeWP
+
+
+https://github.com/vuejs/vue-router/issues/1377
