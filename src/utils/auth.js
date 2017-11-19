@@ -4,8 +4,6 @@ import VueAuthenticate from 'vue-authenticate'
 import axios from 'axios'
 import VueCookie from 'vue-cookie'
 
-// axios.defaults.withCredentials = true
-
 Vue.use(VueCookie)
 Vue.use(VueAxios, axios)
 
@@ -16,11 +14,8 @@ Vue.use(VueAuthenticate, {
 
   bindRequestInterceptor: function () {
     this.$http.interceptors.request.use((config) => {
-      console.log('this.$http.interceptors', this.getToken(), config)
-      if (this.isAuthenticated()) {
-        config.headers['Authorization'] = [
-          this.options.tokenType, this.getToken()
-        ].join(' ')
+      if (config.url === window.appConfig.BASE_URL + window.appConfig.LOGIN_URL) {
+        config.headers['Authorization'] = 'Basic ' + btoa(config.data.email + ':' + config.data.password)
       } else {
         delete config.headers['Authorization']
       }

@@ -91,9 +91,9 @@
 
     <div class="row" v-if="!loading">
       <div class="col-md-6 col-xs-12">
-        <chart-card :chart-data="investmentsChartData" :chart-options="investmentsChartOptions" chart-type="Pie">
+        <chart-card :chart-data="investmentsChartData" :chart-options="investmentsChartOptions" :chart-responsive-options="investmentsChartResponsiveOptions" chart-type="Pie">
           <h4 class="title" slot="title">Investments</h4>
-          <span slot="subTitle">Investments till now</span>
+          <span slot="subTitle">Investment split (USD)</span>
           <span slot="footer"><i class="ti-timer"></i> Last investment 2 days ago</span>
         </chart-card>
       </div>
@@ -232,7 +232,7 @@
           // axisX: {
           //   showGrid: false
           // },
-          // height: '245px',
+          height: '245px',
           showArea: true,
           showLine: false,
           showPoint: false,
@@ -243,14 +243,26 @@
           }
         },
         investmentsChartOptions: {
-          // labelInterpolationFnc (value) {
-          //   return value
-          // }
-          // ,showLabel: false,
+          labelInterpolationFnc (value) {
+            return value
+          }
           // plugins: [
           //   this.$Chartist.plugins.legend()
           // ]
         },
+        investmentsChartResponsiveOptions: [
+          ['screen and (min-width: 640px)', {
+            chartPadding: 30,
+            labelInterpolationFnc: function (value) {
+              return value
+            }
+          }],
+          ['screen and (min-width: 1024px)', {
+            labelPosition: 'outside',
+            labelOffset: 20,
+            chartPadding: 30
+          }]
+        ],
         investmentsTableColumns: ['Currency', 'Amount', 'Price', 'Value'],
         currentPricesTableColumns: ['Currency', 'Price']
       }
@@ -289,9 +301,12 @@
         _.each(this.investments, function (investment) {
           if (investment.amount > 0) {
             data.labels.push(investment.currency)
-            data.series.push(investment.amount)
+            data.series.push(investment.value)
           }
         })
+
+        data.labels.push('Virtual Wallet')
+        data.series.push(this.virtualWalletBalance)
 
         return data
       },

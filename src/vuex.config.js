@@ -140,14 +140,14 @@ const store = new Vuex.Store({
       let userData = {
         firstName: 'Vineet', lastName: 'Ahirkar', email: 'vinzee93@gmail.com',
         address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
-        virtual_wallet: { balance: 1234 },
+        virtual_wallet: { balance: 123 },
         bank_accounts: [
           { id: '1', name: 'Bank of America', account_number: '1234', type: 'credit' }, {id: '2', name: 'PNC', account_number: '6789', type: 'debit'}
         ],
         investments: [
-          { currency: 'Bitcoin', amount: 1.7 },
-          { currency: 'Litecoin', amount: 1.3 },
-          { currency: 'Ethereum', amount: 0.5 },
+          { currency: 'Bitcoin', amount: 0.4 },
+          { currency: 'Litecoin', amount: 2.3 },
+          { currency: 'Ethereum', amount: 3.5 },
           { currency: 'Ripple', amount: 0 }
         ],
         transactions: [
@@ -204,6 +204,9 @@ const store = new Vuex.Store({
     },
     commitTransaction ({ commit }, data) {
       commit('commitTransaction', data)
+    },
+    addMoneyToVirtualWallet ({ commit }, data) {
+      commit('addMoneyToVirtualWallet', data)
     }
   }
 })
