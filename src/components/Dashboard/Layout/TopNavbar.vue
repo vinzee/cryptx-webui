@@ -50,8 +50,12 @@
     },
     computed: {
       routeName () {
-        const {name} = this.$route
-        return name === undefined ? 'Dashboard' : this.capitalizeFirstLetter(name)
+        let name = this.$route.name
+        if (name === 'login' || name === 'register') {
+          return 'Cryptx'
+        } else {
+          return name === undefined ? 'Dashboard' : this.capitalizeFirstLetter(name)
+        }
       },
       user () {
         return this.$store.state.user
