@@ -119,7 +119,7 @@
     },
     methods: {
       updateProfile () {
-        alert('Your data: ' + JSON.stringify(this.user))
+        this.$store.dispatch('updateUserProfile', this.user)
       }
     }
   }

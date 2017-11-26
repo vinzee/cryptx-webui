@@ -2,7 +2,7 @@ import Vue from 'vue'
 import vueConfig from 'vue-config'
 
 const configs = {
-  BASE_URL: 'http://localhost:8080', // 'http://10.0.0.93:8080',
+  BASE_URL: 'http://10.0.0.93:8080',
   LOGIN_URL: '/login',
   REGISTER_URL: '/register',
   momentFormat: 'MMMM Do YYYY, h:mm:ss a',

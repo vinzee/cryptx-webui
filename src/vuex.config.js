@@ -120,6 +120,9 @@ const store = new Vuex.Store({
     },
     commitTransaction (state, data) {
       console.log('commitTransaction: ', data)
+    },
+    updateUserProfile (state, data) {
+      console.log('updateUserProfile: ', data)
     }
   },
   actions: {
@@ -202,11 +205,17 @@ const store = new Vuex.Store({
           console.error(err)
         })
     },
+    addMoneyToVirtualWallet ({ commit }, data) {
+      commit('addMoneyToVirtualWallet', data)
+    },
+    redeemMoneyFromVirtualWallet ({ commit }, data) {
+      commit('addMoneyToVirtualWallet', data)
+    },
     commitTransaction ({ commit }, data) {
       commit('commitTransaction', data)
     },
-    addMoneyToVirtualWallet ({ commit }, data) {
-      commit('addMoneyToVirtualWallet', data)
+    updateUserProfile ({ commit }, data) {
+      commit('updateUserProfile', data)
     }
   }
 })

@@ -51,7 +51,7 @@
                     </div>
 
                     <div class="form-group">
-                      <label>Bank Account</label>
+                      <label>Payment Method</label>
                       <select v-validate="'required'" class="form-control" v-model="virtual_wallet_add_money.bank_id" name="bank_account">
                         <option v-for="bank_account in bank_accounts" :value="bank_account.id">{{bank_account.name}}</option>
                       </select>

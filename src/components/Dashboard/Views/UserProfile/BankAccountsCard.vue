@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <div class="header">
-        <h4 class="title">Bank Accounts</h4>
+        <h4 class="title">Payment Methods</h4>
       </div>
       <div class="content">
         <ul class="list-unstyled team-members">
@@ -48,7 +48,7 @@
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="myModalLabel">Add Bank Account</h4>
+            <h4 class="modal-title" id="myModalLabel">Add Payment Method</h4>
           </div>
 
           <div class="modal-body">
@@ -103,7 +103,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click.prevent="addBankAccount">Add Bank Account</button>
+            <button type="button" class="btn btn-primary" @click.prevent="addBankAccount">Add Payment Method</button>
           </div>
 
         </form>
@@ -167,7 +167,7 @@
           if (isValidated) {
             this.$store.dispatch('addBankAccount', this.new_bank_account_details)
             $('#addAccountModal').modal('hide')
-            this.$notify('Added new bank account sucessfully !', 'ti-bank')
+            this.$notify('Added new Payment Method sucessfully !', 'ti-bank')
             // this.$notify('Error in adding bank !', 'ti-bank', 'danger')
           }
         })
