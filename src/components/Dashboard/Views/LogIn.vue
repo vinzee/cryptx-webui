@@ -58,7 +58,7 @@
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.login()
+            this.login(this.user.email, this.user.password)
           }
         })
       }

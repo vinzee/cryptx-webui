@@ -45,6 +45,12 @@
           return {}
         }
       },
+      chartResponsiveOptions: {
+        type: Array,
+        default: () => {
+          return []
+        }
+      },
       chartData: {
         type: Object,
         default: () => {
@@ -66,7 +72,7 @@
        */
       initChart () {
         var chartIdQuery = `#${this.chartId}`
-        this.$Chartist[this.chartType](chartIdQuery, this.chartData, this.chartOptions)
+        this.$Chartist[this.chartType](chartIdQuery, this.chartData, this.chartOptions, this.chartResponsiveOptions)
       },
       /***
        * Assigns a random id to the chart

@@ -14,7 +14,8 @@ const store = new Vuex.Store({
     currencyIconData: {},
     investmentsMap: {},
     topCurrency: {},
-    worstCurrency: {}
+    worstCurrency: {},
+    currencyPriceSeries: []
   },
   getters: {
     currentUser: state => {
@@ -54,6 +55,9 @@ const store = new Vuex.Store({
     },
     worstCurrency: state => {
       return state.worstCurrency
+    },
+    currencyPriceSeries: state => {
+      return state.currencyPriceSeries
     }
   },
   mutations: {
@@ -99,6 +103,15 @@ const store = new Vuex.Store({
         }
       })
     },
+    setCurrencyHistoricPricing (state, data) {
+      let priceSeries = {name: data.currency, data: []}
+
+      _.map(data.price, function (p) {
+        priceSeries.data.push(p.high)
+      })
+
+      state.currencyPriceSeries.push(priceSeries)
+    },
     addMoneyToVirtualWallet (state, data) {
       Vue.set(state.user.virtual_wallet, 'balance', state.user.virtual_wallet.balance + data.amount)
     },
@@ -130,14 +143,14 @@ const store = new Vuex.Store({
       let userData = {
         firstName: 'Vineet', lastName: 'Ahirkar', email: 'vinzee93@gmail.com',
         address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
-        virtual_wallet: { balance: 1234 },
+        virtual_wallet: { balance: 123 },
         bank_accounts: [
           { id: '1', name: 'Bank of America', account_number: '1234', type: 'credit' }, {id: '2', name: 'PNC', account_number: '6789', type: 'debit'}
         ],
         investments: [
-          { currency: 'Bitcoin', amount: 1.7 },
-          { currency: 'Litecoin', amount: 1.3 },
-          { currency: 'Ethereum', amount: 0.5 },
+          { currency: 'Bitcoin', amount: 0.4 },
+          { currency: 'Litecoin', amount: 2.3 },
+          { currency: 'Ethereum', amount: 3.5 },
           { currency: 'Ripple', amount: 0 }
         ],
         transactions: [
@@ -165,11 +178,21 @@ const store = new Vuex.Store({
         commit('addBankAccount', accountData)
       }
     },
-    getCoinPricingHistogram ({ commit }, data) {
-      // &e=CCCAGG&aggregate=3
-      Vue.axios.get(window.appConfig.CRYPTOCOMPARE_API_URL + '/data/histohour?fsym=' + data.coin + '&tsym=USD&limit=60').then((response) => {
-        console.log('cryptocompare currencyPrices: ', response.data)
-      })
+    getAllCurrentPricingData ({ commit }) {
+      let url = window.appConfig.CRYPTOCOMPARE_API_URL + '/data/histohour'
+
+      return Vue.axios.all([
+        Vue.axios.get(url + '?fsym=BTC&tsym=USD&limit=30&aggregate=1'),
+        Vue.axios.get(url + '?fsym=ETH&tsym=USD&limit=30&aggregate=1')
+        // Vue.axios.get(url + '?fsym=XRP&tsym=USD&limit=30&aggregate=1'),
+        // Vue.axios.get(url + '?fsym=LTC&tsym=USD&limit=30&aggregate=1')
+        // Vue.axios.get(url + '?fsym=BCH&tsym=USD&limit=30&aggregate=1'),
+      ])
+      .then(Vue.axios.spread(function (bitcoin, ethereum, ripple, litecoin) {
+        console.log('getAllCurrentPricingData response: ', bitcoin, ethereum, ripple, litecoin)
+        commit('setCurrencyHistoricPricing', {price: bitcoin.data.Data, currency: 'Bitcoin'})
+        commit('setCurrencyHistoricPricing', {price: ethereum.data.Data, currency: 'Ethereum'})
+      }))
     },
     getCurrencyData ({ commit }) {
       // Vue.axios.get(window.appConfig.CRYPTOCOMPARE_URL + '/api/data/coinlist/')
@@ -185,7 +208,7 @@ const store = new Vuex.Store({
     addMoneyToVirtualWallet ({ commit }, data) {
       commit('addMoneyToVirtualWallet', data)
     },
-    reedeemMoneyFromVirtualWallet ({ commit }, data) {
+    redeemMoneyFromVirtualWallet ({ commit }, data) {
       commit('addMoneyToVirtualWallet', data)
     },
     commitTransaction ({ commit }, data) {
