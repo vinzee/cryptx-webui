@@ -27,12 +27,14 @@ const routes = [
       {
         path: 'login',
         name: 'login',
-        component: Login
+        component: Login,
+        meta: { requiresNoAuth: true }
       },
       {
         path: 'register',
         name: 'register',
-        component: Register
+        component: Register,
+        meta: { requiresNoAuth: true }
       },
       {
         path: 'settings',

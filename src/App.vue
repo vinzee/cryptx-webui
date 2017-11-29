@@ -1,9 +1,9 @@
 <template>
   <div :class="{'nav-open': $sidebar.showSidebar}">
-    <router-view></router-view>
+    <router-view v-if="!isBootstrapping"></router-view>
 
     <!--This sidebar appears only for screens smaller than 992px-->
-    <side-bar type="navbar" :sidebar-links="$sidebar.sidebarLinks">
+    <side-bar type="navbar" :sidebar-links="$sidebar.sidebarLinks" v-if="!isBootstrapping">
       <ul class="nav navbar-nav">
         <li>
           <a class="dropdown-toggle" data-toggle="dropdown">
@@ -22,7 +22,7 @@
       </ul>
     </side-bar>
 
-    <BlockUI message="Loading..." :html="html" v-if="isLoading"></BlockUI>
+    <BlockUI message="Loading..." :html="html" v-if="isLoading || isBootstrapping"></BlockUI>
 
   </div>
 </template>
@@ -34,11 +34,20 @@
     data () {
       return {
         html: '<i class="fa fa-spinner fa-3x fa-spin fa-fw"></i><span class="sr-only">Loading...</span>'
-        // html: '<i class="fa fa-cog fa-spin fa-3x fa-fw"></i>'
+        // fa-cog
       }
     },
+    beforeCreate () {
+      this.$store.dispatch('sessionAuthenticate').then((res) => {
+        if (res.logged_in) {
+          this.$notify('User Logged In')
+        }
+      }).catch(() => {
+        this.$notify('Error in authenticating from session')
+      })
+    },
     computed: {
-      ...mapGetters(['isLoading'])
+      ...mapGetters(['isLoading', 'isBootstrapping'])
     }
   }
 </script>

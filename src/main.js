@@ -24,6 +24,9 @@ import Chartist from 'chartist'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.css'
 import './assets/sass/paper-dashboard.scss'
+// import 'themify-icons/themify-icons'
+import 'font-awesome/scss/font-awesome.scss'
+
 import 'es6-promise/auto'
 import 'mixins/index.js'
 import BlockUI from 'vue-blockui'
@@ -48,27 +51,14 @@ Object.defineProperty(Vue.prototype, '$Chartist', {
 
 Vue.config.productionTip = false
 
-function initializeApp () {
-  /* eslint-disable no-new */
-  window.vue = new Vue({
-    el: '#app',
-    router: router,
-    store,
-    data: {
-      Chartist: Chartist
-    },
-    render: h => h(App)
-  })
-}
+store.commit('fetchSession')
 
-let session = Vue.cookie.get('session') // {domain: window.appConfig.BASE_URL}
-let isSessionPresent = session !== null && session !== undefined
-console.log('appInit: ', isSessionPresent, session)
-
-if (isSessionPresent) {
-  store.dispatch('sessionAuthenticate').then(() => {
-    initializeApp()
-  })
-} else {
-  initializeApp()
-}
+window.vue = new Vue({
+  el: '#app',
+  router: router,
+  store,
+  data: {
+    Chartist: Chartist
+  },
+  render: h => h(App)
+})

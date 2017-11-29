@@ -8,7 +8,9 @@ const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
     isLoading: false,
+    isBootstrapping: true,
     isAuthenticated: false,
+    session: false,
     user: null,
     currencyData: null,
     currencyDataMap: {},
@@ -62,9 +64,25 @@ const store = new Vuex.Store({
     },
     isLoading: state => {
       return state.isLoading
+    },
+    isBootstrapping: state => {
+      return state.isBootstrapping
+    },
+    isSessionPresent: state => {
+      return state.session !== null && state.session !== undefined
     }
   },
   mutations: {
+    fetchSession (state) {
+      state.session = Vue.cookie.get('session') // {domain: window.appConfig.BASE_URL}
+    },
+    deleteSession (state) {
+      Vue.cookie.delete('session') // , {domain: this.$config.BASE_URL}
+      state.session = null
+    },
+    setIsBootstrapping (state, isBootstrapping) {
+      state.isBootstrapping = isBootstrapping
+    },
     setIsLoading (state, isLoading) {
       state.isLoading = isLoading
     },
@@ -133,17 +151,37 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    sessionAuthenticate ({ commit }) {
-      store.dispatch('setTempUserData').then(() => {
-      // store.dispatch('fetchUserData').then(() => {
-        store.dispatch('login')
+    sessionAuthenticate ({ commit, getters }) {
+      return new Promise((resolve, reject) => {
+        if (getters.isSessionPresent) {
+          store.dispatch('setTempUserData').then(() => {
+          // store.dispatch('fetchUserData').then(() => {
+            commit('setAuth', true)
+            store.dispatch('bootstrappingDone')
+            resolve({logged_in: true})
+          }).catch((err) => {
+            console.error('Error in fetchUserData !', err)
+            reject(err)
+          })
+        } else {
+          store.dispatch('bootstrappingDone')
+          resolve({logged_in: false})
+        }
       })
     },
-    login ({ commit }) {
+    bootstrappingDone ({ commit }) {
+      commit('setIsBootstrapping', false)
+      console.log('App bootstrappingDone')
+    },
+    login ({ commit }, session) {
+      Vue.cookie.set('session', session, {expires: '1H'}) // , domain: this.$config.BASE_URL
+      commit('fetchSession')
       commit('setAuth', true)
     },
     logout ({ commit }) {
       commit('setAuth', false)
+      commit('deleteSession')
+      commit('setUser', {})
     },
     setTempUserData ({ commit }) {
       /* eslint-disable object-property-newline  */
@@ -169,15 +207,21 @@ const store = new Vuex.Store({
       }
       commit('setUser', userData)
     },
-    setUserData ({ commit }, userData) {
+    setUserData ({ commit }, data) {
+      let userData = data.user
+      userData.bank_accounts = data.bank_accounts
+      userData.transactions = data.transactions
+      userData.virtual_wallet = data.virtual_wallet
       commit('setUser', userData)
     },
     fetchUserData ({ dispatch }) {
-      Vue.axios.get('/user/info').then((response) => {
-        console.log('axios.get /user/info: ', response)
-        dispatch('setUserData', response.data.user)
-      }, (err) => {
-        console.log(err)
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.get('/user/info').then((res) => {
+          dispatch('setUserData', res.data)
+          resolve(res)
+        }, (err) => {
+          reject(err)
+        })
       })
     },
     addBankAccount ({ commit }, accountData) {
@@ -185,32 +229,30 @@ const store = new Vuex.Store({
         commit('addBankAccount', accountData)
       }
     },
-    getAllCurrentPricingData ({ commit }) {
+    getCurrencyData ({ commit }) {
       let url = window.appConfig.CRYPTOCOMPARE_API_URL + '/data/histohour'
 
-      return Vue.axios.all([
-        Vue.axios.get(url + '?fsym=BTC&tsym=USD&limit=30&aggregate=1'),
-        Vue.axios.get(url + '?fsym=ETH&tsym=USD&limit=30&aggregate=1')
-        // Vue.axios.get(url + '?fsym=XRP&tsym=USD&limit=30&aggregate=1'),
-        // Vue.axios.get(url + '?fsym=LTC&tsym=USD&limit=30&aggregate=1')
-        // Vue.axios.get(url + '?fsym=BCH&tsym=USD&limit=30&aggregate=1'),
-      ])
-      .then(Vue.axios.spread(function (bitcoin, ethereum, ripple, litecoin) {
-        console.log('getAllCurrentPricingData response: ', bitcoin, ethereum, ripple, litecoin)
-        commit('setCurrencyHistoricPricing', {price: bitcoin.data.Data, currency: 'Bitcoin'})
-        commit('setCurrencyHistoricPricing', {price: ethereum.data.Data, currency: 'Ethereum'})
-      }))
-    },
-    getCurrencyData ({ commit }) {
-      // Vue.axios.get(window.appConfig.CRYPTOCOMPARE_URL + '/api/data/coinlist/')
-      return Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/') // ?limit=5
-        .then((response) => {
-          commit('setCurrencyData', response.data)
-          // this.coins = response.data
+      return new Promise((resolve, reject) => {
+        Vue.axios.all([
+          // Vue.axios.get(window.appConfig.CRYPTOCOMPARE_URL + '/api/data/coinlist/')
+          Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/'), // ?limit=5
+          Vue.axios.get(url + '?fsym=BTC&tsym=USD&limit=30&aggregate=1'),
+          Vue.axios.get(url + '?fsym=ETH&tsym=USD&limit=30&aggregate=1')
+          // Vue.axios.get(url + '?fsym=XRP&tsym=USD&limit=30&aggregate=1'),
+          // Vue.axios.get(url + '?fsym=LTC&tsym=USD&limit=30&aggregate=1')
+          // Vue.axios.get(url + '?fsym=BCH&tsym=USD&limit=30&aggregate=1'),
+        ]).then(Vue.axios.spread(function (latestPrices, bitcoin, ethereum, ripple, litecoin) {
+          console.log('getCurrencyData responses: ', bitcoin, ethereum, ripple, litecoin)
+
+          commit('setCurrencyData', latestPrices.data)
+          commit('setCurrencyHistoricPricing', {price: bitcoin.data.Data, currency: 'Bitcoin'})
+          commit('setCurrencyHistoricPricing', {price: ethereum.data.Data, currency: 'Ethereum'})
+
+          resolve()
+        })).catch((err) => {
+          reject(err)
         })
-        .catch((err) => {
-          console.error(err)
-        })
+      })
     },
     addMoneyToVirtualWallet ({ commit }, data) {
       commit('addMoneyToVirtualWallet', data)

@@ -339,7 +339,6 @@
         return temp
       },
       currentPricesChartData () {
-        console.log('this.currencyPriceSeries: ', this.currencyPriceSeries)
         return {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
           series: this.currencyPriceSeries
@@ -374,10 +373,10 @@
       fetchData () {
         let self = this
 
-        this.$store.dispatch('getCurrencyData')
-        .then(this.$store.dispatch('getAllCurrentPricingData'))
-        .then(() => {
+        this.$store.dispatch('getCurrencyData').then(() => {
           self.loading = false
+        }).catch((res) => {
+          self.$notify('Error in fetching the latest crypto-currency pricing data')
         })
       },
       buySellCurrencySubmit () {
