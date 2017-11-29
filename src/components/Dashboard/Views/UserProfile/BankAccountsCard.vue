@@ -7,23 +7,23 @@
       <div class="content">
         <ul class="list-unstyled team-members">
           <li>
-            <div class="row" v-for="bank_account in bank_accounts">
+            <div class="row" v-for="bankAccount in bankAccounts">
               <div class="col-xs-3">
                 <div class="avatar">
                   <img src="static/img/bank-logo.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
                 </div>
               </div>
               <div class="col-xs-6">
-                {{bank_account.name}}
+                {{bankAccount.name}}
                 <br>
                 <span class="text-success">
-                  <small>{{bank_account.account_number}}</small>
+                  <small>{{bankAccount.accountNumber}}</small>
                 </span>
               </div>
 
               <div class="col-xs-3 text-right">
                 <button class="btn btn-sm btn-success btn-icon">
-                  <i class="fa fa-credit-card"></i>
+                  <i class="fa fa-lg fa-trash"></i>
                 </button>
               </div>
             </div>
@@ -59,7 +59,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Full Name</label>
-                  <input v-validate="'required'" class="form-control border-input" name="name" placeholder="Full Name" v-model="new_bank_account_details.name">
+                  <input v-validate="'required'" class="form-control border-input" name="name" placeholder="Full Name" v-model="new_bankAccount_details.name">
                   <span v-show="errors.has('name')" class="text-danger">{{ errors.first('name') }}</span>
                 </div>
               </div>
@@ -67,7 +67,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Bank</label>
-                  <input v-validate="'required'" class="form-control border-input" name="bank" placeholder="Bank" v-model="new_bank_account_details.bank">
+                  <input v-validate="'required'" class="form-control border-input" name="bank" placeholder="Bank" v-model="new_bankAccount_details.bank">
                   <span v-show="errors.has('bank')" class="text-danger">{{ errors.first('bank') }}</span>
                 </div>
               </div>
@@ -77,14 +77,14 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label>Card Number</label>
-                  <input v-validate="'required'" class="form-control border-input" name="number" placeholder="Amount" v-model="new_bank_account_details.number">
+                  <input v-validate="'required'" class="form-control border-input" name="number" placeholder="Amount" v-model="new_bankAccount_details.number">
                   <span v-show="errors.has('number')" class="text-danger">{{ errors.first('number') }}</span>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <label>Expiry</label>
-                  <input v-validate="'required'" class="form-control border-input" name="expiry" placeholder="Amount" v-model="new_bank_account_details.expiry">
+                  <input v-validate="'required'" class="form-control border-input" name="expiry" placeholder="Amount" v-model="new_bankAccount_details.expiry">
                   <span v-show="errors.has('expiry')" class="text-danger">{{ errors.first('expiry') }}</span>
 
                 </div>
@@ -92,7 +92,7 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label>CVC</label>
-                  <input v-validate="'required'" class="form-control border-input" name="cvc" placeholder="Amount" v-model="new_bank_account_details.cvc">
+                  <input v-validate="'required'" class="form-control border-input" name="cvc" placeholder="Amount" v-model="new_bankAccount_details.cvc">
                   <span v-show="errors.has('cvc')" class="text-danger">{{ errors.first('cvc') }}</span>
 
                 </div>
@@ -122,7 +122,7 @@
   export default {
     data () {
       return {
-        new_bank_account_details: {
+        new_bankAccount_details: {
           name: '',
           account_no: '',
           card_number: ''
@@ -131,7 +131,7 @@
     },
     computed: {
       ...mapGetters([
-        'bank_accounts'
+        'bankAccounts'
       ])
     },
     mounted () {
@@ -165,7 +165,7 @@
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.$store.dispatch('addBankAccount', this.new_bank_account_details)
+            this.$store.dispatch('addBankAccount', this.new_bankAccount_details)
             $('#addAccountModal').modal('hide')
             this.$notify('Added new Payment Method sucessfully !', 'ti-bank')
             // this.$notify('Error in adding bank !', 'ti-bank', 'danger')

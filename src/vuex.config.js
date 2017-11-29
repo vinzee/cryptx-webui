@@ -27,8 +27,8 @@ const store = new Vuex.Store({
     transactions: state => {
       return state.user.transactions
     },
-    bank_accounts: state => {
-      return state.user.bank_accounts
+    bankAccounts: state => {
+      return state.user.bankAccounts
     },
     virtualWalletBalance: state => {
       return state.user.virtual_wallet.balance
@@ -137,11 +137,14 @@ const store = new Vuex.Store({
 
       state.currencyPriceSeries.push(priceSeries)
     },
-    addMoneyToVirtualWallet (state, data) {
+    virtualWalletDeposit (state, data) {
       Vue.set(state.user.virtual_wallet, 'balance', state.user.virtual_wallet.balance + data.amount)
     },
+    virtualWalletRedeem (state, data) {
+      Vue.set(state.user.virtual_wallet, 'balance', state.user.virtual_wallet.balance - data.amount)
+    },
     addBankAccount (state, data) {
-      state.user.bank_accounts.push(data)
+      state.user.bankAccounts.push(data)
     },
     commitTransaction (state, data) {
       console.log('commitTransaction: ', data)
@@ -189,8 +192,8 @@ const store = new Vuex.Store({
         name: 'Vineet Ahirkar', email: 'vinzee93@gmail.com', ssn: '111-11-1111', phone: '240 230 2969',
         address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
         virtual_wallet: { balance: 123 },
-        bank_accounts: [
-          { id: '1', name: 'Bank of America', account_number: '1234', type: 'credit' }, {id: '2', name: 'PNC', account_number: '6789', type: 'debit'}
+        bankAccounts: [
+          { id: '1', name: 'Bank of America', accountNumber: '1234', type: 'credit' }, {id: '2', name: 'PNC', accountNumber: '6789', type: 'debit'}
         ],
         investments: [
           { currency: 'Bitcoin', amount: 0.4 },
@@ -209,7 +212,7 @@ const store = new Vuex.Store({
     },
     setUserData ({ commit }, data) {
       let userData = data.user
-      userData.bank_accounts = data.bank_accounts
+      userData.bankAccounts = data.bankAccounts
       userData.transactions = data.transactions
       userData.virtual_wallet = data.virtual_wallet
       commit('setUser', userData)
@@ -235,18 +238,30 @@ const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         Vue.axios.all([
           // Vue.axios.get(window.appConfig.CRYPTOCOMPARE_URL + '/api/data/coinlist/')
-          Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/'), // ?limit=5
+          Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/bitcoin/'),
+          Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/ethereum/'),
+          Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/ripple/'),
+          Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/litecoin/'),
           Vue.axios.get(url + '?fsym=BTC&tsym=USD&limit=30&aggregate=1'),
           Vue.axios.get(url + '?fsym=ETH&tsym=USD&limit=30&aggregate=1')
           // Vue.axios.get(url + '?fsym=XRP&tsym=USD&limit=30&aggregate=1'),
           // Vue.axios.get(url + '?fsym=LTC&tsym=USD&limit=30&aggregate=1')
           // Vue.axios.get(url + '?fsym=BCH&tsym=USD&limit=30&aggregate=1'),
-        ]).then(Vue.axios.spread(function (latestPrices, bitcoin, ethereum, ripple, litecoin) {
-          console.log('getCurrencyData responses: ', bitcoin, ethereum, ripple, litecoin)
+        ]).then(Vue.axios.spread(function (bitcoinCurrent, ethereumCurrent, rippleCurrent, litecoinCurrent, bitcoinHistoric, ethereumHistoric, rippleHistoric, litecoinHistoric) {
+          console.log('getCurrencyData responses: ', bitcoinCurrent, ethereumCurrent, rippleCurrent, litecoinCurrent, bitcoinHistoric, ethereumHistoric, rippleHistoric, litecoinHistoric)
 
-          commit('setCurrencyData', latestPrices.data)
-          commit('setCurrencyHistoricPricing', {price: bitcoin.data.Data, currency: 'Bitcoin'})
-          commit('setCurrencyHistoricPricing', {price: ethereum.data.Data, currency: 'Ethereum'})
+          let current = {
+            bitcoin: bitcoinCurrent.data[0],
+            ethereum: ethereumCurrent.data[0],
+            ripple: rippleCurrent.data[0],
+            litecoin: litecoinCurrent.data[0]
+          }
+
+          commit('setCurrencyData', current)
+          commit('setCurrencyHistoricPricing', {price: bitcoinHistoric.data.Data, currency: 'Bitcoin'})
+          commit('setCurrencyHistoricPricing', {price: ethereumHistoric.data.Data, currency: 'Ethereum'})
+          // commit('setCurrencyHistoricPricing', {price: rippleHistoric.data.Data, currency: 'Ethereum'})
+          // commit('setCurrencyHistoricPricing', {price: litecoinHistoric.data.Data, currency: 'Ethereum'})
 
           resolve()
         })).catch((err) => {

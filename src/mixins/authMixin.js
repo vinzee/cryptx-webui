@@ -17,7 +17,7 @@ Vue.mixin({
         this.$notify('User Logged In', 'ti-user')
       })
       // }).catch(function (res) {
-      //   self.$notify('Error in user login. ', 'ti-alert')
+      //   self.$notify('Error in user login. ', 'ti-alert', 'danger')
       // })
     },
     register (userData) {
@@ -26,7 +26,7 @@ Vue.mixin({
         self.$notify('User registered in sucessfully', 'ti-user')
         self.login(userData.email, userData.password)
       }).catch(function (res) {
-        self.$notify('Error in User Registration. ', 'ti-alert')
+        self.$notify('Error in User Registration. ', 'ti-alert', 'danger')
       })
     },
     logout () {

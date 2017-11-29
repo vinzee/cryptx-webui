@@ -43,7 +43,7 @@
           this.$notify('User Logged In')
         }
       }).catch(() => {
-        this.$notify('Error in authenticating from session')
+        this.$notify('Error in authenticating from session', 'ti-user', 'danger')
       })
     },
     computed: {

@@ -17,8 +17,8 @@
               ${{virtualWalletBalance}}
             </div>
             <div class="stats" slot="footer">
-              <button type="button" class="btn btn-sm btn-info btn-fill" data-toggle="modal" data-target="#addMoneyModal">
-                Add Money
+              <button type="button" class="btn btn-sm btn-info btn-fill" data-toggle="modal" data-target="#depositRedeemModal">
+                Deposit / Redeem
               </button>
             </div>
           </stats-card>
@@ -27,15 +27,15 @@
         </div>
       </div>
 
-      <!-- add money modal -->
-      <div class="modal" id="addMoneyModal" tabindex="-1" role="dialog" aria-labelledby="addMoneyModal" aria-hidden="true" data-backdrop="false">
+      <!-- Deposit / Redeem money modal -->
+      <div class="modal" id="depositRedeemModal" tabindex="-1" role="dialog" aria-labelledby="depositRedeemModal" aria-hidden="true" data-backdrop="false">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
-            <form @submit.stop.prevent="add_money">
+            <form @submit.stop.prevent="depositRedeem">
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title" id="myModalLabel">Add Money to Virtual Wallet</h4>
+              <h4 class="modal-title" id="myModalLabel">Deposit / Redeem Money</h4>
             </div>
 
             <div class="modal-body">
@@ -45,17 +45,26 @@
 
                     <div class="form-group">
                       <label>Amount ($)</label>
-                      <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="virtual_wallet_add_money.amount" min="10" step="10">
+                      <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="virtualWalletDepositRedeem.amount" min="10" step="10">
                       <span v-show="errors.has('amount')" class="text-danger">{{ errors.first('amount') }}</span>
 
                     </div>
 
                     <div class="form-group">
                       <label>Payment Method</label>
-                      <select v-validate="'required'" class="form-control" v-model="virtual_wallet_add_money.bank_id" name="bank_account">
-                        <option v-for="bank_account in bank_accounts" :value="bank_account.id">{{bank_account.name}}</option>
+                      <select v-validate="'required'" class="form-control" v-model="virtualWalletDepositRedeem.bank_id" name="bankAccount">
+                        <option v-for="bankAccount in bankAccounts" :value="bankAccount.id">{{bankAccount.name}}</option>
                       </select>
-                      <span v-show="errors.has('bank_account')" class="text-danger">{{ errors.first('bank_account') }}</span>
+                      <span v-show="errors.has('bankAccount')" class="text-danger">{{ errors.first('bankAccount') }}</span>
+                    </div>
+
+
+                    <div class="form-group">
+                      <input type="radio" id="depositCurrency" value="deposit" v-model="transactionType">
+                      <label for="depositCurrency">Deposit</label> &nbsp;
+                      <input type="radio" id="redeemCurrency" value="redeem" v-model="transactionType">
+                      <label for="redeemCurrency">Redeem</label>
+                      <br>
                     </div>
 
                   </div>
@@ -65,14 +74,14 @@
 
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Add Money</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
             </div>
 
             </form>
           </div>
         </div>
       </div>
-      <!-- end add money modal -->
+      <!-- end Deposit / Redeem money modal -->
 
     </div>
 </template>
@@ -93,28 +102,32 @@
     },
     data () {
       return {
-        virtual_wallet_add_money: {
+        virtualWalletDepositRedeem: {
           amount: 100,
           bank_id: 1
-        }
+        },
+        transactionType: 'deposit'
       }
     },
     computed: {
       ...mapGetters([
         'virtualWalletBalance',
-        'bank_accounts'
+        'bankAccounts'
       ])
     },
     methods: {
-      add_money () {
+      depositRedeem () {
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.$store.dispatch('addMoneyToVirtualWallet', {amount: this.virtual_wallet_add_money.amount})
-            this.$notify('Added $' + this.virtual_wallet_add_money.amount + ' to virtual wallet successfully from !', 'ti-money')
-            $('#addMoneyModal').modal('hide')
+            let type = this.transactionType === 'deposit' ? 'virtualWalletDepositRedeem' : 'virtualWalletRedeem'
 
-            // this.$notify('Error in adding money to virtual wallet !', 'ti-money', 'danger')
+            this.$store.dispatch(type, {amount: this.virtualWalletDepositRedeem.amount}).then(() => {
+              this.$notify('Added $' + this.virtualWalletDepositRedeem.amount + ' to virtual wallet successfully from !', 'ti-money')
+              $('#depositRedeemModal').modal('hide')
+            }).catch(() => {
+              this.$notify('Error in processing deposit/redeem to virtual wallet !', 'ti-money', 'danger')
+            })
           }
         })
       }

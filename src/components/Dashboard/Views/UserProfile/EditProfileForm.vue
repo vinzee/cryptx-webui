@@ -31,12 +31,26 @@
         </div>
 
         <div class="row">
-          <div class="col-md-12">
-            <fg-input type="text"
-                      label="Name"
-                      placeholder="Name"
-                      v-model="user.name">
-            </fg-input>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input v-validate="'required'" class="form-control border-input" name="name" placeholder="First Name" v-model="user.name">
+              <span v-show="errors.has('name')" class="text-danger">{{ errors.first('name') }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>SSN</label>
+              <input v-validate="{required: true, regex: /^\d{3}-?\d{2}-?\d{4}$$/}" class="form-control border-input" name="ssn" placeholder="XXX-XX-XXXX" v-model="user.ssn">
+              <span v-show="errors.has('ssn')" class="text-danger">{{ errors.first('ssn') }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>Phone</label>
+              <input v-validate="{required: true, regex: /^(()?\d{3}())?(-|\s)?\d{3}(-|\s)?\d{4}$/}" class="form-control border-input" name="phone" placeholder="Phone" v-model="user.phone">
+              <span v-show="errors.has('phone')" class="text-danger">{{ errors.first('phone') }}</span>
+            </div>
           </div>
         </div>
 

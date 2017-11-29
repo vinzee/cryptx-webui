@@ -106,7 +106,7 @@
 
           <div class="row">
             <div class="col-xs-4 col-xs-offset-4 text-center">
-              <button type="button" class="btn btn-lg btn-block btn-success btn-fill" data-toggle="modal" data-target="#buySellCurrencyModal">Buy / Sell</button>
+              <button type="button" class="btn btn-block btn-success btn-fill" data-toggle="modal" data-target="#buySellCurrencyModal">Buy / Sell</button>
               <br>
             </div>
           </div>
@@ -179,7 +179,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Buy / Sell</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </div>
 
           </form>
@@ -376,7 +376,7 @@
         this.$store.dispatch('getCurrencyData').then(() => {
           self.loading = false
         }).catch((res) => {
-          self.$notify('Error in fetching the latest crypto-currency pricing data')
+          self.$notify('Error in fetching the latest crypto-currency pricing data', 'ti-alert', 'danger')
         })
       },
       buySellCurrencySubmit () {

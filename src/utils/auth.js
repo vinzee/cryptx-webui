@@ -20,10 +20,12 @@ Vue.use(VueAuthenticate, {
       // config.crossDomain = true
       // config.xDomain = true
 
+      config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+
       if (config.url === window.appConfig.BASE_URL + window.appConfig.LOGIN_URL) {
-        config.headers.Authorization = 'Basic ' + btoa(config.data.email + ':' + config.data.password)
+        config.headers['Authorization'] = 'Basic ' + btoa(config.data.email + ':' + config.data.password)
       } else {
-        delete config.headers.Authorization
+        delete config.headers['Authorization']
       }
 
       return config
