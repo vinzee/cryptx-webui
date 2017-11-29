@@ -10,6 +10,8 @@ Vue.mixin({
 
     // this.$axiosClient.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
     this.$axiosClient.interceptors.request.use(function (config) {
+      window.vue.$blockUI()
+
       if (store.getters.isAuthenticated) {
         config.headers['x-auth-token'] = Vue.cookie.get('session')
       } else {
@@ -24,6 +26,7 @@ Vue.mixin({
 
     this.$axiosClient.interceptors.response.use(function (response) {
       // this.setToken(response)
+      window.vue.$unblockUI()
       return response
     }, function (error) {
       // Do something with response error

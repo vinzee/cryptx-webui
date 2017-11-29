@@ -7,6 +7,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   state: {
+    isLoading: false,
     isAuthenticated: false,
     user: null,
     currencyData: null,
@@ -58,9 +59,15 @@ const store = new Vuex.Store({
     },
     currencyPriceSeries: state => {
       return state.currencyPriceSeries
+    },
+    isLoading: state => {
+      return state.isLoading
     }
   },
   mutations: {
+    setIsLoading (state, isLoading) {
+      state.isLoading = isLoading
+    },
     setAuth (state, isAuthenticated) {
       state.isAuthenticated = isAuthenticated
     },
@@ -141,7 +148,7 @@ const store = new Vuex.Store({
     setTempUserData ({ commit }) {
       /* eslint-disable object-property-newline  */
       let userData = {
-        firstName: 'Vineet', lastName: 'Ahirkar', email: 'vinzee93@gmail.com',
+        name: 'Vineet Ahirkar', email: 'vinzee93@gmail.com', ssn: '111-11-1111', phone: '240 230 2969',
         address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
         virtual_wallet: { balance: 123 },
         bank_accounts: [
@@ -196,7 +203,7 @@ const store = new Vuex.Store({
     },
     getCurrencyData ({ commit }) {
       // Vue.axios.get(window.appConfig.CRYPTOCOMPARE_URL + '/api/data/coinlist/')
-      return Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/?limit=5')
+      return Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/') // ?limit=5
         .then((response) => {
           commit('setCurrencyData', response.data)
           // this.coins = response.data

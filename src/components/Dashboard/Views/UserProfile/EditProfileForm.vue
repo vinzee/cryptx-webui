@@ -31,18 +31,11 @@
         </div>
 
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <fg-input type="text"
-                      label="First Name"
-                      placeholder="First Name"
-                      v-model="user.firstName">
-            </fg-input>
-          </div>
-          <div class="col-md-6">
-            <fg-input type="text"
-                      label="Last Name"
-                      placeholder="Last Name"
-                      v-model="user.lastName">
+                      label="Name"
+                      placeholder="Name"
+                      v-model="user.name">
             </fg-input>
           </div>
         </div>

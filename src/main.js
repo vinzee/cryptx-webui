@@ -26,6 +26,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './assets/sass/paper-dashboard.scss'
 import 'es6-promise/auto'
 import 'mixins/index.js'
+import BlockUI from 'vue-blockui'
 
 // plugin setup
 Vue.use(VueConfig, configs)
@@ -34,6 +35,7 @@ Vue.use(GlobalDirectives)
 Vue.use(Notifications)
 Vue.use(SideBar)
 Vue.use(VeeValidate)
+Vue.use(BlockUI)
 
 sync(store, router)
 

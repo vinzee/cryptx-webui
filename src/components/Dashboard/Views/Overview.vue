@@ -1,7 +1,9 @@
 <template>
   <div>
+
     <div class="loading" v-if="loading">
-      Loading...
+      <i class="fa fa-spinner fa-3x fa-spin fa-fw"></i>
+      <span class="sr-only">Loading...</span>
     </div>
 
     <!--Stats cards-->
