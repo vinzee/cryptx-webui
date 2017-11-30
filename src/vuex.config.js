@@ -31,7 +31,7 @@ const store = new Vuex.Store({
       return state.user.bankAccounts
     },
     virtualWalletBalance: state => {
-      return state.user.virtual_wallet.balance
+      return state.user.virtualWallet.balance
     },
     portfolioNetWorth: state => {
       return _.round(_.reduce(state.user.investments, function (sum, investment) {
@@ -70,6 +70,9 @@ const store = new Vuex.Store({
     },
     isSessionPresent: state => {
       return state.session !== null && state.session !== undefined
+    },
+    session: state => {
+      return state.session
     }
   },
   mutations: {
@@ -138,10 +141,10 @@ const store = new Vuex.Store({
       state.currencyPriceSeries.push(priceSeries)
     },
     virtualWalletDeposit (state, data) {
-      Vue.set(state.user.virtual_wallet, 'balance', state.user.virtual_wallet.balance + data.amount)
+      Vue.set(state.user.virtualWallet, 'balance', state.user.virtualWallet.balance + data.amount)
     },
     virtualWalletRedeem (state, data) {
-      Vue.set(state.user.virtual_wallet, 'balance', state.user.virtual_wallet.balance - data.amount)
+      Vue.set(state.user.virtualWallet, 'balance', state.user.virtualWallet.balance - data.amount)
     },
     addBankAccount (state, data) {
       state.user.bankAccounts.push(data)
@@ -157,18 +160,18 @@ const store = new Vuex.Store({
     sessionAuthenticate ({ commit, getters }) {
       return new Promise((resolve, reject) => {
         if (getters.isSessionPresent) {
-          store.dispatch('setTempUserData').then(() => {
-          // store.dispatch('fetchUserData').then(() => {
+          // store.dispatch('setTempUserData').then(() => {
+          store.dispatch('fetchUserData').then(() => {
             commit('setAuth', true)
             store.dispatch('bootstrappingDone')
-            resolve({logged_in: true})
+            resolve({loggedIn: true})
           }).catch((err) => {
             console.error('Error in fetchUserData !', err)
             reject(err)
           })
         } else {
           store.dispatch('bootstrappingDone')
-          resolve({logged_in: false})
+          resolve({loggedIn: false})
         }
       })
     },
@@ -191,7 +194,7 @@ const store = new Vuex.Store({
       let userData = {
         name: 'Vineet Ahirkar', email: 'vinzee93@gmail.com', ssn: '111-11-1111', phone: '240 230 2969',
         address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
-        virtual_wallet: { balance: 123 },
+        virtualWallet: { balance: 123 },
         bankAccounts: [
           { id: '1', name: 'Bank of America', accountNumber: '1234', type: 'credit' }, {id: '2', name: 'PNC', accountNumber: '6789', type: 'debit'}
         ],
@@ -214,12 +217,13 @@ const store = new Vuex.Store({
       let userData = data.user
       userData.bankAccounts = data.bankAccounts
       userData.transactions = data.transactions
-      userData.virtual_wallet = data.virtual_wallet
+      userData.virtualWallet = data.virtualWallet
+      userData.investments = data.investments
       commit('setUser', userData)
     },
     fetchUserData ({ dispatch }) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.get('/user/info').then((res) => {
+        this._vm.$axiosClient.get('/user/profile').then((res) => {
           dispatch('setUserData', res.data)
           resolve(res)
         }, (err) => {

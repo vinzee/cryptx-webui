@@ -39,7 +39,7 @@
     },
     beforeCreate () {
       this.$store.dispatch('sessionAuthenticate').then((res) => {
-        if (res.logged_in) {
+        if (res.loggedIn) {
           this.$notify('User Logged In')
         }
       }).catch(() => {

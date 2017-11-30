@@ -12,8 +12,8 @@ Vue.mixin({
     this.$axiosClient.interceptors.request.use(function (config) {
       window.vue.$blockUI()
 
-      if (store.getters.isAuthenticated) {
-        config.headers['x-auth-token'] = Vue.cookie.get('session')
+      if (store.getters.isSessionPresent) {
+        config.headers['x-auth-token'] = store.getters.session
       } else {
         delete config.headers['x-auth-token']
       }
