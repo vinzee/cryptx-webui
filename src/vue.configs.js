@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import vueConfig from 'vue-config'
 
-console.log('process.env.NODE_ENV: ', process.env.NODE_ENV)
-
 const configs = {
   LOGIN_URL: '/login',
   REGISTER_URL: '/register',
