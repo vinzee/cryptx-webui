@@ -12,9 +12,9 @@ const configs = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  configs.BASE_URL = 'http://169.55.144.76:8080'
+  configs.BASE_URL = 'https://169.55.144.76:8080'
 } else {
-  configs.BASE_URL = 'http://10.0.0.93:8080'
+  configs.BASE_URL = 'https://10.0.0.93:8080'
 }
 
 Vue.use(vueConfig, configs)
