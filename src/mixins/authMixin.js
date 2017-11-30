@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import store from 'src/vuex.config.js'
 
 Vue.mixin({
   methods: {
@@ -10,6 +11,7 @@ Vue.mixin({
 
         this.$store.dispatch('setUserData', res.data)
         // this.$store.dispatch('setTempUserData')
+        .then(this.$store.dispatch('getCurrencyData'))
         .then(this.$store.dispatch('login', res.headers['x-auth-token']))
         .then(() => {
           let redirectPath = this.$route.query.redirect == null ? '/' : this.$route.query.redirect
@@ -17,21 +19,21 @@ Vue.mixin({
           this.$notify('User Logged In', 'ti-user')
         })
       }).catch(function (res) {
-        self.$notify('Error in user login. ', 'ti-alert', 'danger')
+        self.$notify('User Login failed! Invalid email/password', 'ti-alert', 'danger')
       })
     },
     register (userData) {
       let self = this
       this.$auth.register({user: userData}).then(function (res) {
-        self.$notify('User registered in sucessfully', 'ti-user')
+        self.$notify('User Registered', 'ti-user')
         self.login(userData.email, userData.password)
       }).catch(function (res) {
-        self.$notify('Error in User Registration. ', 'ti-alert', 'danger')
+        self.$notify('User Registration failed', 'ti-alert', 'danger')
       })
     },
     logout () {
       let self = this
-      this.$store.dispatch('logout').then(() => {
+      store.dispatch('logout').then(() => {
         self.$router.push({ path: '/login' })
         self.$notify('User Logged Out', 'ti-user')
       })

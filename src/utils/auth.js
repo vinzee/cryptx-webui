@@ -19,8 +19,7 @@ Vue.use(VueAuthenticate, {
       // config.withCredentials = true
       // config.crossDomain = true
       // config.xDomain = true
-
-      config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+      // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
       if (config.url === window.appConfig.BASE_URL + window.appConfig.LOGIN_URL) {
         config.headers['Authorization'] = 'Basic ' + btoa(config.data.email + ':' + config.data.password)
@@ -37,6 +36,10 @@ Vue.use(VueAuthenticate, {
       window.vue.$unblockUI()
       // this.setToken(response)
       return response
+    }, (error) => {
+      window.vue.$unblockUI()
+
+      return Promise.reject(error)
     })
   }
 })

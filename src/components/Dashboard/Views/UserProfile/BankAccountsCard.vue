@@ -167,8 +167,8 @@
           if (isValidated) {
             this.$store.dispatch('addBankAccount', this.new_bankAccount_details)
             $('#addAccountModal').modal('hide')
-            this.$notify('Added new Payment Method sucessfully !', 'ti-bank')
-            // this.$notify('Error in adding bank !', 'ti-bank', 'danger')
+            this.$notify('Added new Payment Method', 'ti-bank')
+            // this.$notify('Error in adding bank', 'ti-bank', 'danger')
           }
         })
       }

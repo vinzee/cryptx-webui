@@ -162,22 +162,23 @@ const store = new Vuex.Store({
         if (getters.isSessionPresent) {
           // store.dispatch('setTempUserData').then(() => {
           store.dispatch('fetchUserData').then(() => {
-            commit('setAuth', true)
-            store.dispatch('bootstrappingDone')
-            resolve({loggedIn: true})
+            store.dispatch('getCurrencyData').then(() => {
+              commit('setAuth', true)
+              commit('setIsBootstrapping', false)
+              self.loading = false
+              resolve({loggedIn: true})
+            }).catch((res) => {
+              self.$notify('Error in fetching the latest crypto-currency pricing data', 'ti-alert', 'danger')
+            })
           }).catch((err) => {
             console.error('Error in fetchUserData !', err)
             reject(err)
           })
         } else {
-          store.dispatch('bootstrappingDone')
+          commit('setIsBootstrapping', false)
           resolve({loggedIn: false})
         }
       })
-    },
-    bootstrappingDone ({ commit }) {
-      commit('setIsBootstrapping', false)
-      console.log('App bootstrappingDone')
     },
     login ({ commit }, session) {
       Vue.cookie.set('session', session, {expires: '1H'}) // , domain: this.$config.BASE_URL

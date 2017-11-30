@@ -123,7 +123,7 @@
             let type = this.transactionType === 'deposit' ? 'virtualWalletDepositRedeem' : 'virtualWalletRedeem'
 
             this.$store.dispatch(type, {amount: this.virtualWalletDepositRedeem.amount}).then(() => {
-              this.$notify('Added $' + this.virtualWalletDepositRedeem.amount + ' to virtual wallet successfully from !', 'ti-money')
+              this.$notify('Added $' + this.virtualWalletDepositRedeem.amount + ' to virtual wallet from !', 'ti-money')
               $('#depositRedeemModal').modal('hide')
             }).catch(() => {
               this.$notify('Error in processing deposit/redeem to virtual wallet !', 'ti-money', 'danger')

@@ -40,7 +40,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label>SSN</label>
-              <input v-validate="{required: true, regex: /^\d{3}-?\d{2}-?\d{4}$$/}" class="form-control border-input" name="ssn" placeholder="XXX-XX-XXXX" v-model="user.ssn">
+              <input v-validate="{regex: /^\d{3}-?\d{2}-?\d{4}$$/}" class="form-control border-input" name="ssn" placeholder="XXX-XX-XXXX" v-model="user.ssn">
               <span v-show="errors.has('ssn')" class="text-danger">{{ errors.first('ssn') }}</span>
             </div>
           </div>

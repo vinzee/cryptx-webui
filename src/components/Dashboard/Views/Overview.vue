@@ -1,13 +1,7 @@
 <template>
   <div>
-
-    <div class="loading" v-if="loading">
-      <i class="fa fa-spinner fa-3x fa-spin fa-fw"></i>
-      <span class="sr-only">Loading...</span>
-    </div>
-
     <!--Stats cards-->
-    <div class="row" v-if="!loading">
+    <div class="row">
       <div class="col-lg-3 col-sm-6">
         <stats-card>
           <div class="icon-big text-center icon-success" slot="header">
@@ -60,7 +54,7 @@
     </div>
 
     <!--Charts-->
-    <div class="row" v-if="!loading">
+    <div class="row">
 
       <div class="col-xs-12">
         <chart-card :chart-data="userPerformanceChartData" :chart-options="userPerformanceChartOptions">
@@ -91,7 +85,7 @@
 
     </div>
 
-    <div class="row" v-if="!loading">
+    <div class="row">
       <div class="col-md-6 col-xs-12">
         <chart-card :chart-data="investmentsChartData" :chart-options="investmentsChartOptions" :chart-responsive-options="investmentsChartResponsiveOptions" chart-type="Pie">
           <h4 class="title" slot="title">Investments</h4>
@@ -208,7 +202,6 @@
      */
     data () {
       return {
-        loading: true,
         buySellCurrency: {
           amount: 0,
           currency: 'Bitcoin',
@@ -270,25 +263,20 @@
       }
     },
     watch: {
-      '$route': 'fetchData',
       'buySellCurrency.amount': function () {
-        if (this.loading) {
-          this.buySellCurrency.value = 0
-        } else {
-          this.buySellCurrency.value = _.round(this.investmentsMap[this.buySellCurrency.currency].price * this.buySellCurrency.amount, 3)
-        }
+        this.buySellCurrency.value = _.round(this.investmentsMap[this.buySellCurrency.currency].price * this.buySellCurrency.amount, 3)
       }
     },
     computed: {
       selectedCurrencyAmount () {
-        if (this.loading || this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
+        if (this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
           return 0
         } else {
           return this.investmentsMap[this.buySellCurrency.currency].amount
         }
       },
       selectedCurrencyPrice () {
-        if (this.loading || this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
+        if (this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
           return 0
         } else {
           return this.investmentsMap[this.buySellCurrency.currency].price
@@ -315,16 +303,14 @@
       investmentsTableData () {
         let data = []
 
-        if (!this.loading) {
-          _.each(this.investments, function (investment) {
-            data.push({
-              currency: investment.currency,
-              amount: investment.amount,
-              price: '$' + investment.price,
-              value: '$' + investment.value
-            })
+        _.each(this.investments, function (investment) {
+          data.push({
+            currency: investment.currency,
+            amount: investment.amount,
+            price: '$' + investment.price,
+            value: '$' + investment.value
           })
-        }
+        })
 
         return data
       },
@@ -366,19 +352,7 @@
         'currencyPriceSeries'
       ])
     },
-    created () {
-      this.fetchData()
-    },
     methods: {
-      fetchData () {
-        let self = this
-
-        this.$store.dispatch('getCurrencyData').then(() => {
-          self.loading = false
-        }).catch((res) => {
-          self.$notify('Error in fetching the latest crypto-currency pricing data', 'ti-alert', 'danger')
-        })
-      },
       buySellCurrencySubmit () {
         console.log('buySellCurrencySubmit: ', this.buySellCurrency)
         this.$store.dispatch('commitTransaction', this.buySellCurrency)

@@ -3,6 +3,8 @@ import store from 'src/vuex.config.js'
 
 Vue.mixin({
   created: function () {
+    let self = this
+
     this.$axiosClient = Vue.axios.create({
       baseURL: window.appConfig.BASE_URL,
       withCredentials: true
@@ -25,11 +27,18 @@ Vue.mixin({
     })
 
     this.$axiosClient.interceptors.response.use(function (response) {
-      // this.setToken(response)
       window.vue.$unblockUI()
       return response
     }, function (error) {
-      // Do something with response error
+      window.vue.$unblockUI()
+
+      console.log('error', error)
+
+      if (error.response.status === 401) {
+        self.$notify('Unauthorized User. ', 'ti-alert', 'danger')
+        self.logout()
+      }
+
       return Promise.reject(error)
     })
   },
