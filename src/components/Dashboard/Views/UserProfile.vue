@@ -23,7 +23,7 @@
             </div>
           </stats-card>
 
-          <bank-accounts-card></bank-accounts-card>
+          <payment-methods-card></payment-methods-card>
         </div>
       </div>
 
@@ -52,10 +52,10 @@
 
                     <div class="form-group">
                       <label>Payment Method</label>
-                      <select v-validate="'required'" class="form-control" v-model="virtualWalletDepositRedeem.bank_id" name="bankAccount">
-                        <option v-for="bankAccount in bankAccounts" :value="bankAccount.id">{{bankAccount.name}}</option>
+                      <select v-validate="'required'" class="form-control" v-model="virtualWalletDepositRedeem.bank_id" name="paymentMethod">
+                        <option v-for="paymentMethod in paymentMethods" :value="paymentMethod.id">{{paymentMethod.name}}</option>
                       </select>
-                      <span v-show="errors.has('bankAccount')" class="text-danger">{{ errors.first('bankAccount') }}</span>
+                      <span v-show="errors.has('paymentMethod')" class="text-danger">{{ errors.first('paymentMethod') }}</span>
                     </div>
 
 
@@ -88,7 +88,7 @@
 <script>
   import EditProfileForm from './UserProfile/EditProfileForm.vue'
   import UserCard from './UserProfile/UserCard.vue'
-  import BankAccountsCard from './UserProfile/BankAccountsCard.vue'
+  import PaymentMethodsCard from './UserProfile/PaymentMethodsCard.vue'
   import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
   import $ from 'jquery'
   import { mapGetters } from 'vuex'
@@ -97,7 +97,7 @@
     components: {
       EditProfileForm,
       UserCard,
-      BankAccountsCard,
+      PaymentMethodsCard,
       StatsCard
     },
     data () {
@@ -112,7 +112,7 @@
     computed: {
       ...mapGetters([
         'virtualWalletBalance',
-        'bankAccounts'
+        'paymentMethods'
       ])
     },
     methods: {

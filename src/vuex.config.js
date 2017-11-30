@@ -27,8 +27,8 @@ const store = new Vuex.Store({
     transactions: state => {
       return state.user.transactions
     },
-    bankAccounts: state => {
-      return state.user.bankAccounts
+    paymentMethods: state => {
+      return state.user.paymentMethods
     },
     virtualWalletBalance: state => {
       return state.user.virtualWallet.balance
@@ -92,12 +92,15 @@ const store = new Vuex.Store({
     setAuth (state, isAuthenticated) {
       state.isAuthenticated = isAuthenticated
     },
-    setUser (state, user) {
+    setUserData (state, user) {
       _.each(user.investments, function (investment) {
         state.investmentsMap[investment.currency] = investment
       })
 
       state.user = user
+    },
+    updateUserData (state, data) {
+      console.log('updateUserData: ', data)
     },
     setCurrencyData (state, currencyData) {
       let topCurrency = null
@@ -146,23 +149,20 @@ const store = new Vuex.Store({
     virtualWalletRedeem (state, data) {
       Vue.set(state.user.virtualWallet, 'balance', state.user.virtualWallet.balance - data.amount)
     },
-    addBankAccount (state, data) {
-      state.user.bankAccounts.push(data)
+    addPaymentMethod (state, data) {
+      state.user.paymentMethods.push(data)
     },
     commitTransaction (state, data) {
       console.log('commitTransaction: ', data)
-    },
-    updateUserProfile (state, data) {
-      console.log('updateUserProfile: ', data)
     }
   },
   actions: {
-    sessionAuthenticate ({ commit, getters }) {
+    sessionAuthenticate ({ commit, getters, dispatch }) {
       return new Promise((resolve, reject) => {
         if (getters.isSessionPresent) {
           // store.dispatch('setTempUserData').then(() => {
-          store.dispatch('fetchUserData').then(() => {
-            store.dispatch('getCurrencyData').then(() => {
+          dispatch('fetchUserData').then(() => {
+            dispatch('getCurrencyData').then(() => {
               commit('setAuth', true)
               commit('setIsBootstrapping', false)
               self.loading = false
@@ -188,7 +188,7 @@ const store = new Vuex.Store({
     logout ({ commit }) {
       commit('setAuth', false)
       commit('deleteSession')
-      commit('setUser', {})
+      commit('setUserData', {})
     },
     setTempUserData ({ commit }) {
       /* eslint-disable object-property-newline  */
@@ -196,7 +196,7 @@ const store = new Vuex.Store({
         name: 'Vineet Ahirkar', email: 'vinzee93@gmail.com', ssn: '111-11-1111', phone: '240 230 2969',
         address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
         virtualWallet: { balance: 123 },
-        bankAccounts: [
+        paymentMethods: [
           { id: '1', name: 'Bank of America', accountNumber: '1234', type: 'credit' }, {id: '2', name: 'PNC', accountNumber: '6789', type: 'debit'}
         ],
         investments: [
@@ -212,15 +212,15 @@ const store = new Vuex.Store({
           { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 }
         ]
       }
-      commit('setUser', userData)
+      commit('setUserData', userData)
     },
     setUserData ({ commit }, data) {
       let userData = data.user
-      userData.bankAccounts = data.bankAccounts
+      userData.paymentMethods = data.paymentMethods
       userData.transactions = data.transactions
       userData.virtualWallet = data.virtualWallet
       userData.investments = data.investments
-      commit('setUser', userData)
+      commit('setUserData', userData)
     },
     fetchUserData ({ dispatch }) {
       return new Promise((resolve, reject) => {
@@ -232,10 +232,15 @@ const store = new Vuex.Store({
         })
       })
     },
-    addBankAccount ({ commit }, accountData) {
-      if (accountData) {
-        commit('addBankAccount', accountData)
-      }
+    addPaymentMethod ({ commit }, accountData) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.post('/payment_method/create', {accountData}).then((res) => {
+          commit('addPaymentMethod', accountData)
+          resolve(res)
+        }, (err) => {
+          reject(err)
+        })
+      })
     },
     getCurrencyData ({ commit }) {
       let url = window.appConfig.CRYPTOCOMPARE_API_URL + '/data/histohour'
@@ -283,8 +288,15 @@ const store = new Vuex.Store({
     commitTransaction ({ commit }, data) {
       commit('commitTransaction', data)
     },
-    updateUserProfile ({ commit }, data) {
-      commit('updateUserProfile', data)
+    updateUserProfile ({ commit, dispatch }, data) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.put('/user/update').then((res) => {
+          commit('updateUserData', res.data)
+          resolve(res)
+        }, (err) => {
+          reject(err)
+        })
+      })
     }
   }
 })

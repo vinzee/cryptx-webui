@@ -126,7 +126,11 @@
     },
     methods: {
       updateProfile () {
-        this.$store.dispatch('updateUserProfile', this.user)
+        this.$store.dispatch('updateUserProfile', this.user).then(() => {
+          this.$notify('User Profile updated', 'ti-user')
+        }).catch(function (res) {
+          this.$notify('User Profile update failed', 'ti-alert', 'danger')
+        })
       }
     }
   }
