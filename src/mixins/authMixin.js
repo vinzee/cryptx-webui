@@ -7,9 +7,9 @@ Vue.mixin({
       let self = this
       // let res = {session: 'session_value'}
       this.$auth.login({ email, password }).then((res) => {
-        console.log('login successful !', res.headers['x-auth-token'], res.data)
+        console.log('login successful !', res.headers['x-auth-token'], res.data.data)
 
-        this.$store.dispatch('setUserData', res.data)
+        this.$store.dispatch('setUserData', res.data.data)
         // this.$store.dispatch('setTempUserData')
         .then(this.$store.dispatch('getCurrencyData'))
         .then(this.$store.dispatch('login', res.headers['x-auth-token']))
@@ -18,8 +18,8 @@ Vue.mixin({
           this.$router.push(redirectPath)
           this.$notify('User Logged In', 'ti-user')
         })
-      }).catch(function (res) {
-        self.$notify('User Login failed! Invalid email/password', 'ti-alert', 'danger')
+      }).catch(function (error) {
+        self.$notify('User Login failed! ' + error.response.data.message, 'ti-alert', 'danger')
       })
     },
     register (userData) {

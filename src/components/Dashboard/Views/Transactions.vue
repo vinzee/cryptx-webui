@@ -3,13 +3,14 @@
       <div class="col-md-12">
 
         <div class="card">
-          <paper-table title="Transactions" sub-title="List of crypocurrency transactions" :data="transactions" :columns="columns">
+          <paper-table title="Transactions" sub-title="List of crypocurrency transactions" :data="transactions" :columns="columns" :columnNames="columnNames">
           </paper-table>
         </div>
 
       </div>
     </div>
 </template>
+
 <script>
   import PaperTable from 'components/UIComponents/PaperTable.vue'
   import { mapGetters } from 'vuex'
@@ -20,7 +21,8 @@
     },
     data () {
       return {
-        columns: ['Type', 'Currency', 'Amount', 'Date']
+        columnNames: ['Type', 'Currency', 'Number Of Coins', 'Transaction Time'],
+        columns: ['type', 'currency', 'numberOfCoins', 'transactionTime']
       }
     },
     computed: {
@@ -31,6 +33,3 @@
   }
 
 </script>
-
-<style>
-</style>

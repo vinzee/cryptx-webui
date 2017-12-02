@@ -9,7 +9,7 @@
     <div class="content table-responsive table-full-width">
       <table class="table" :class="tableClass">
         <thead>
-          <th v-for="column in columns">{{column}}</th>
+          <th v-for="column in columnNames">{{column}}</th>
         </thead>
         <tbody>
           <tr v-for="item in data">
@@ -23,6 +23,7 @@
 <script>
   export default {
     props: {
+      columnNames: Array,
       columns: Array,
       data: Array,
       type: {
@@ -46,10 +47,10 @@
     },
     methods: {
       hasValue (item, column) {
-        return item[column.toLowerCase()] !== 'undefined'
+        return item[column] !== 'undefined'
       },
       itemValue (item, column) {
-        return item[column.toLowerCase()]
+        return item[column]
       }
     }
   }

@@ -96,7 +96,7 @@
 
       <div class="col-md-6 col-xs-12">
         <div class="card">
-          <paper-table title="Investments" sub-title="" :data="investmentsTableData" :columns="investmentsTableColumns"></paper-table>
+          <paper-table title="Investments" sub-title="" :data="investmentsTableData" :columns="investmentsTableColumns" :columnNames="investmentsTableColumnNames"></paper-table>
 
           <div class="row">
             <div class="col-xs-4 col-xs-offset-4 text-center">
@@ -258,7 +258,8 @@
             chartPadding: 30
           }]
         ],
-        investmentsTableColumns: ['Currency', 'Amount', 'Price', 'Value'],
+        investmentsTableColumns: ['currency', 'amount', 'price', 'value'],
+        investmentsTableColumnNames: ['Currency', 'Amount', 'Price', 'Value'],
         currentPricesTableColumns: ['Currency', 'Price']
       }
     },
@@ -354,13 +355,15 @@
     },
     methods: {
       buySellCurrencySubmit () {
-        console.log('buySellCurrencySubmit: ', this.buySellCurrency)
-        this.$store.dispatch('commitTransaction', this.buySellCurrency)
+        console.log('buySellCurrency: ', this.buySellCurrency)
+        let action = this.buySellCurrency.type === 'buy' ? 'buyCurrency' : 'sellCurrency'
+        let self = this
+
+        this.$store.dispatch(action, this.buySellCurrency).then((res) => {
+          self.$notify('Currency ' + (this.buySellCurrency.type === 'buy' ? 'bought' : 'sold') + ' successfully', 'ti-money')
+        })
       }
     }
   }
 
 </script>
-<style>
-
-</style>

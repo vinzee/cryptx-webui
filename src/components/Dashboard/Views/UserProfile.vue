@@ -52,8 +52,8 @@
 
                     <div class="form-group">
                       <label>Payment Method</label>
-                      <select v-validate="'required'" class="form-control" v-model="virtualWalletDepositRedeem.bank_id" name="paymentMethod">
-                        <option v-for="paymentMethod in paymentMethods" :value="paymentMethod.id">{{paymentMethod.name}}</option>
+                      <select v-validate="'required'" class="form-control" v-model="virtualWalletDepositRedeem.paymentMethodId" name="paymentMethod">
+                        <option v-for="paymentMethod in paymentMethods" :value="paymentMethod.paymentMethodId">{{paymentMethod.bankName}}</option>
                       </select>
                       <span v-show="errors.has('paymentMethod')" class="text-danger">{{ errors.first('paymentMethod') }}</span>
                     </div>
@@ -104,7 +104,7 @@
       return {
         virtualWalletDepositRedeem: {
           amount: 100,
-          bank_id: 1
+          paymentMethodId: 1
         },
         transactionType: 'deposit'
       }
@@ -120,9 +120,9 @@
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            let type = this.transactionType === 'deposit' ? 'virtualWalletDepositRedeem' : 'virtualWalletRedeem'
+            let type = this.transactionType === 'deposit' ? 'virtualWalletDeposit' : 'virtualWalletRedeem'
 
-            this.$store.dispatch(type, {amount: this.virtualWalletDepositRedeem.amount}).then(() => {
+            this.$store.dispatch(type, this.virtualWalletDepositRedeem).then(() => {
               this.$notify('Added $' + this.virtualWalletDepositRedeem.amount + ' to virtual wallet from !', 'ti-money')
               $('#depositRedeemModal').modal('hide')
             }).catch(() => {

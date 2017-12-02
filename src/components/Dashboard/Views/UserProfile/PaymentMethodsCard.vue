@@ -9,12 +9,11 @@
           <li>
             <div class="row" v-for="paymentMethod in paymentMethods">
               <div class="col-xs-3">
-                <div class="avatar">
-                  <img src="static/img/bank-logo.png" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                </div>
+                <i class="fa fa-lg fa-credit-card"></i>
+                  <!-- <img src="static/img/bank-logo.png" alt="Circle Image" class="img-circle img-no-padding img-responsive"> -->
               </div>
               <div class="col-xs-6">
-                {{paymentMethod.name}}
+                {{paymentMethod.bankName}}
                 <br>
                 <span class="text-success">
                   <small>{{paymentMethod.accountNumber}}</small>
@@ -22,7 +21,7 @@
               </div>
 
               <div class="col-xs-3 text-right">
-                <button class="btn btn-sm btn-success btn-icon">
+                <button class="btn btn-sm btn-success btn-icon" @click="deletePaymentMethod(paymentMethod.paymentMethodId)">
                   <i class="fa fa-lg fa-trash"></i>
                 </button>
               </div>
@@ -91,7 +90,7 @@
               </div>
               <div class="col-md-4">
                 <div class="form-group">
-                  <label>CVC</label>
+                  <label>CVV</label>
                   <input v-validate="'required'" class="form-control border-input" name="cvc" placeholder="Amount" v-model="newPaymentMethod.cvc">
                   <span v-show="errors.has('cvc')" class="text-danger">{{ errors.first('cvc') }}</span>
 
@@ -170,6 +169,14 @@
             this.$notify('Added new Payment Method', 'ti-bank')
             // this.$notify('Error in adding Payment Method', 'ti-bank', 'danger')
           }
+        })
+      },
+      deletePaymentMethod (paymentMethodId) {
+        let self = this
+
+        this.$store.dispatch('deletePaymentMethod', {id: paymentMethodId})
+        .then((res) => {
+          self.$notify('Payment Method deleted', 'ti-bank')
         })
       }
     }

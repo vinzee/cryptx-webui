@@ -31,8 +31,7 @@ Vue.mixin({
       return response
     }, function (error) {
       window.vue.$unblockUI()
-
-      console.log('error', error)
+      console.log('axiosClient error', error)
 
       if (error.response.status === 401) {
         self.$notify('Unauthorized User. ', 'ti-alert', 'danger')

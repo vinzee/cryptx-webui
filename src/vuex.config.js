@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import _ from 'lodash'
+import moment from 'moment'
 
 Vue.use(Vuex)
 
@@ -97,6 +98,10 @@ const store = new Vuex.Store({
         state.investmentsMap[investment.currency] = investment
       })
 
+      _.each(user.transactions, function (transaction) {
+        transaction.transactionTime = moment(transaction.transactionTime * 1000).format(window.appConfig.momentFormat)
+      })
+
       state.user = user
     },
     updateUserData (state, data) {
@@ -150,10 +155,17 @@ const store = new Vuex.Store({
       Vue.set(state.user.virtualWallet, 'balance', state.user.virtualWallet.balance - data.amount)
     },
     addPaymentMethod (state, data) {
+      console.log('addPaymentMethod ', data)
       state.user.paymentMethods.push(data)
     },
-    commitTransaction (state, data) {
-      console.log('commitTransaction: ', data)
+    deletePaymentMethod (state, data) {
+      console.log('deletePaymentMethod ', data)
+    },
+    buyCurrency (state, data) {
+      console.log('buyCurrency: ', data)
+    },
+    sellCurrency (state, data) {
+      console.log('sellCurrency: ', data)
     }
   },
   actions: {
@@ -197,7 +209,8 @@ const store = new Vuex.Store({
         address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
         virtualWallet: { balance: 123 },
         paymentMethods: [
-          { id: '1', name: 'Bank of America', accountNumber: '1234', type: 'credit' }, {id: '2', name: 'PNC', accountNumber: '6789', type: 'debit'}
+          { id: '1', name: 'Bank of America', accountNumber: '1234', type: 'credit' },
+          {id: '2', name: 'PNC', accountNumber: '6789', type: 'debit'}
         ],
         investments: [
           { currency: 'Bitcoin', amount: 0.4 },
@@ -225,17 +238,27 @@ const store = new Vuex.Store({
     fetchUserData ({ dispatch }) {
       return new Promise((resolve, reject) => {
         this._vm.$axiosClient.get('/user/profile').then((res) => {
-          dispatch('setUserData', res.data)
+          dispatch('setUserData', res.data.data)
           resolve(res)
         }, (err) => {
           reject(err)
         })
       })
     },
-    addPaymentMethod ({ commit }, accountData) {
+    addPaymentMethod ({ commit }, data) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.post('/payment_method/create', {accountData}).then((res) => {
-          commit('addPaymentMethod', accountData)
+        this._vm.$axiosClient.post('/payment_method/create', data).then((res) => {
+          commit('addPaymentMethod', data)
+          resolve(res)
+        }, (err) => {
+          reject(err)
+        })
+      })
+    },
+    deletePaymentMethod ({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.delete('/payment_method/' + data.id).then((res) => {
+          commit('deletePaymentMethod', data)
           resolve(res)
         }, (err) => {
           reject(err)
@@ -279,19 +302,50 @@ const store = new Vuex.Store({
         })
       })
     },
-    addMoneyToVirtualWallet ({ commit }, data) {
-      commit('addMoneyToVirtualWallet', data)
+    virtualWalletDeposit ({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.post('/wallet/deposit', data).then((res) => {
+          commit('virtualWalletDeposit', data)
+          resolve(res)
+        }, (err) => {
+          reject(err)
+        })
+      })
     },
-    redeemMoneyFromVirtualWallet ({ commit }, data) {
-      commit('addMoneyToVirtualWallet', data)
+    virtualWalletRedeem ({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.post('/wallet/withdraw', data).then((res) => {
+          commit('virtualWalletRedeem', data)
+          resolve(res)
+        }, (err) => {
+          reject(err)
+        })
+      })
     },
-    commitTransaction ({ commit }, data) {
-      commit('commitTransaction', data)
+    buyCurrency ({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.post('/currency/buy', data).then((res) => {
+          commit('buyCurrency', data)
+          resolve(res)
+        }, (err) => {
+          reject(err)
+        })
+      })
+    },
+    sellCurrency ({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.post('/currency/sell', data).then((res) => {
+          commit('sellCurrency', data)
+          resolve(res)
+        }, (err) => {
+          reject(err)
+        })
+      })
     },
     updateUserProfile ({ commit, dispatch }, data) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.put('/user/update').then((res) => {
-          commit('updateUserData', res.data)
+        this._vm.$axiosClient.put('/user/update', data).then((res) => {
+          commit('updateUserData', res.data.data)
           resolve(res)
         }, (err) => {
           reject(err)
