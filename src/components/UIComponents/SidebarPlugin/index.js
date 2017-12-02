@@ -17,27 +17,28 @@ const SidebarStore = {
       name: 'Transactions',
       icon: 'ti-money',
       path: '/transactions'
-    },
-    {
-      name: 'Typography',
-      icon: 'ti-text',
-      path: '/typography'
-    },
-    {
-      name: 'Icons',
-      icon: 'ti-pencil-alt2',
-      path: '/icons'
-    },
+    }
+    // ,
+    // {
+    //   name: 'Typography',
+    //   icon: 'ti-text',
+    //   path: '/typography'
+    // },
+    // {
+    //   name: 'Icons',
+    //   icon: 'ti-pencil-alt2',
+    //   path: '/icons'
+    // },
     // {
     //   name: 'Maps',
     //   icon: 'ti-map',
     //   path: '/maps'
     // },
-    {
-      name: 'Notifications',
-      icon: 'ti-bell',
-      path: '/notifications'
-    }
+    // {
+    //   name: 'Notifications',
+    //   icon: 'ti-bell',
+    //   path: '/notifications'
+    // }
   ],
   displaySidebar (value) {
     this.showSidebar = value

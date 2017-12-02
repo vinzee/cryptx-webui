@@ -10,10 +10,9 @@
             <div class="row" v-for="paymentMethod in paymentMethods">
               <div class="col-xs-3">
                 <i class="fa fa-lg fa-credit-card"></i>
-                  <!-- <img src="static/img/bank-logo.png" alt="Circle Image" class="img-circle img-no-padding img-responsive"> -->
               </div>
               <div class="col-xs-6">
-                {{paymentMethod.bankName}}
+                {{paymentMethod.nickName}}
                 <br>
                 <span class="text-success">
                   <small>{{paymentMethod.accountNumber}}</small>
@@ -65,9 +64,9 @@
 
               <div class="col-md-6">
                 <div class="form-group">
-                  <label>Bank</label>
-                  <input v-validate="'required'" class="form-control border-input" name="bank" placeholder="Bank" v-model="newPaymentMethod.bank">
-                  <span v-show="errors.has('bank')" class="text-danger">{{ errors.first('bank') }}</span>
+                  <label>Payment Method Nick Name</label>
+                  <input v-validate="'required'" class="form-control border-input" name="nickName" placeholder="Payment Method 1" v-model="newPaymentMethod.nickName">
+                  <span v-show="errors.has('nickName')" class="text-danger">{{ errors.first('nickName') }}</span>
                 </div>
               </div>
             </div>
@@ -134,6 +133,8 @@
       ])
     },
     mounted () {
+      this.newPaymentMethod.name = this.$store.getters.currentUser.name
+
       // eslint-disable-next-line
       var card = new Card({
         form: 'form[name="addPaymentMethodForm"]',
@@ -161,23 +162,30 @@
     },
     methods: {
       addPaymentMethod () {
+        let self = this
+
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            this.$store.dispatch('addPaymentMethod', this.newPaymentMethod)
-            $('#addAccountModal').modal('hide')
-            this.$notify('Added new Payment Method', 'ti-bank')
-            // this.$notify('Error in adding Payment Method', 'ti-bank', 'danger')
+            self.$store.dispatch('addPaymentMethod', self.newPaymentMethod).then((res) => {
+              $('#addAccountModal').modal('hide')
+              self.$notify('Added new Payment Method', 'ti-bank')
+            }).catch(() => {
+              self.$notify('Error in adding Payment Method', 'ti-bank', 'danger')
+            })
           }
         })
       },
       deletePaymentMethod (paymentMethodId) {
         let self = this
 
-        this.$store.dispatch('deletePaymentMethod', {id: paymentMethodId})
-        .then((res) => {
-          self.$notify('Payment Method deleted', 'ti-bank')
-        })
+        if (confirm('Are you sure you want to delete ?')) {
+          this.$store.dispatch('deletePaymentMethod', {id: paymentMethodId}).then((res) => {
+            self.$notify('Payment Method deleted', 'ti-bank')
+          }).catch(() => {
+            self.$notify('Error in deleting Payment Method', 'ti-bank', 'danger')
+          })
+        }
       }
     }
   }

@@ -1,3 +1,4 @@
+import $ from 'jquery'
 import Vue from 'vue'
 import VueConfig from 'vue-config'
 import configs from './vue.configs.js'
@@ -62,3 +63,5 @@ window.vue = new Vue({
   },
   render: h => h(App)
 })
+
+window.$ = $

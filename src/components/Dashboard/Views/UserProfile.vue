@@ -17,8 +17,9 @@
               ${{virtualWalletBalance}}
             </div>
             <div class="stats" slot="footer">
-              <button type="button" class="btn btn-sm btn-info btn-fill" data-toggle="modal" data-target="#depositRedeemModal">
-                Deposit / Redeem
+
+              <button type="button" class="btn btn-sm btn-info btn-fill" data-toggle="modal" data-target="#depositWithdrawModal">
+                Deposit / Withdraw
               </button>
             </div>
           </stats-card>
@@ -27,15 +28,15 @@
         </div>
       </div>
 
-      <!-- Deposit / Redeem money modal -->
-      <div class="modal" id="depositRedeemModal" tabindex="-1" role="dialog" aria-labelledby="depositRedeemModal" aria-hidden="true" data-backdrop="false">
+      <!-- Deposit / Withdraw money modal -->
+      <div class="modal" id="depositWithdrawModal" tabindex="-1" role="dialog" aria-labelledby="depositWithdrawModal" aria-hidden="true" data-backdrop="false">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
-            <form @submit.stop.prevent="depositRedeem">
+            <form @submit.stop.prevent="depositWithdrawSubmit">
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title" id="myModalLabel">Deposit / Redeem Money</h4>
+              <h4 class="modal-title" id="myModalLabel">Deposit / Withdraw Money</h4>
             </div>
 
             <div class="modal-body">
@@ -45,26 +46,29 @@
 
                     <div class="form-group">
                       <label>Amount ($)</label>
-                      <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="virtualWalletDepositRedeem.amount" min="10" step="10">
+                      <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="depositWithdraw.amount" min="10" step="10">
                       <span v-show="errors.has('amount')" class="text-danger">{{ errors.first('amount') }}</span>
 
                     </div>
 
                     <div class="form-group">
                       <label>Payment Method</label>
-                      <select v-validate="'required'" class="form-control" v-model="virtualWalletDepositRedeem.paymentMethodId" name="paymentMethod">
-                        <option v-for="paymentMethod in paymentMethods" :value="paymentMethod.paymentMethodId">{{paymentMethod.bankName}}</option>
+                      <select v-validate="'required'" class="form-control" v-model="depositWithdraw.paymentMethodId" name="paymentMethod">
+                        <option v-for="paymentMethod in paymentMethods" :value="paymentMethod.paymentMethodId">{{paymentMethod.nickName}}</option>
                       </select>
                       <span v-show="errors.has('paymentMethod')" class="text-danger">{{ errors.first('paymentMethod') }}</span>
                     </div>
 
+                    <div class="btn-group" data-toggle="buttons">
+                      <label for="depositCurrency" class="btn btn-info active" @click="changeTransactionType('deposit')">
+                        Deposit
+                        <input type="radio" id="depositCurrency" value="deposit" v-model="depositWithdraw.type" autocomplete="off" checked>
+                      </label> &nbsp;
 
-                    <div class="form-group">
-                      <input type="radio" id="depositCurrency" value="deposit" v-model="transactionType">
-                      <label for="depositCurrency">Deposit</label> &nbsp;
-                      <input type="radio" id="redeemCurrency" value="redeem" v-model="transactionType">
-                      <label for="redeemCurrency">Redeem</label>
-                      <br>
+                      <label for="withdrawCurrency" class="btn btn-info" @click="changeTransactionType('withdraw')">
+                        Withdraw
+                        <input type="radio" id="withdrawCurrency" value="withdraw" v-model="depositWithdraw.type" autocomplete="off">
+                      </label>
                     </div>
 
                   </div>
@@ -81,7 +85,7 @@
           </div>
         </div>
       </div>
-      <!-- end Deposit / Redeem money modal -->
+      <!-- end Deposit / Withdraw money modal -->
 
     </div>
 </template>
@@ -102,11 +106,11 @@
     },
     data () {
       return {
-        virtualWalletDepositRedeem: {
+        depositWithdraw: {
           amount: 100,
-          paymentMethodId: 1
-        },
-        transactionType: 'deposit'
+          paymentMethodId: 1,
+          type: 'deposit'
+        }
       }
     },
     computed: {
@@ -115,21 +119,31 @@
         'paymentMethods'
       ])
     },
+    mounted () {
+      // $('.btn-group').button()
+    },
     methods: {
-      depositRedeem () {
+      depositWithdrawSubmit () {
+        let self = this
+
         this.$validator.validateAll()
         .then((isValidated) => {
           if (isValidated) {
-            let type = this.transactionType === 'deposit' ? 'virtualWalletDeposit' : 'virtualWalletRedeem'
+            if (self.depositWithdraw.type !== 'deposit' && self.depositWithdraw.type !== 'withdraw') {
+              throw new Error('Invalid transaction type: ', self.depositWithdraw.type)
+            }
 
-            this.$store.dispatch(type, this.virtualWalletDepositRedeem).then(() => {
-              this.$notify('Added $' + this.virtualWalletDepositRedeem.amount + ' to virtual wallet from !', 'ti-money')
-              $('#depositRedeemModal').modal('hide')
+            self.$store.dispatch('depositWithdraw', self.depositWithdraw).then(() => {
+              self.$notify(self.depositWithdraw.type + ' $' + self.depositWithdraw.amount + ' to virtual wallet', 'ti-money')
+              $('#depositWithdrawModal').modal('hide')
             }).catch(() => {
-              this.$notify('Error in processing deposit/redeem to virtual wallet !', 'ti-money', 'danger')
+              self.$notify('Error in processing deposit/withdraw to virtual wallet !', 'ti-money', 'danger')
             })
           }
         })
+      },
+      changeTransactionType (type) {
+        this.depositWithdraw.type = type
       }
     }
   }

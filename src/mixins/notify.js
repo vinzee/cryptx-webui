@@ -8,7 +8,7 @@ Vue.mixin({
         message: message,
         icon: icon === undefined ? 'ti-bell' : icon,
         horizontalAlign: 'right',
-        verticalAlign: 'bottom',
+        verticalAlign: 'top',
         type: type === undefined ? 'success' : type
       })
     }

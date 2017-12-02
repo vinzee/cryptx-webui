@@ -9,7 +9,7 @@
           <slot name="content"></slot>
         </div>
       </div>
-      <div class="footer">
+      <div class="footer text-center">
         <hr/>
         <slot name="footer"></slot>
       </div>

@@ -5,18 +5,18 @@ Vue.mixin({
   methods: {
     login (email, password) {
       let self = this
-      // let res = {session: 'session_value'}
+
       this.$auth.login({ email, password }).then((res) => {
         console.log('login successful !', res.headers['x-auth-token'], res.data.data)
 
-        this.$store.dispatch('setUserData', res.data.data)
-        // this.$store.dispatch('setTempUserData')
-        .then(this.$store.dispatch('getCurrencyData'))
-        .then(this.$store.dispatch('login', res.headers['x-auth-token']))
-        .then(() => {
-          let redirectPath = this.$route.query.redirect == null ? '/' : this.$route.query.redirect
-          this.$router.push(redirectPath)
-          this.$notify('User Logged In', 'ti-user')
+        this.$store.dispatch('setUserData', res.data.data).then(() => {
+          self.$store.dispatch('getCurrencyData').then(() => {
+            self.$store.dispatch('login', res.headers['x-auth-token']).then(() => {
+              let redirectPath = self.$route.query.redirect == null ? '/' : self.$route.query.redirect
+              self.$router.push(redirectPath)
+              self.$notify('User Logged In', 'ti-user')
+            })
+          })
         })
       }).catch(function (error) {
         self.$notify('User Login failed! ' + error.response.data.message, 'ti-alert', 'danger')

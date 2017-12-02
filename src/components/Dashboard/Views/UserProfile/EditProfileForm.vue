@@ -11,7 +11,7 @@
             <fg-input type="email"
                       label="Email"
                       placeholder="Email"
-                      v-model="user.email">
+                      v-model="user.email" disabled>
             </fg-input>
           </div>
           <div class="col-md-4">

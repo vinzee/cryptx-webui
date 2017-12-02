@@ -100,12 +100,10 @@
 
           <div class="row">
             <div class="col-xs-4 col-xs-offset-4 text-center">
-              <button type="button" class="btn btn-block btn-success btn-fill" data-toggle="modal" data-target="#buySellCurrencyModal">Buy / Sell</button>
+              <button type="button" class="btn btn-block btn-info btn-fill" data-toggle="modal" data-target="#buySellCurrencyModal">Buy / Sell</button>
               <br>
             </div>
           </div>
-
-          <!-- <paper-table title="Current Prices" sub-title="" :data="currentPricesTableData" :columns="currentPricesTableColumns"></paper-table> -->
 
         </div> <!-- card -->
       </div>
@@ -137,9 +135,13 @@
                   </div>
 
                   <div class="form-group">
-                    <label>Current Price: ${{selectedCurrencyPrice}} per unit</label>
-                    <label>Current Investment: {{selectedCurrencyAmount}} units</label>
-                    <label>Virtual Wallet Balance: ${{virtualWalletBalance}}</label>
+                    <label class="text-info">${{selectedCurrencyPrice}} per coin</label>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Number of Coins</label>
+                    <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="buySellCurrency.amount" min="0.001" step="0.001">
+                    <span v-show="errors.has('amount')" class="text-danger">{{ errors.first('amount') }}</span>
                   </div>
 
                 </div>
@@ -147,23 +149,24 @@
                 <div class="col-md-4">
 
                   <div class="form-group">
-                    <label>Amount (units)</label>
-                    <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="buySellCurrency.amount" min="0.001" step="0.001">
-                    <span v-show="errors.has('amount')" class="text-danger">{{ errors.first('amount') }}</span>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Total Cost ($)</label>
+                    <label>Total ($)</label>
                     <input class="form-control border-input" type="number" label="Amount" placeholder="Amount" v-model="buySellCurrency.value" min="0.001" step="0.001" disabled="disabled">
-
                   </div>
 
                   <div class="form-group">
-                    <input type="radio" id="buyCurrency" value="buy" v-model="buySellCurrency.type">
-                    <label for="buyCurrency">Buy</label> &nbsp;
-                    <input type="radio" id="sellCurrency" value="sell" v-model="buySellCurrency.type">
-                    <label for="sellCurrency">Sell</label>
-                    <br>
+                    <label class="text-success">Virtual Wallet Balance: ${{virtualWalletBalance}}</label>
+                  </div>
+
+                  <div class="btn-group" data-toggle="buttons">
+                    <label for="buyCurrency" class="btn btn-info active" @click="changeTransactionType('buy')">
+                      <input type="radio" id="buyCurrency" value="buy" v-model="buySellCurrency.type" autocomplete="off" checked>
+                      Buy
+                    </label> &nbsp;
+
+                    <label for="sellCurrency" class="btn btn-info" @click="changeTransactionType('sell')">
+                      <input type="radio" id="sellCurrency" value="sell" v-model="buySellCurrency.type" autocomplete="off">
+                      Sell
+                    </label>
                   </div>
 
                 </div>
@@ -205,8 +208,7 @@
         buySellCurrency: {
           amount: 0,
           currency: 'Bitcoin',
-          type: 'buy',
-          value: 0
+          type: 'buy'
         },
         userPerformanceChartOptions: {
           low: 0,
@@ -263,19 +265,15 @@
         currentPricesTableColumns: ['Currency', 'Price']
       }
     },
+    mounted () {
+      this.buySellCurrency.amount = 0.1
+    },
     watch: {
       'buySellCurrency.amount': function () {
         this.buySellCurrency.value = _.round(this.investmentsMap[this.buySellCurrency.currency].price * this.buySellCurrency.amount, 3)
       }
     },
     computed: {
-      selectedCurrencyAmount () {
-        if (this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
-          return 0
-        } else {
-          return this.investmentsMap[this.buySellCurrency.currency].amount
-        }
-      },
       selectedCurrencyPrice () {
         if (this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
           return 0
@@ -290,6 +288,11 @@
         }
 
         _.each(this.investments, function (investment) {
+          if (investment.value === undefined) {
+            console.error('ERROR in Overview: investment value not calculated: ', investment)
+            return data
+          }
+
           if (investment.amount > 0) {
             data.labels.push(investment.currency)
             data.series.push(investment.value)
@@ -298,6 +301,8 @@
 
         data.labels.push('Virtual Wallet')
         data.series.push(this.virtualWalletBalance)
+
+        console.log('investmentsChartData: ', data)
 
         return data
       },
@@ -356,12 +361,21 @@
     methods: {
       buySellCurrencySubmit () {
         console.log('buySellCurrency: ', this.buySellCurrency)
-        let action = this.buySellCurrency.type === 'buy' ? 'buyCurrency' : 'sellCurrency'
         let self = this
 
-        this.$store.dispatch(action, this.buySellCurrency).then((res) => {
-          self.$notify('Currency ' + (this.buySellCurrency.type === 'buy' ? 'bought' : 'sold') + ' successfully', 'ti-money')
+        if (this.buySellCurrency.type === 'buy' && this.buySellCurrency.value > this.virtualWalletBalance) {
+          self.$notify('Insufficient balance in Virtual Wallet', 'ti-money', 'danger')
+          return
+        }
+
+        this.$store.dispatch('buySellCurrency', this.buySellCurrency).then((res) => {
+          self.$notify('Currency ' + this.buySellCurrency.type + ' successfull', 'ti-money')
+        }).catch(() => {
+          self.$notify('Error in currency ' + this.buySellCurrency.type, 'ti-money', 'danger')
         })
+      },
+      changeTransactionType (type) {
+        this.buySellCurrency.type = type
       }
     }
   }

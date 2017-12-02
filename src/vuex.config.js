@@ -35,7 +35,7 @@ const store = new Vuex.Store({
       return state.user.virtualWallet.balance
     },
     portfolioNetWorth: state => {
-      return _.round(_.reduce(state.user.investments, function (sum, investment) {
+      return state.user.virtualWallet.balance + _.round(_.reduce(state.user.investments, function (sum, investment) {
         return sum + investment.value
       }, 0))
     },
@@ -94,6 +94,7 @@ const store = new Vuex.Store({
       state.isAuthenticated = isAuthenticated
     },
     setUserData (state, user) {
+      console.log('setUserData')
       _.each(user.investments, function (investment) {
         state.investmentsMap[investment.currency] = investment
       })
@@ -148,11 +149,8 @@ const store = new Vuex.Store({
 
       state.currencyPriceSeries.push(priceSeries)
     },
-    virtualWalletDeposit (state, data) {
-      Vue.set(state.user.virtualWallet, 'balance', state.user.virtualWallet.balance + data.amount)
-    },
-    virtualWalletRedeem (state, data) {
-      Vue.set(state.user.virtualWallet, 'balance', state.user.virtualWallet.balance - data.amount)
+    updateVirtualWallet (state, data) {
+      Vue.set(state.user.virtualWallet, 'balance', data.virtualWallet.balance)
     },
     addPaymentMethod (state, data) {
       console.log('addPaymentMethod ', data)
@@ -161,18 +159,17 @@ const store = new Vuex.Store({
     deletePaymentMethod (state, data) {
       console.log('deletePaymentMethod ', data)
     },
-    buyCurrency (state, data) {
-      console.log('buyCurrency: ', data)
-    },
-    sellCurrency (state, data) {
-      console.log('sellCurrency: ', data)
+    updatePortfolio (state, data) {
+      console.log('updatePortfolio: ', data)
+
+      state.user.transactions = data.transactions
+      state.user.virtualWallet = data.virtualWallet
     }
   },
   actions: {
     sessionAuthenticate ({ commit, getters, dispatch }) {
       return new Promise((resolve, reject) => {
         if (getters.isSessionPresent) {
-          // store.dispatch('setTempUserData').then(() => {
           dispatch('fetchUserData').then(() => {
             dispatch('getCurrencyData').then(() => {
               commit('setAuth', true)
@@ -193,6 +190,7 @@ const store = new Vuex.Store({
       })
     },
     login ({ commit }, session) {
+      console.log('login')
       Vue.cookie.set('session', session, {expires: '1H'}) // , domain: this.$config.BASE_URL
       commit('fetchSession')
       commit('setAuth', true)
@@ -201,31 +199,6 @@ const store = new Vuex.Store({
       commit('setAuth', false)
       commit('deleteSession')
       commit('setUserData', {})
-    },
-    setTempUserData ({ commit }) {
-      /* eslint-disable object-property-newline  */
-      let userData = {
-        name: 'Vineet Ahirkar', email: 'vinzee93@gmail.com', ssn: '111-11-1111', phone: '240 230 2969',
-        address: 'Maryland, US', city: 'baltimore', country: 'United States', postalCode: '21227',
-        virtualWallet: { balance: 123 },
-        paymentMethods: [
-          { id: '1', name: 'Bank of America', accountNumber: '1234', type: 'credit' },
-          {id: '2', name: 'PNC', accountNumber: '6789', type: 'debit'}
-        ],
-        investments: [
-          { currency: 'Bitcoin', amount: 0.4 },
-          { currency: 'Litecoin', amount: 2.3 },
-          { currency: 'Ethereum', amount: 3.5 },
-          { currency: 'Ripple', amount: 0 }
-        ],
-        transactions: [
-          { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 },
-          { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 },
-          { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 },
-          { type: 'Buy', currency: 'Bitcoin', amount: '$36.738', date: 1510930059 }
-        ]
-      }
-      commit('setUserData', userData)
     },
     setUserData ({ commit }, data) {
       let userData = data.user
@@ -266,6 +239,7 @@ const store = new Vuex.Store({
       })
     },
     getCurrencyData ({ commit }) {
+      console.log('getCurrencyData')
       let url = window.appConfig.CRYPTOCOMPARE_API_URL + '/data/histohour'
 
       return new Promise((resolve, reject) => {
@@ -302,40 +276,24 @@ const store = new Vuex.Store({
         })
       })
     },
-    virtualWalletDeposit ({ commit }, data) {
+    depositWithdraw ({ commit }, data) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.post('/wallet/deposit', data).then((res) => {
-          commit('virtualWalletDeposit', data)
+        this._vm.$axiosClient.post('/wallet/' + data.type, data).then((res) => {
+          commit('updateVirtualWallet', data)
           resolve(res)
         }, (err) => {
           reject(err)
         })
       })
     },
-    virtualWalletRedeem ({ commit }, data) {
+    buySellCurrency ({ commit }, data) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.post('/wallet/withdraw', data).then((res) => {
-          commit('virtualWalletRedeem', data)
-          resolve(res)
-        }, (err) => {
-          reject(err)
-        })
-      })
-    },
-    buyCurrency ({ commit }, data) {
-      return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.post('/currency/buy', data).then((res) => {
-          commit('buyCurrency', data)
-          resolve(res)
-        }, (err) => {
-          reject(err)
-        })
-      })
-    },
-    sellCurrency ({ commit }, data) {
-      return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.post('/currency/sell', data).then((res) => {
-          commit('sellCurrency', data)
+        if (data.type !== 'buy' && data.type !== 'sell') {
+          throw new Error('Invalid currency transaction type in buySellCurrency: ', data.type)
+        }
+
+        this._vm.$axiosClient.post('/currency/' + data.type, data).then((res) => {
+          commit('updatePortfolio', res.data)
           resolve(res)
         }, (err) => {
           reject(err)
