@@ -14,7 +14,7 @@
             </div>
             <div class="numbers" slot="content">
               <p style="font-size: 15px">Virtual Wallet</p>
-              ${{virtualWalletBalance}}
+              ${{virtualWalletAmount}}
             </div>
             <div class="stats" slot="footer">
 
@@ -115,7 +115,7 @@
     },
     computed: {
       ...mapGetters([
-        'virtualWalletBalance',
+        'virtualWalletAmount',
         'paymentMethods'
       ])
     },

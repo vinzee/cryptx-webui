@@ -28,12 +28,6 @@
     },
     methods: {
       initHighCharts () {
-        Highcharts.setOptions({
-          global: {
-            useUTC: false
-          }
-        })
-
         Highcharts.chart('container', {
           tooltip: {
             shared: true,
@@ -51,7 +45,7 @@
           xAxis: {
             labels: {
               formatter: function () {
-                return moment(this.value).format('YYYY-MM-DD')
+                return moment(this.value).format('YY-MMM-DD')
               }
             },
             type: 'datetime'

@@ -12,12 +12,18 @@ import Icons from 'src/components/Dashboard/Views/Icons.vue'
 // import Maps from 'src/components/Dashboard/Views/Maps.vue'
 import Typography from 'src/components/Dashboard/Views/Typography.vue'
 import Transactions from 'src/components/Dashboard/Views/Transactions.vue'
+import Test from 'src/components/Test.vue'
 
 const routes = [
   {
     path: '/',
     component: DashboardLayout,
     children: [
+      {
+        path: '/test',
+        name: 'test',
+        component: Test
+      },
       {
         path: '/',
         name: 'overview',

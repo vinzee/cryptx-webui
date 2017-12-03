@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import Vue from 'vue'
+import 'highcharts.config.js'
 import VueConfig from 'vue-config'
 import configs from './vue.configs.js'
 import './utils/auth.js'

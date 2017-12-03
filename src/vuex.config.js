@@ -16,7 +16,7 @@ const store = new Vuex.Store({
     currencyData: null,
     currencyDataMap: {},
     currencyIconData: {},
-    investmentsMap: {},
+    portfolioMap: {},
     topCurrency: {},
     worstCurrency: {},
     currencyPriceSeries: []
@@ -31,19 +31,19 @@ const store = new Vuex.Store({
     paymentMethods: state => {
       return state.user.paymentMethods
     },
-    virtualWalletBalance: state => {
-      return state.user.virtualWallet.balance
+    virtualWalletAmount: state => {
+      return state.user.virtualWallet.amount
     },
     portfolioNetWorth: state => {
-      return state.user.virtualWallet.balance + _.round(_.reduce(state.user.investments, function (sum, investment) {
-        return sum + investment.value
+      return state.user.virtualWallet.amount + _.round(_.reduce(state.user.portfolio, function (sum, portfolio) {
+        return sum + portfolio.value
       }, 0))
     },
-    investments: state => {
-      return state.user.investments
+    portfolio: state => {
+      return state.user.portfolio
     },
-    investmentsMap: state => {
-      return state.investmentsMap
+    portfolioMap: state => {
+      return state.portfolioMap
     },
     isAuthenticated: state => {
       return state.isAuthenticated
@@ -81,7 +81,7 @@ const store = new Vuex.Store({
       state.session = Vue.cookie.get('session') // {domain: window.appConfig.BASE_URL}
     },
     deleteSession (state) {
-      Vue.cookie.delete('session') // , {domain: this.$config.BASE_URL}
+      Vue.cookie.delete('session') // , {domain: window.appConfig.BASE_URL}
       state.session = null
     },
     setIsBootstrapping (state, isBootstrapping) {
@@ -95,8 +95,19 @@ const store = new Vuex.Store({
     },
     setUserData (state, user) {
       console.log('setUserData')
-      _.each(user.investments, function (investment) {
-        state.investmentsMap[investment.currency] = investment
+
+      let portfolio = []
+      portfolio.push({currency: 'Bitcoin', amount: user.portfolio.bitcoin})
+      portfolio.push({currency: 'Litecoin', amount: user.portfolio.litecoin})
+      portfolio.push({currency: 'Ethereum', amount: user.portfolio.ethereum})
+      user.portfolio = portfolio
+
+      _.each(user.portfolio, function (portfolio) {
+        state.portfolioMap[portfolio.currency] = portfolio
+      })
+
+      _.each(user.transactions, function (transaction) {
+        transaction.transactionTime = moment(transaction.transactionTime * 1000).format(window.appConfig.momentFormat)
       })
 
       _.each(user.transactions, function (transaction) {
@@ -107,6 +118,7 @@ const store = new Vuex.Store({
     },
     updateUserData (state, data) {
       console.log('updateUserData: ', data)
+      state.user = data.user
     },
     setCurrencyData (state, currencyData) {
       let topCurrency = null
@@ -128,15 +140,15 @@ const store = new Vuex.Store({
       state.worstCurrency = worstCurrency
       state.currencyData = currencyData
 
-      _.each(state.user.investments, function (investment) {
-        let currencyDetails = state.currencyDataMap[investment.currency]
+      _.each(state.user.portfolio, function (portfolio) {
+        let currencyDetails = state.currencyDataMap[portfolio.currency]
 
         if (currencyDetails !== undefined) {
-          investment.value = _.round(investment.amount * currencyDetails.price_usd, 3)
-          investment.price = currencyDetails.price_usd
+          portfolio.value = _.round(portfolio.amount * currencyDetails.price_usd, 3)
+          portfolio.price = currencyDetails.price_usd
         } else {
-          investment.value = 0
-          investment.price = 0
+          portfolio.value = 0
+          portfolio.price = 0
         }
       })
     },
@@ -150,7 +162,7 @@ const store = new Vuex.Store({
       state.currencyPriceSeries.push(priceSeries)
     },
     updateVirtualWallet (state, data) {
-      Vue.set(state.user.virtualWallet, 'balance', data.virtualWallet.balance)
+      Vue.set(state.user.virtualWallet, 'amount', data.virtualWallet.amount)
     },
     addPaymentMethod (state, data) {
       console.log('addPaymentMethod ', data)
@@ -168,6 +180,8 @@ const store = new Vuex.Store({
   },
   actions: {
     sessionAuthenticate ({ commit, getters, dispatch }) {
+      let self = this
+
       return new Promise((resolve, reject) => {
         if (getters.isSessionPresent) {
           dispatch('fetchUserData').then(() => {
@@ -176,12 +190,7 @@ const store = new Vuex.Store({
               commit('setIsBootstrapping', false)
               self.loading = false
               resolve({loggedIn: true})
-            }).catch((res) => {
-              self.$notify('Error in fetching the latest crypto-currency pricing data', 'ti-alert', 'danger')
             })
-          }).catch((err) => {
-            console.error('Error in fetchUserData !', err)
-            reject(err)
           })
         } else {
           commit('setIsBootstrapping', false)
@@ -205,7 +214,7 @@ const store = new Vuex.Store({
       userData.paymentMethods = data.paymentMethods
       userData.transactions = data.transactions
       userData.virtualWallet = data.virtualWallet
-      userData.investments = data.investments
+      userData.portfolio = data.portfolio
       commit('setUserData', userData)
     },
     fetchUserData ({ dispatch }) {
@@ -238,37 +247,38 @@ const store = new Vuex.Store({
         })
       })
     },
+    getPortfolioData ({ commit }, data) {
+      console.log('getPortfolioData')
+
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.get('/portfolio/').then((data) => {
+          // console.log('getCurrencyData responses: ', bitcoinHistoric, ethereumHistoric, litecoinHistoric)
+          // commit('setCurrencyHistoricPricing', {price: bitcoinHistoric.data.Data, currency: 'Bitcoin'})
+          // commit('setCurrencyHistoricPricing', {price: ethereumHistoric.data.Data, currency: 'Ethereum'})
+          // commit('setCurrencyHistoricPricing', {price: litecoinHistoric.data.Data, currency: 'Ethereum'})
+
+          resolve()
+        }).catch((err) => {
+          reject(err)
+        })
+      })
+    },
     getCurrencyData ({ commit }) {
       console.log('getCurrencyData')
-      let url = window.appConfig.CRYPTOCOMPARE_API_URL + '/data/histohour'
 
       return new Promise((resolve, reject) => {
         Vue.axios.all([
-          // Vue.axios.get(window.appConfig.CRYPTOCOMPARE_URL + '/api/data/coinlist/')
           Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/bitcoin/'),
           Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/ethereum/'),
-          Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/ripple/'),
-          Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/litecoin/'),
-          Vue.axios.get(url + '?fsym=BTC&tsym=USD&limit=30&aggregate=1'),
-          Vue.axios.get(url + '?fsym=ETH&tsym=USD&limit=30&aggregate=1')
-          // Vue.axios.get(url + '?fsym=XRP&tsym=USD&limit=30&aggregate=1'),
-          // Vue.axios.get(url + '?fsym=LTC&tsym=USD&limit=30&aggregate=1')
-          // Vue.axios.get(url + '?fsym=BCH&tsym=USD&limit=30&aggregate=1'),
-        ]).then(Vue.axios.spread(function (bitcoinCurrent, ethereumCurrent, rippleCurrent, litecoinCurrent, bitcoinHistoric, ethereumHistoric, rippleHistoric, litecoinHistoric) {
-          console.log('getCurrencyData responses: ', bitcoinCurrent, ethereumCurrent, rippleCurrent, litecoinCurrent, bitcoinHistoric, ethereumHistoric, rippleHistoric, litecoinHistoric)
+          Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/litecoin/')
+        ]).then(Vue.axios.spread(function (bitcoinCurrent, ethereumCurrent, litecoinCurrent) {
+          console.log('getCurrencyData responses: ', bitcoinCurrent, ethereumCurrent, litecoinCurrent)
 
-          let current = {
+          commit('setCurrencyData', {
             bitcoin: bitcoinCurrent.data[0],
             ethereum: ethereumCurrent.data[0],
-            ripple: rippleCurrent.data[0],
             litecoin: litecoinCurrent.data[0]
-          }
-
-          commit('setCurrencyData', current)
-          commit('setCurrencyHistoricPricing', {price: bitcoinHistoric.data.Data, currency: 'Bitcoin'})
-          commit('setCurrencyHistoricPricing', {price: ethereumHistoric.data.Data, currency: 'Ethereum'})
-          // commit('setCurrencyHistoricPricing', {price: rippleHistoric.data.Data, currency: 'Ethereum'})
-          // commit('setCurrencyHistoricPricing', {price: litecoinHistoric.data.Data, currency: 'Ethereum'})
+          })
 
           resolve()
         })).catch((err) => {
@@ -278,7 +288,12 @@ const store = new Vuex.Store({
     },
     depositWithdraw ({ commit }, data) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.post('/wallet/' + data.type, data).then((res) => {
+        this._vm.$axiosClient.post('/wallet/' + data.type, {
+          walletRequest: {
+            amount: data.amount,
+            paymentMethodId: data.paymentMethodId
+          }
+        }).then((res) => {
           commit('updateVirtualWallet', data)
           resolve(res)
         }, (err) => {
