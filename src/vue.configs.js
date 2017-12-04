@@ -8,7 +8,12 @@ const configs = {
   isLoggingEnabled: true,
   CRYPTOCOMPARE_URL: 'https://www.cryptocompare.com',
   CRYPTOCOMPARE_API_URL: 'https://min-api.cryptocompare.com',
-  COINMARKETCAP_API_URL: 'https://api.coinmarketcap.com'
+  COINMARKETCAP_API_URL: 'https://api.coinmarketcap.com',
+  updateIntervals: {
+    currency: 10 * 1000, //  = 10 sec
+    currencyHistoric: 30 * 1000, // 30 sec
+    portfolioHistoric: 60 * 60 * 1000 // 60 min
+  }
 }
 
 if (process.env.NODE_ENV === 'production') {

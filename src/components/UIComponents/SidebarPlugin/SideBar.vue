@@ -11,8 +11,7 @@
       <div class="logo">
         <a href="#/" class="simple-text" style="font-size:20px">
             <div class="logo-img">
-              <!-- 42px -->
-                <img src="static/img/cryptx-logo.jpg" alt="">
+                <img src="static/img/cryptx-logo.jpg" alt="" style="max-width: 50px">
             </div>
           Cryptx
         </a>

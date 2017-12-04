@@ -7,6 +7,7 @@
       <div class="content">
         <ul class="list-unstyled team-members">
           <li>
+            <p class="text-danger" :v-if="paymentMethods.length === 0"></p>
             <div class="row" v-for="paymentMethod in paymentMethods">
               <div class="col-xs-3">
                 <i class="fa fa-lg fa-credit-card"></i>
@@ -20,7 +21,7 @@
               </div>
 
               <div class="col-xs-3 text-right">
-                <button class="btn btn-sm btn-success btn-icon" @click="deletePaymentMethod(paymentMethod.paymentMethodId)">
+                <button class="btn btn-sm btn-success btn-icon" @click="deletePaymentMethod(paymentMethod.cardid)">
                   <i class="fa fa-lg fa-trash"></i>
                 </button>
               </div>
@@ -75,14 +76,14 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label>Card Number</label>
-                  <input v-validate="'required'" class="form-control border-input" name="number" placeholder="Amount" v-model="newPaymentMethod.number">
+                  <input v-validate="'required'" class="form-control border-input" name="number" placeholder="Card Number" v-model="newPaymentMethod.number">
                   <span v-show="errors.has('number')" class="text-danger">{{ errors.first('number') }}</span>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <label>Expiry</label>
-                  <input v-validate="'required'" class="form-control border-input" name="expiry" placeholder="Amount" v-model="newPaymentMethod.expiry">
+                  <input v-validate="'required'" class="form-control border-input" name="expiry" placeholder="Expiry" v-model="newPaymentMethod.expiry">
                   <span v-show="errors.has('expiry')" class="text-danger">{{ errors.first('expiry') }}</span>
 
                 </div>
@@ -90,7 +91,7 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label>CVV</label>
-                  <input v-validate="'required'" class="form-control border-input" name="cvc" placeholder="Amount" v-model="newPaymentMethod.cvc">
+                  <input v-validate="'required'" class="form-control border-input" name="cvc" placeholder="CVV" v-model="newPaymentMethod.cvv">
                   <span v-show="errors.has('cvc')" class="text-danger">{{ errors.first('cvc') }}</span>
 
                 </div>
@@ -176,11 +177,11 @@
           }
         })
       },
-      deletePaymentMethod (paymentMethodId) {
+      deletePaymentMethod (cardid) {
         let self = this
 
         if (confirm('Are you sure you want to delete ?')) {
-          this.$store.dispatch('deletePaymentMethod', {id: paymentMethodId}).then((res) => {
+          this.$store.dispatch('deletePaymentMethod', {id: cardid}).then((res) => {
             self.$notify('Payment Method deleted', 'ti-bank')
           }).catch(() => {
             self.$notify('Error in deleting Payment Method', 'ti-bank', 'danger')

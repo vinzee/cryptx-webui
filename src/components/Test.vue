@@ -7,10 +7,12 @@
 <script>
   import Highcharts from 'highcharts'
   import moment from 'moment'
+  import $ from 'jquery'
 
   export default {
     mounted () {
       this.initHighCharts()
+      window.$ = $
     },
     computed: {
       btc () {
@@ -93,6 +95,11 @@
             name: 'Litecoin',
             data: this.ltc
           }]
+        })
+
+        $('#container').bind('mousedown', function () {
+          // $(this).toggleClass('modal')
+          // $('#container', this).highcharts().reflow()
         })
       }
     }

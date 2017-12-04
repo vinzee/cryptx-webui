@@ -7,19 +7,24 @@ Vue.mixin({
       let self = this
 
       this.$auth.login({ email, password }).then((res) => {
-        console.log('login successful !', res.headers['x-auth-token'], res.data.data)
-
         this.$store.dispatch('setUserData', res.data.data).then(() => {
-          self.$store.dispatch('getCurrencyData').then(() => {
-            self.$store.dispatch('login', res.headers['x-auth-token']).then(() => {
-              let redirectPath = self.$route.query.redirect == null ? '/' : self.$route.query.redirect
-              self.$router.push(redirectPath)
-              self.$notify('User Logged In', 'ti-user')
-            })
+          self.$store.dispatch('login', res.headers['x-auth-token'])
+          Promise.all([
+            self.$store.dispatch('getCurrencyData'),
+            self.$store.dispatch('getCurrencyHistoricData'),
+            self.$store.dispatch('getPortfolioHistoricData')
+          ]).then(() => {
+            let redirectPath = self.$route.query.redirect == null ? '/' : self.$route.query.redirect
+            self.$router.push(redirectPath)
+            self.$notify('User Logged In', 'ti-user')
           })
         })
       }).catch(function (error) {
-        self.$notify('User Login failed! ' + error.response.data.message, 'ti-alert', 'danger')
+        if (error && error.response && error.response.data) {
+          self.$notify('User Login failed! ' + error.response.data.message, 'ti-alert', 'danger')
+        } else {
+          console.error(error)
+        }
       })
     },
     register (userData) {

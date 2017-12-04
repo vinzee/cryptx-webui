@@ -7,7 +7,6 @@
         </div>
 
         <div class="col-lg-4 col-md-5">
-          <!-- <user-card></user-card> -->
           <stats-card>
             <div class="icon-big text-center icon-success" slot="header">
               <i class="ti-wallet"></i>
@@ -46,15 +45,15 @@
 
                     <div class="form-group">
                       <label>Amount ($)</label>
-                      <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="depositWithdraw.amount" min="10" step="10">
+                      <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="depositWithdraw.amount" min="10" step="0.01">
                       <span v-show="errors.has('amount')" class="text-danger">{{ errors.first('amount') }}</span>
 
                     </div>
 
                     <div class="form-group">
                       <label>Payment Method</label>
-                      <select v-validate="'required'" class="form-control" v-model="depositWithdraw.paymentMethodId" name="paymentMethod">
-                        <option v-for="paymentMethod in paymentMethods" :value="paymentMethod.paymentMethodId">{{paymentMethod.nickName}}</option>
+                      <select v-validate="'required'" class="form-control" v-model="depositWithdraw.cardid" name="paymentMethod">
+                        <option v-for="paymentMethod in paymentMethods" :value="paymentMethod.cardid">{{paymentMethod.nickName}}</option>
                       </select>
                       <span v-show="errors.has('paymentMethod')" class="text-danger">{{ errors.first('paymentMethod') }}</span>
                     </div>
@@ -108,7 +107,6 @@
       return {
         depositWithdraw: {
           amount: 100,
-          paymentMethodId: 1,
           type: 'deposit'
         }
       }
@@ -119,9 +117,6 @@
         'paymentMethods'
       ])
     },
-    mounted () {
-      // $('.btn-group').button()
-    },
     methods: {
       depositWithdrawSubmit () {
         let self = this
@@ -131,12 +126,16 @@
           if (isValidated) {
             if (self.depositWithdraw.type !== 'deposit' && self.depositWithdraw.type !== 'withdraw') {
               throw new Error('Invalid transaction type: ', self.depositWithdraw.type)
+            } else if (self.depositWithdraw.type === 'withdraw' && self.depositWithdraw.amount > self.virtualWalletAmount) {
+              self.$notify('Insufficient balance in Virtual Wallet', 'ti-money', 'danger')
+              return
             }
 
             self.$store.dispatch('depositWithdraw', self.depositWithdraw).then(() => {
               self.$notify(self.depositWithdraw.type + ' $' + self.depositWithdraw.amount + ' to virtual wallet', 'ti-money')
               $('#depositWithdrawModal').modal('hide')
-            }).catch(() => {
+            }).catch((res) => {
+              self.depositWithdraw.amount = 100
               self.$notify('Error in processing deposit/withdraw to virtual wallet !', 'ti-money', 'danger')
             })
           }

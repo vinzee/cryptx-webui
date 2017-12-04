@@ -36,6 +36,7 @@ Vue.mixin({
       if (error.response && error.response.status === 401) {
         self.$notify('Unauthorized User. ', 'ti-alert', 'danger')
         self.logout()
+        return
       }
 
       return Promise.reject(error)

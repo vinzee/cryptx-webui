@@ -56,56 +56,46 @@
 
         <div class="row">
           <div class="col-md-12">
-            <fg-input type="text"
-                      label="Address"
-                      placeholder="Home Address"
-                      v-model="user.address">
-            </fg-input>
+            <div class="form-group">
+              <label>Address</label>
+              <input class="form-control border-input" name="address" placeholder="Address" v-model="user.address">
+              <span v-show="errors.has('address')" class="text-danger">{{ errors.first('address') }}</span>
+            </div>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-4">
-            <fg-input type="text"
-                      label="City"
-                      placeholder="City"
-                      v-model="user.city">
-            </fg-input>
+            <div class="form-group">
+              <label>City</label>
+              <input class="form-control border-input" name="city" placeholder="City" v-model="user.city">
+              <span v-show="errors.has('city')" class="text-danger">{{ errors.first('city') }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <fg-input type="text"
-                      label="Country"
-                      placeholder="Country"
-                      v-model="user.country">
-            </fg-input>
+            <div class="form-group">
+              <label>Country</label>
+              <input class="form-control border-input" name="country" placeholder="Country" v-model="user.country">
+              <span v-show="errors.has('country')" class="text-danger">{{ errors.first('country') }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <fg-input type="number"
-                      label="Postal Code"
-                      placeholder="ZIP Code"
-                      v-model="user.postalCode">
-            </fg-input>
+            <div class="form-group">
+              <label>Postal Code</label>
+              <input class="form-control border-input" name="postalCode" placeholder="Postal Code" v-model="user.postalCode" type="number">
+              <span v-show="errors.has('postalCode')" class="text-danger">{{ errors.first('postalCode') }}</span>
+            </div>
           </div>
         </div>
 
-        <!-- <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>About Me</label>
-              <textarea rows="5" class="form-control border-input"
-                        placeholder="Here can be your description"
-                        v-model="user.aboutMe">
-
-              </textarea>
-            </div>
-          </div>
-        </div> -->
         <div class="text-center">
           <button type="submit" class="btn btn-info btn-fill btn-wd" @click.prevent="updateProfile">
             Update Profile
           </button>
         </div>
+
         <div class="clearfix"></div>
+
       </form>
     </div>
   </div>
@@ -121,15 +111,22 @@
     },
     computed: {
       user () {
-        return _.cloneDeep(this.$store.getters.currentUser)
+        let user = _.cloneDeep(this.$store.getters.currentUser)
+        delete user.portfolio
+        delete user.paymentMethods
+        delete user.transactions
+        delete user.virtualWallet
+        delete user.portfolioId
+        return user
       }
     },
     methods: {
       updateProfile () {
+        let self = this
         this.$store.dispatch('updateUserProfile', this.user).then(() => {
-          this.$notify('User Profile updated', 'ti-user')
+          self.$notify('User Profile updated', 'ti-user')
         }).catch(function (res) {
-          this.$notify('User Profile update failed', 'ti-alert', 'danger')
+          self.$notify('User Profile update failed', 'ti-alert', 'danger')
         })
       }
     }

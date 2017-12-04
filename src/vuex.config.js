@@ -19,7 +19,8 @@ const store = new Vuex.Store({
     portfolioMap: {},
     topCurrency: {},
     worstCurrency: {},
-    currencyPriceSeries: []
+    portfolioHistoricData: [],
+    currencyHistoricData: []
   },
   getters: {
     currentUser: state => {
@@ -60,8 +61,11 @@ const store = new Vuex.Store({
     worstCurrency: state => {
       return state.worstCurrency
     },
-    currencyPriceSeries: state => {
-      return state.currencyPriceSeries
+    portfolioHistoricData: state => {
+      return state.portfolioHistoricData
+    },
+    currencyHistoricData: state => {
+      return state.currencyHistoricData
     },
     isLoading: state => {
       return state.isLoading
@@ -93,32 +97,40 @@ const store = new Vuex.Store({
     setAuth (state, isAuthenticated) {
       state.isAuthenticated = isAuthenticated
     },
-    setUserData (state, user) {
-      console.log('setUserData')
-
-      let portfolio = []
-      portfolio.push({currency: 'Bitcoin', amount: user.portfolio.bitcoin})
-      portfolio.push({currency: 'Litecoin', amount: user.portfolio.litecoin})
-      portfolio.push({currency: 'Ethereum', amount: user.portfolio.ethereum})
-      user.portfolio = portfolio
-
-      _.each(user.portfolio, function (portfolio) {
-        state.portfolioMap[portfolio.currency] = portfolio
-      })
-
-      _.each(user.transactions, function (transaction) {
-        transaction.transactionTime = moment(transaction.transactionTime * 1000).format(window.appConfig.momentFormat)
-      })
-
-      _.each(user.transactions, function (transaction) {
-        transaction.transactionTime = moment(transaction.transactionTime * 1000).format(window.appConfig.momentFormat)
-      })
-
-      state.user = user
-    },
     updateUserData (state, data) {
-      console.log('updateUserData: ', data)
-      state.user = data.user
+      state.user = data
+    },
+    setPaymentMethod (state, data) {
+      state.user.paymentMethods = data
+    },
+    setUserData (state, user) {
+      state.user = state.user || user
+
+      if (user.portfolio !== null && user.portfolio !== undefined) {
+        let portfolio = []
+        portfolio.push({currency: 'Bitcoin', amount: user.portfolio.bitcoin})
+        portfolio.push({currency: 'Litecoin', amount: user.portfolio.litecoin})
+        portfolio.push({currency: 'Ethereum', amount: user.portfolio.ethereum})
+
+        user.portfolioId = user.portfolio.portfolioId
+        user.portfolio = portfolio
+
+        _.each(user.portfolio, function (portfolio) {
+          state.portfolioMap[portfolio.currency] = portfolio
+        })
+      }
+
+      if (user.transactions !== null && user.transactions !== undefined) {
+        user.transactions = user.transactions.reverse()
+
+        _.each(user.transactions, function (transaction) {
+          transaction.transactionTime = moment(transaction.transactionTime * 1000).format(window.appConfig.momentFormat)
+        })
+      }
+
+      _.each(user, (v, k) => {
+        state.user[k] = v
+      })
     },
     setCurrencyData (state, currencyData) {
       let topCurrency = null
@@ -139,7 +151,8 @@ const store = new Vuex.Store({
       state.topCurrency = topCurrency
       state.worstCurrency = worstCurrency
       state.currencyData = currencyData
-
+    },
+    setPortfolioValue (state, data) {
       _.each(state.user.portfolio, function (portfolio) {
         let currencyDetails = state.currencyDataMap[portfolio.currency]
 
@@ -152,30 +165,19 @@ const store = new Vuex.Store({
         }
       })
     },
-    setCurrencyHistoricPricing (state, data) {
-      let priceSeries = {name: data.currency, data: []}
-
-      _.map(data.price, function (p) {
-        priceSeries.data.push(p.high)
-      })
-
-      state.currencyPriceSeries.push(priceSeries)
+    setPortfolioHistoricData (state, data) {
+      state.portfolioHistoricData = [
+        {pricing: data.bitcoin, currency: 'Bitcoin'},
+        {pricing: data.ethereum, currency: 'Ethereum'},
+        {pricing: data.litecoin, currency: 'Litecoin'}
+      ]
     },
-    updateVirtualWallet (state, data) {
-      Vue.set(state.user.virtualWallet, 'amount', data.virtualWallet.amount)
-    },
-    addPaymentMethod (state, data) {
-      console.log('addPaymentMethod ', data)
-      state.user.paymentMethods.push(data)
-    },
-    deletePaymentMethod (state, data) {
-      console.log('deletePaymentMethod ', data)
-    },
-    updatePortfolio (state, data) {
-      console.log('updatePortfolio: ', data)
-
-      state.user.transactions = data.transactions
-      state.user.virtualWallet = data.virtualWallet
+    setCurrencyHistoricData (state, data) {
+      state.currencyHistoricData = [
+        {pricing: data.bitcoin, currency: 'Bitcoin'},
+        {pricing: data.ethereum, currency: 'Ethereum'},
+        {pricing: data.litecoin, currency: 'Litecoin'}
+      ]
     }
   },
   actions: {
@@ -185,7 +187,11 @@ const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         if (getters.isSessionPresent) {
           dispatch('fetchUserData').then(() => {
-            dispatch('getCurrencyData').then(() => {
+            Promise.all([
+              dispatch('getCurrencyData'),
+              dispatch('getCurrencyHistoricData'),
+              dispatch('getPortfolioHistoricData')
+            ]).then(() => {
               commit('setAuth', true)
               commit('setIsBootstrapping', false)
               self.loading = false
@@ -199,7 +205,6 @@ const store = new Vuex.Store({
       })
     },
     login ({ commit }, session) {
-      console.log('login')
       Vue.cookie.set('session', session, {expires: '1H'}) // , domain: this.$config.BASE_URL
       commit('fetchSession')
       commit('setAuth', true)
@@ -207,7 +212,7 @@ const store = new Vuex.Store({
     logout ({ commit }) {
       commit('setAuth', false)
       commit('deleteSession')
-      commit('setUserData', {})
+      commit('updateUserData', {})
     },
     setUserData ({ commit }, data) {
       let userData = data.user
@@ -229,8 +234,16 @@ const store = new Vuex.Store({
     },
     addPaymentMethod ({ commit }, data) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.post('/payment_method/create', data).then((res) => {
-          commit('addPaymentMethod', data)
+        this._vm.$axiosClient.post('/payment_method/create', {
+          paymentMethod: {
+            nickName: data.nickName,
+            cardNumber: data.number,
+            cardName: data.name,
+            cvv: data.cvv,
+            cardExpiryDate: data.expiry
+          }
+        }).then((res) => {
+          commit('setPaymentMethod', res.data.data)
           resolve(res)
         }, (err) => {
           reject(err)
@@ -240,22 +253,27 @@ const store = new Vuex.Store({
     deletePaymentMethod ({ commit }, data) {
       return new Promise((resolve, reject) => {
         this._vm.$axiosClient.delete('/payment_method/' + data.id).then((res) => {
-          commit('deletePaymentMethod', data)
+          commit('setPaymentMethod', res.data.data)
           resolve(res)
         }, (err) => {
           reject(err)
         })
       })
     },
-    getPortfolioData ({ commit }, data) {
-      console.log('getPortfolioData')
-
+    getPortfolioHistoricData ({ commit }, data) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.get('/portfolio/').then((data) => {
-          // console.log('getCurrencyData responses: ', bitcoinHistoric, ethereumHistoric, litecoinHistoric)
-          // commit('setCurrencyHistoricPricing', {price: bitcoinHistoric.data.Data, currency: 'Bitcoin'})
-          // commit('setCurrencyHistoricPricing', {price: ethereumHistoric.data.Data, currency: 'Ethereum'})
-          // commit('setCurrencyHistoricPricing', {price: litecoinHistoric.data.Data, currency: 'Ethereum'})
+        this._vm.$axiosClient.get('/portfoliohistory').then((data) => {
+          commit('setPortfolioHistoricData', data.data)
+          resolve()
+        }).catch((err) => {
+          reject(err)
+        })
+      })
+    },
+    getCurrencyHistoricData ({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axiosClient.get('/currencyhistory').then((data) => {
+          commit('setCurrencyHistoricData', data.data)
 
           resolve()
         }).catch((err) => {
@@ -264,21 +282,18 @@ const store = new Vuex.Store({
       })
     },
     getCurrencyData ({ commit }) {
-      console.log('getCurrencyData')
-
       return new Promise((resolve, reject) => {
         Vue.axios.all([
           Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/bitcoin/'),
           Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/ethereum/'),
           Vue.axios.get(window.appConfig.COINMARKETCAP_API_URL + '/v1/ticker/litecoin/')
         ]).then(Vue.axios.spread(function (bitcoinCurrent, ethereumCurrent, litecoinCurrent) {
-          console.log('getCurrencyData responses: ', bitcoinCurrent, ethereumCurrent, litecoinCurrent)
-
           commit('setCurrencyData', {
             bitcoin: bitcoinCurrent.data[0],
             ethereum: ethereumCurrent.data[0],
             litecoin: litecoinCurrent.data[0]
           })
+          commit('setPortfolioValue')
 
           resolve()
         })).catch((err) => {
@@ -286,29 +301,40 @@ const store = new Vuex.Store({
         })
       })
     },
-    depositWithdraw ({ commit }, data) {
+    depositWithdraw ({ commit, state }, data) {
       return new Promise((resolve, reject) => {
         this._vm.$axiosClient.post('/wallet/' + data.type, {
           walletRequest: {
             amount: data.amount,
-            paymentMethodId: data.paymentMethodId
+            cardid: data.cardid,
+            portfolioId: state.user.portfolioId
           }
         }).then((res) => {
-          commit('updateVirtualWallet', data)
+          commit('setUserData', res.data.data)
           resolve(res)
         }, (err) => {
           reject(err)
         })
       })
     },
-    buySellCurrency ({ commit }, data) {
+    buySellCurrency ({ commit, state, dispatch }, data) {
       return new Promise((resolve, reject) => {
         if (data.type !== 'buy' && data.type !== 'sell') {
           throw new Error('Invalid currency transaction type in buySellCurrency: ', data.type)
         }
 
-        this._vm.$axiosClient.post('/currency/' + data.type, data).then((res) => {
-          commit('updatePortfolio', res.data)
+        this._vm.$axiosClient.post('/currency/' + data.type, {
+          transactionRequest: {
+            currency: data.currency,
+            numberOfCoins: data.amount,
+            transactionAmount: data.value,
+            transactionTime: Math.round((new Date()).getTime() / 1000),
+            cardid: data.cardid,
+            portfolioId: state.user.portfolioId
+          }
+        }).then((res) => {
+          commit('setUserData', res.data.data)
+          commit('setPortfolioValue')
           resolve(res)
         }, (err) => {
           reject(err)
@@ -317,8 +343,8 @@ const store = new Vuex.Store({
     },
     updateUserProfile ({ commit, dispatch }, data) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.put('/user/update', data).then((res) => {
-          commit('updateUserData', res.data.data)
+        this._vm.$axiosClient.put('/user/update', {user: data}).then((res) => {
+          commit('setUserData', res.data.data)
           resolve(res)
         }, (err) => {
           reject(err)
