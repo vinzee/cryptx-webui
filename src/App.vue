@@ -24,6 +24,7 @@
 
     <BlockUI message="Loading..." :html="html" v-if="isLoading || isBootstrapping"></BlockUI>
 
+    <notifications></notifications>
   </div>
 </template>
 

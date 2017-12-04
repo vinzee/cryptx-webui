@@ -19,7 +19,6 @@ Vue.use(VueAuthenticate, {
       // config.withCredentials = true
       // config.crossDomain = true
       // config.xDomain = true
-      // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
       if (config.url === window.appConfig.BASE_URL + window.appConfig.LOGIN_URL) {
         config.headers['Authorization'] = 'Basic ' + btoa(config.data.email + ':' + config.data.password)
@@ -34,10 +33,13 @@ Vue.use(VueAuthenticate, {
   bindResponseInterceptor: function () {
     this.$http.interceptors.response.use((response) => {
       window.vue.$unblockUI()
-      // this.setToken(response)
       return response
     }, (error) => {
       window.vue.$unblockUI()
+
+      if (error.code === 'ECONNABORTED') {
+        window.vue.$notify('Please check your internet connection', 'ti-alert', 'danger')
+      }
 
       return Promise.reject(error)
     })

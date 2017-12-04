@@ -3,9 +3,6 @@
     <side-bar type="sidebar" :sidebar-links="$sidebar.sidebarLinks">
 
     </side-bar>
-    <notifications>
-
-    </notifications>
     <div class="main-panel" v-bind:class="{ 'disable-sidebar' : isSidebarDisabled }" ref="mainPanel">
       <top-navbar></top-navbar>
 

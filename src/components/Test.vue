@@ -69,7 +69,6 @@
               animation: {
                 duration: 1000
               },
-              colors: ['#68B3C8', '#F3BB45', '#EB5E28'],
               marker: {
                 radius: 2
               },

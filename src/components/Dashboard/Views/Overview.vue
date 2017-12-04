@@ -210,44 +210,25 @@
 </template>
 
 <script>
-  import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
-  import ChartCard from 'components/UIComponents/Cards/ChartCard.vue'
-  import PaperTable from 'components/UIComponents/PaperTable.vue'
+  import Highcharts from 'highcharts'
   import _ from 'lodash'
   import $ from 'jquery'
-  import { mapGetters } from 'vuex'
-  import Highcharts from 'highcharts'
   import moment from 'moment'
+  import { mapGetters } from 'vuex'
+  import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
+  import PaperTable from 'components/UIComponents/PaperTable.vue'
 
   export default {
     components: {
       StatsCard,
-      ChartCard,
       PaperTable
     },
-    /**
-     * Chart data used to render stats, charts. Should be replaced with server data
-     */
     data () {
       return {
         buySellCurrency: {
           amount: 0,
           currency: 'Bitcoin',
           type: 'buy'
-        },
-        userPerformanceChartOptions: {
-          low: 0,
-          high: 1000,
-          showArea: true,
-          height: '245px',
-          axisX: {
-            showGrid: false
-          },
-          lineSmooth: this.$Chartist.Interpolation.simple({
-            divisor: 3
-          }),
-          showLine: true,
-          showPoint: false
         },
         portfolioTableColumns: ['currency', 'amount', 'price', 'value'],
         portfolioTableColumnNames: ['Currency', 'Amount', 'Price', 'Value']
@@ -322,7 +303,6 @@
             animation: {
               duration: 1000
             },
-            colors: ['#68B3C8', '#F3BB45', '#EB5E28'],
             marker: {
               radius: 2
             },
@@ -377,7 +357,6 @@
             animation: {
               duration: 1000
             },
-            colors: ['#68B3C8', '#F3BB45', '#EB5E28'],
             marker: {
               radius: 2
             },

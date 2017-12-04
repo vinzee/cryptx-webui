@@ -3,7 +3,7 @@ import Vue from 'vue'
 import 'highcharts.config.js'
 import VueConfig from 'vue-config'
 import configs from './vue.configs.js'
-import './utils/auth.js'
+import './vueAuthenticate.config.js'
 
 // Plugins
 import GlobalComponents from './globalComponents'
@@ -19,7 +19,7 @@ import router from './routes/index'
 
 // library imports
 import VeeValidate from 'vee-validate'
-import Chartist from 'chartist'
+// import Chartist from 'chartist'
 // import 'chartist-plugin-legend'
 // import './assets/chartist.scss'
 
@@ -45,11 +45,11 @@ Vue.use(BlockUI)
 sync(store, router)
 
 // global library setup
-Object.defineProperty(Vue.prototype, '$Chartist', {
-  get () {
-    return this.$root.Chartist
-  }
-})
+// Object.defineProperty(Vue.prototype, '$Chartist', {
+//   get () {
+//     return this.$root.Chartist
+//   }
+// })
 
 Vue.config.productionTip = false
 
@@ -59,9 +59,9 @@ window.vue = new Vue({
   el: '#app',
   router: router,
   store,
-  data: {
-    Chartist: Chartist
-  },
+  // data: {
+  //   Chartist: Chartist
+  // },
   render: h => h(App)
 })
 

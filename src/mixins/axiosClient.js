@@ -34,17 +34,13 @@ Vue.mixin({
       console.log('axiosClient error', error)
 
       if (error.response && error.response.status === 401) {
-        self.$notify('Unauthorized User. ', 'ti-alert', 'danger')
+        self.$notify('Unauthorized User', 'ti-alert', 'danger')
         self.logout()
-        return
+      } else if (error.code === 'ECONNABORTED') {
+        self.$notify('Please check your internet connection', 'ti-alert', 'danger')
       }
 
       return Promise.reject(error)
     })
-  },
-  methods: {
-    // getAxiosClient: function (message, icon, type) {
-    //   return this.$axiosClient
-    // }
   }
 })
