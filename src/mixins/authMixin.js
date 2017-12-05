@@ -39,7 +39,9 @@ Vue.mixin({
     logout () {
       let self = this
       store.dispatch('logout').then(() => {
-        self.$router.push({ path: '/login' })
+        if (self.$router) {
+          self.$router.push({ path: '/login' })
+        }
         self.$notify('User Logged Out', 'ti-user')
       })
     }

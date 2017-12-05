@@ -10,6 +10,7 @@
            v-on="$listeners">
   </div>
 </template>
+
 <script>
   export default {
     inheritAttrs: false,
@@ -20,6 +21,3 @@
   }
 
 </script>
-<style>
-
-</style>

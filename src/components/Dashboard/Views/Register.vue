@@ -23,7 +23,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label>Password Confirmation</label>
-              <input v-validate="'required'" class="form-control border-input" name="passwordConfirmation" type="password" placeholder="Password Confirmation" v-model="passwordConfirmation">
+              <input v-validate="'required'" class="form-control border-input" name="passwordConfirmation" type="password" placeholder="Password Confirmation" v-model="passwordConfirmation" data-vv-as="password">
               <span v-show="errors.has('passwordConfirmation')" class="text-danger">{{ errors.first('passwordConfirmation') }}</span>
             </div>
           </div>
@@ -117,8 +117,7 @@
     methods: {
       submitRegisterForm () {
         let self = this
-        this.$validator.validateAll()
-        .then((isValidated) => {
+        this.$validator.validateAll().then((isValidated) => {
           if (isValidated) {
             self.register(self.user)
           }

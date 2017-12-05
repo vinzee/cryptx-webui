@@ -6,8 +6,6 @@ const configs = {
   REGISTER_URL: '/register',
   momentFormat: 'MMMM Do YYYY, h:mm:ss a',
   isLoggingEnabled: true,
-  CRYPTOCOMPARE_URL: 'https://www.cryptocompare.com',
-  CRYPTOCOMPARE_API_URL: 'https://min-api.cryptocompare.com',
   COINMARKETCAP_API_URL: 'https://api.coinmarketcap.com',
   updateIntervals: {
     currency: 10 * 1000, //  = 10 sec

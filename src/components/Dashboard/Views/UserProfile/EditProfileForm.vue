@@ -123,10 +123,14 @@
     methods: {
       updateProfile () {
         let self = this
-        this.$store.dispatch('updateUserProfile', this.user).then(() => {
-          self.$notify('User Profile updated', 'ti-user')
-        }).catch(function (res) {
-          self.$notify('User Profile update failed', 'ti-alert', 'danger')
+        this.$validator.validateAll().then((isValidated) => {
+          if (isValidated) {
+            self.$store.dispatch('updateUserProfile', self.user).then(() => {
+              self.$notify('User Profile updated', 'ti-user')
+            }).catch(function (res) {
+              self.$notify('User Profile update failed', 'ti-alert', 'danger')
+            })
+          }
         })
       }
     }

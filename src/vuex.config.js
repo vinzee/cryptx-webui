@@ -101,7 +101,7 @@ const store = new Vuex.Store({
       state.user = data
     },
     setPaymentMethod (state, data) {
-      state.user.paymentMethods = data
+      Vue.set(state.user, 'paymentMethods', data)
     },
     setUserData (state, user) {
       state.user = state.user || user
@@ -129,8 +129,16 @@ const store = new Vuex.Store({
       }
 
       _.each(user, (v, k) => {
-        state.user[k] = v
+        Vue.set(state.user, k, v)
       })
+
+      if (state.user.paymentMethods === null || state.user.paymentMethods === undefined) {
+        Vue.set(state.user, 'paymentMethods', [])
+      }
+
+      if (state.user.transactions === null || state.user.transactions === undefined) {
+        Vue.set(state.user, 'transactions', [])
+      }
     },
     setCurrencyData (state, currencyData) {
       let topCurrency = null
@@ -166,17 +174,22 @@ const store = new Vuex.Store({
       })
     },
     setPortfolioHistoricData (state, data) {
-      state.portfolioHistoricData = [
-        {pricing: data.bitcoin, currency: 'Bitcoin'},
-        {pricing: data.ethereum, currency: 'Ethereum'},
-        {pricing: data.litecoin, currency: 'Litecoin'}
-      ]
+      if (data.amount === null || data.amount.length === 0) {
+        state.portfolioHistoricData = []
+      } else {
+        state.portfolioHistoricData = [
+          {pricing: data.bitcoin, name: 'Bitcoin'},
+          {pricing: data.ethereum, name: 'Ethereum'},
+          {pricing: data.litecoin, name: 'Litecoin'},
+          {pricing: data.amount, name: 'Overall'}
+        ]
+      }
     },
     setCurrencyHistoricData (state, data) {
       state.currencyHistoricData = [
-        {pricing: data.bitcoin, currency: 'Bitcoin'},
-        {pricing: data.ethereum, currency: 'Ethereum'},
-        {pricing: data.litecoin, currency: 'Litecoin'}
+        {pricing: data.bitcoin, name: 'Bitcoin'},
+        {pricing: data.ethereum, name: 'Ethereum'},
+        {pricing: data.litecoin, name: 'Litecoin'}
       ]
     }
   },
@@ -260,9 +273,9 @@ const store = new Vuex.Store({
         })
       })
     },
-    getPortfolioHistoricData ({ commit }, data) {
+    getPortfolioHistoricData ({ commit, state }, data) {
       return new Promise((resolve, reject) => {
-        this._vm.$axiosClient.get('/portfoliohistory').then((data) => {
+        this._vm.$axiosClient.get('/portfoliohistory/' + state.user.portfolioId).then((data) => {
           commit('setPortfolioHistoricData', data.data)
           resolve()
         }).catch((err) => {
