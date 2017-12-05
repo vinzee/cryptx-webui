@@ -104,19 +104,20 @@
   import _ from 'lodash'
 
   export default {
+    data () {
+      return {
+        passwordConfirmation: this.user.password
+      }
+    },
     computed: {
       user () {
         let user = _.cloneDeep(this.$store.getters.currentUser)
-        delete user.password
         delete user.portfolio
         delete user.paymentMethods
         delete user.transactions
         delete user.virtualWallet
         delete user.portfolioId
         return user
-      },
-      passwordConfirmation () {
-        return this.user.password
       }
     },
     methods: {
