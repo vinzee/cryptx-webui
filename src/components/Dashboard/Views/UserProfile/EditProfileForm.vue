@@ -81,7 +81,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label>Postal Code</label>
-              <input class="form-control border-input" name="postalCode" placeholder="Postal Code" v-model="user.postalCode" type="number">
+              <input v-validate="'required'" class="form-control border-input" name="postalCode" placeholder="Postal Code" v-model="user.postalCode" type="number">
               <span v-show="errors.has('postalCode')" class="text-danger">{{ errors.first('postalCode') }}</span>
             </div>
           </div>

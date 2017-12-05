@@ -43,7 +43,7 @@
     <div class="modal" id="addAccountModal" tabindex="-1" role="dialog" aria-labelledby="addAccountModal" aria-hidden="true" data-backdrop="false">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <form name="addPaymentMethodForm" @submit.stop.prevent="addPaymentMethod">
+          <form name="addPaymentMethodForm" id="addPaymentMethodForm" @submit.stop.prevent="addPaymentMethod">
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -159,6 +159,10 @@
         },
         // if true, will log helpful messages for setting up Card
         debug: true // optional - default false
+      })
+
+      $('#addAccountModal').on('hidden.bs.modal', function () {
+        $('#addPaymentMethodForm input').val('')
       })
     },
     methods: {
