@@ -99,16 +99,11 @@
     </div>
   </div>
 </template>
+
 <script>
   import _ from 'lodash'
-  // import { mapGetters } from 'vuex'
 
   export default {
-    data () {
-      return {
-        passwordConfirmation: ''
-      }
-    },
     computed: {
       user () {
         let user = _.cloneDeep(this.$store.getters.currentUser)
@@ -119,6 +114,9 @@
         delete user.virtualWallet
         delete user.portfolioId
         return user
+      },
+      passwordConfirmation () {
+        return this.user.password
       }
     },
     methods: {
