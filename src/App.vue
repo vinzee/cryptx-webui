@@ -12,8 +12,8 @@
         </li>
 
         <li v-if="currentUser">
-          <a href="#/settings" class="btn-rotate">
-            <i class="fa fa-gear" aria-hidden="true"></i> Settings
+          <a href="#" class="btn-rotate" @click="logOut">
+            <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
           </a>
         </li>
 
@@ -54,6 +54,11 @@
         'isBootstrapping',
         'currentUser'
       ])
+    },
+    methods: {
+      logOut () {
+        this.logout()
+      }
     }
   }
 </script>
