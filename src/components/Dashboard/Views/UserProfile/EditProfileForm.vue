@@ -9,7 +9,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label>Email</label>
-              <input v-validate="{required: true, email: true}" class="form-control border-input" name="email" placeholder="Email" v-model="user.email">
+              <input v-validate="{required: true, email: true}" class="form-control border-input" name="email" placeholder="Email" :value="user.email" disabled>
               <span v-show="errors.has('email')" class="text-danger">{{ errors.first('email') }}</span>
             </div>
           </div>
