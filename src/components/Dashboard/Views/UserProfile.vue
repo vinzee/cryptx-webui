@@ -45,7 +45,7 @@
 
                     <div class="form-group">
                       <label>Amount ($)</label>
-                      <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="depositWithdraw.amount" min="0.01" step="0.01">
+                      <input v-validate="'required'" class="form-control border-input" type="number" name="amount" label="Amount" placeholder="Amount" v-model="depositWithdraw.amount" min="0.01" step="0.01" max="2147483645">
                       <span v-show="errors.has('amount')" class="text-danger">{{ errors.first('amount') }}</span>
 
                     </div>

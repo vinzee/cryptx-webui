@@ -9,10 +9,10 @@
           </div>
           <div class="numbers" slot="content">
             <p style="font-size: 15px">Virtual Wallet</p>
-            ${{virtualWalletAmount}}
+            ${{formattedVirtualWalletAmount}}
           </div>
           <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
-          </div>
+          </div>,
         </stats-card>
       </div>
 
@@ -217,6 +217,7 @@
   import { mapGetters } from 'vuex'
   import StatsCard from 'components/UIComponents/Cards/StatsCard.vue'
   import PaperTable from 'components/UIComponents/PaperTable.vue'
+  // import numeral from 'numeral'
 
   export default {
     components: {
@@ -236,141 +237,9 @@
     },
     mounted () {
       this.buySellCurrency.amount = 0.1
-
-      Highcharts.chart('portfolioChart', {
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false,
-          type: 'pie'
-        },
-        title: {
-          text: 'User portfolio'
-        },
-        tooltip: {
-          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-          pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-              enabled: true,
-              format: '{point.name}: {point.y:.1f}'
-            },
-            showInLegend: true
-          }
-        },
-        series: this.portfolioChartData
-      })
-
-      Highcharts.chart('pricingChart', {
-        tooltip: {
-          shared: true,
-          crosshairs: true
-        },
-        chart: {
-          zoomType: 'x'
-        },
-        title: {
-          text: 'Crypocurrency price trends'
-        },
-        subtitle: {
-          text: document.ontouchstart === undefined ? 'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-        },
-        xAxis: {
-          labels: {
-            formatter: function () {
-              return moment(this.value).format('YYYY-MMM-DD')
-            }
-          },
-          type: 'datetime'
-        },
-        yAxis: {
-          min: 0,
-          height: '100%',
-          floor: 0,
-          title: {
-            text: 'Exchange rate'
-          }
-        },
-        legend: {
-          enabled: true
-        },
-        plotOptions: {
-          area: {
-            animation: {
-              duration: 1000
-            },
-            marker: {
-              radius: 2
-            },
-            lineWidth: 1,
-            states: {
-              hover: {
-                lineWidth: 1
-              }
-            },
-            threshold: null
-          }
-        },
-        series: this.currentPricesChartData
-      })
-
-      if (this.portfolioHistoricChartData.length > 0) {
-        Highcharts.chart('portfolioHistoricChart', {
-          tooltip: {
-            shared: true,
-            crosshairs: true
-          },
-          chart: {
-            zoomType: 'x'
-          },
-          title: {
-            text: 'Portfolio'
-          },
-          subtitle: {
-            text: document.ontouchstart === undefined ? 'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-          },
-          xAxis: {
-            labels: {
-              formatter: function () {
-                return moment(this.value).format('YYYY-MMM-DD')
-              }
-            },
-            type: 'datetime'
-          },
-          yAxis: {
-            min: 0,
-            height: '100%',
-            floor: 0,
-            title: {
-              text: 'Exchange rate'
-            }
-          },
-          legend: {
-            enabled: true
-          },
-          plotOptions: {
-            area: {
-              animation: {
-                duration: 1000
-              },
-              marker: {
-                radius: 2
-              },
-              lineWidth: 1,
-              states: {
-                hover: {
-                  lineWidth: 1
-                }
-              },
-              threshold: null
-            }
-          },
-          series: this.portfolioHistoricChartData
-        })
-      }
+      this.loadPortfolioChart()
+      this.loadPricingChart()
+      this.loadPortfolioHistoricChart()
 
       setInterval(function () {
         this.$store.dispatch('getCurrencyData')
@@ -390,9 +259,22 @@
       },
       'buySellCurrency.currency': function () {
         this.buySellCurrency.value = _.round(this.portfolioMap[this.buySellCurrency.currency].price * this.buySellCurrency.amount, 3)
+      },
+      'portfolioChartData': function () {
+        this.loadPortfolioChart()
+      },
+      'pricingChartData': function () {
+        this.loadPricingChart()
+      },
+      'portfolioHistoricData': function () {
+        this.loadPortfolioHistoricChart()
       }
     },
     computed: {
+      formattedVirtualWalletAmount () {
+        return this.virtualWalletAmount
+        // return numeral(this.virtualWalletAmount).format('000.00 a')
+      },
       selectedCurrencyAmount () {
         if (this.buySellCurrency.currency === null || this.buySellCurrency.currency === '') {
           return 0
@@ -522,7 +404,147 @@
       },
       changeTransactionType (type) {
         this.buySellCurrency.type = type
+      },
+
+      loadPortfolioChart () {
+        Highcharts.chart('portfolioChart', {
+          chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+          },
+          title: {
+            text: 'User portfolio'
+          },
+          tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                enabled: true,
+                format: '{point.name}: {point.y:.1f}'
+              },
+              showInLegend: true
+            }
+          },
+          series: this.portfolioChartData
+        })
+      },
+      loadPricingChart () {
+        Highcharts.chart('pricingChart', {
+          tooltip: {
+            shared: true,
+            crosshairs: true
+          },
+          chart: {
+            zoomType: 'x'
+          },
+          title: {
+            text: 'Crypocurrency price trends'
+          },
+          subtitle: {
+            text: document.ontouchstart === undefined ? 'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+          },
+          xAxis: {
+            labels: {
+              formatter: function () {
+                return moment(this.value).format('MMM/DD')
+              }
+            },
+            type: 'datetime'
+          },
+          yAxis: {
+            min: 0,
+            height: '100%',
+            floor: 0,
+            title: {
+              text: 'Exchange rate'
+            }
+          },
+          legend: {
+            enabled: true
+          },
+          plotOptions: {
+            area: {
+              animation: {
+                duration: 1000
+              },
+              marker: {
+                radius: 2
+              },
+              lineWidth: 1,
+              states: {
+                hover: {
+                  lineWidth: 1
+                }
+              },
+              threshold: null
+            }
+          },
+          series: this.currentPricesChartData
+        })
+      },
+      loadPortfolioHistoricChart () {
+        if (this.portfolioHistoricChartData.length > 0) {
+          Highcharts.chart('portfolioHistoricChart', {
+            tooltip: {
+              shared: true,
+              crosshairs: true
+            },
+            chart: {
+              zoomType: 'x'
+            },
+            title: {
+              text: 'Portfolio'
+            },
+            subtitle: {
+              text: document.ontouchstart === undefined ? 'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+            },
+            xAxis: {
+              labels: {
+                formatter: function () {
+                  return moment(this.value).format('HH:mm MM/DD')
+                }
+              },
+              type: 'datetime'
+            },
+            yAxis: {
+              min: 0,
+              height: '100%',
+              floor: 0,
+              title: {
+                text: 'Exchange rate'
+              }
+            },
+            legend: {
+              enabled: true
+            },
+            plotOptions: {
+              area: {
+                animation: {
+                  duration: 1000
+                },
+                marker: {
+                  radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                  hover: {
+                    lineWidth: 1
+                  }
+                },
+                threshold: null
+              }
+            },
+            series: this.portfolioHistoricChartData
+          })
+        }
       }
+
     }
   }
 
