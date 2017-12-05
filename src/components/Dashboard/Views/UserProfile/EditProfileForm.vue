@@ -23,7 +23,7 @@
           <div class="col-md-4">
             <div class="form-group">
               <label>Password Confirmation</label>
-              <input v-validate="'required|confirmed:password'" class="form-control border-input" name="passwordConfirmation" type="password" placeholder="Password Confirmation" v-model="passwordConfirmation" data-vv-as="password">
+              <input v-validate="'required|confirmed:password'" class="form-control border-input" name="passwordConfirmation" type="password" placeholder="Password Confirmation" data-vv-as="password">
               <span v-show="errors.has('passwordConfirmation')" class="text-danger">{{ errors.first('passwordConfirmation') }}</span>
             </div>
           </div>
@@ -104,11 +104,6 @@
   import _ from 'lodash'
 
   export default {
-    data () {
-      return {
-        passwordConfirmation: this.user.password
-      }
-    },
     computed: {
       user () {
         let user = _.cloneDeep(this.$store.getters.currentUser)
