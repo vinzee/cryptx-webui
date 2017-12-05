@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>asas: {{passwordConfirmation}}</h1>
     <div id="container" style="min-width: 400px; height: 500px; margin: 0 auto"></div>
   </div>
 </template>
@@ -14,11 +13,6 @@
     mounted () {
       this.initHighCharts()
       window.$ = $
-    },
-    data () {
-      return {
-        passwordConfirmation: this.$store.getters.currentUser.password
-      }
     },
     computed: {
       btc () {
