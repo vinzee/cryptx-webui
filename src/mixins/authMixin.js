@@ -7,7 +7,8 @@ Vue.mixin({
       let self = this
 
       this.$auth.login({ email, password }).then((res) => {
-        this.$store.dispatch('setUserData', res.data.data).then(() => {
+        console.log('logged In !')
+        self.$store.dispatch('setUserData', res.data.data).then(() => {
           self.$store.dispatch('login', res.headers['x-auth-token'])
           Promise.all([
             self.$store.dispatch('getCurrencyData'),
@@ -32,8 +33,13 @@ Vue.mixin({
       this.$auth.register({user: userData}).then(function (res) {
         self.$notify('User Registered', 'ti-user')
         self.login(userData.email, userData.password)
-      }).catch(function (res) {
-        self.$notify('User Registration failed', 'ti-alert', 'danger')
+      }).catch(function (error) {
+        let msg = 'User Registration failed. '
+
+        if (error && error.response && error.response.data && error.response.data.message) {
+          msg += error.response.data.message
+        }
+        self.$notify(msg, 'ti-alert', 'danger')
       })
     },
     logout () {

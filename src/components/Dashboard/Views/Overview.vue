@@ -373,16 +373,16 @@
     },
     methods: {
       lastUpdatedCurrency () {
-        let temp = _.round(moment.duration(moment().diff(this.lastUpdated.currency)).asHours())
-        return temp === 0 ? 'now' : temp + 'min ago'
+        let temp = _.round(moment.duration(moment().diff(this.lastUpdated.currency)).asSeconds())
+        return temp === 0 ? 'now' : temp + 'sec ago'
       },
       lastUpdatedPortfolioHistoric () {
-        let temp = _.round(moment.duration(moment().diff(this.lastUpdated.portfolioHistoric)).asHours())
-        return temp === 0 ? 'now' : temp + 'min ago'
+        let temp = _.round(moment.duration(moment().diff(this.lastUpdated.portfolioHistoric)).asSeconds())
+        return temp === 0 ? 'now' : temp + 'sec ago'
       },
       lastUpdatedCurrencyHistoric () {
-        let temp = _.round(moment.duration(moment().diff(this.lastUpdated.currencyHistoric)).asHours())
-        return temp === 0 ? 'now' : temp + 'min ago'
+        let temp = _.round(moment.duration(moment().diff(this.lastUpdated.currencyHistoric)).asSeconds())
+        return temp === 0 ? 'now' : temp + 'sec ago'
       },
       buySellCurrencySubmit () {
         let self = this
