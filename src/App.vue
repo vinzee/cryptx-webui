@@ -6,18 +6,17 @@
     <side-bar type="navbar" :sidebar-links="$sidebar.sidebarLinks" v-if="!isBootstrapping">
       <ul class="nav navbar-nav">
         <li>
-          <a class="dropdown-toggle" data-toggle="dropdown">
-            <i class="ti-panel"></i>
-            <p>Stats</p>
+          <a href="javascript:void(0)" class="btn-rotate">
+            <i class="fa fa-user" aria-hidden="true"></i> {{userEmail}}
           </a>
         </li>
 
-        <li>
-          <a>
-            <i class="ti-settings"></i>
-            <p>Settings</p>
+        <li v-if="currentUser">
+          <a href="#/settings" class="btn-rotate">
+            <i class="fa fa-gear" aria-hidden="true"></i> Settings
           </a>
         </li>
+
         <li class="divider"></li>
       </ul>
     </side-bar>
@@ -47,7 +46,14 @@
       })
     },
     computed: {
-      ...mapGetters(['isLoading', 'isBootstrapping'])
+      userEmail () {
+        return this.currentUser !== null ? this.currentUser.email : 'Guest'
+      },
+      ...mapGetters([
+        'isLoading',
+        'isBootstrapping',
+        'currentUser'
+      ])
     }
   }
 </script>

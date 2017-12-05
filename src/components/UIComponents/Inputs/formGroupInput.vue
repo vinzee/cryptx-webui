@@ -3,11 +3,7 @@
     <label v-if="label">
       {{label}}
     </label>
-    <input class="form-control border-input"
-           v-bind="$attrs"
-           :value="value"
-           @input="$emit('input', $event.target.value)"
-           v-on="$listeners">
+    <input class="form-control border-input" :value="value">
   </div>
 </template>
 

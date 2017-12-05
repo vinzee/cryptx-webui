@@ -6,28 +6,27 @@
     <div class="content">
       <form>
         <div class="row">
-
           <div class="col-md-4">
-            <fg-input type="email"
-                      label="Email"
-                      placeholder="Email"
-                      v-model="user.email" disabled>
-            </fg-input>
+            <div class="form-group">
+              <label>Email</label>
+              <input v-validate="{required: true, email: true}" class="form-control border-input" name="email" placeholder="Email" v-model="user.email">
+              <span v-show="errors.has('email')" class="text-danger">{{ errors.first('email') }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <fg-input type="password"
-                      label="Password"
-                      placeholder="Password"
-                      v-model="user.password">
-            </fg-input>
+            <div class="form-group">
+              <label>Password</label>
+              <input v-validate="'required'" class="form-control border-input" name="password" type="password" placeholder="Password" v-model="user.password">
+              <span v-show="errors.has('password')" class="text-danger">{{ errors.first('password') }}</span>
+            </div>
           </div>
           <div class="col-md-4">
-            <fg-input type="password"
-                      label="Password Confirmation"
-                      placeholder="Password Confirmation">
-            </fg-input>
+            <div class="form-group">
+              <label>Password Confirmation</label>
+              <input v-validate="'required|confirmed:password'" class="form-control border-input" name="passwordConfirmation" type="password" placeholder="Password Confirmation" v-model="passwordConfirmation" data-vv-as="password">
+              <span v-show="errors.has('passwordConfirmation')" class="text-danger">{{ errors.first('passwordConfirmation') }}</span>
+            </div>
           </div>
-
         </div>
 
         <div class="row">
@@ -107,11 +106,13 @@
   export default {
     data () {
       return {
+        passwordConfirmation: ''
       }
     },
     computed: {
       user () {
         let user = _.cloneDeep(this.$store.getters.currentUser)
+        delete user.password
         delete user.portfolio
         delete user.paymentMethods
         delete user.transactions

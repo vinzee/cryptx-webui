@@ -8,8 +8,8 @@ const configs = {
   isLoggingEnabled: true,
   COINMARKETCAP_API_URL: 'https://api.coinmarketcap.com',
   updateIntervals: {
-    currency: 10 * 1000, //  = 10 sec
-    currencyHistoric: 30 * 1000, // 30 sec
+    currency: 60 * 1000, // = 1 min
+    currencyHistoric: 15 * 60 * 1000, // 15 min
     portfolioHistoric: 60 * 60 * 1000 // 60 min
   }
 }

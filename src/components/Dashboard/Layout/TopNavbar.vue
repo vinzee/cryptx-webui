@@ -14,22 +14,22 @@
         <ul class="nav navbar-nav navbar-right">
 
           <drop-down v-bind:title="userEmail" icon="fa fa-user">
-            <li v-if="user">
+            <li v-if="currentUser">
               <a href="#/settings" class="btn-rotate">
                 <i class="fa fa-gear" aria-hidden="true"></i> Settings
               </a>
             </li>
-            <li v-if="user">
+            <li v-if="currentUser">
               <a href="#" class="btn-rotate" @click="logOut">
                 <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
               </a>
             </li>
-            <li v-if="!user">
+            <li v-if="!currentUser">
               <a href="#/login" class="btn-rotate">
                 <i class="fa fa-sign-out" aria-hidden="true"></i> LogIn
               </a>
             </li>
-            <li v-if="!user">
+            <li v-if="!currentUser">
               <a href="#/register" class="btn-rotate">
                 <i class="fa fa-sign-out" aria-hidden="true"></i> Register
               </a>
@@ -41,7 +41,10 @@
     </div>
   </nav>
 </template>
+
 <script>
+  import { mapGetters } from 'vuex'
+
   export default {
     data () {
       return {
@@ -57,12 +60,12 @@
           return name === undefined ? 'Dashboard' : this.capitalizeFirstLetter(name)
         }
       },
-      user () {
-        return this.$store.state.user
-      },
       userEmail () {
-        return this.user !== null ? this.user.email : 'Guest'
-      }
+        return this.currentUser !== null ? this.currentUser.email : 'Guest'
+      },
+      ...mapGetters([
+        'currentUser'
+      ])
     },
     methods: {
       capitalizeFirstLetter (string) {

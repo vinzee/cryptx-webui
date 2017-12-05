@@ -6,9 +6,7 @@
     <div class="main-panel" v-bind:class="{ 'disable-sidebar' : isSidebarDisabled }" ref="mainPanel">
       <top-navbar></top-navbar>
 
-      <dashboard-content @click.native="toggleSidebar">
-
-      </dashboard-content>
+      <dashboard-content @click.native="toggleSidebar"></dashboard-content>
 
       <content-footer></content-footer>
     </div>

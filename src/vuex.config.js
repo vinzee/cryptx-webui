@@ -20,7 +20,12 @@ const store = new Vuex.Store({
     topCurrency: {},
     worstCurrency: {},
     portfolioHistoricData: [],
-    currencyHistoricData: []
+    currencyHistoricData: [],
+    currencyDataLastUpdated: {
+      currency: moment(),
+      currencyHistoric: moment(),
+      portfolioHistoric: moment()
+    }
   },
   getters: {
     currentUser: state => {
@@ -36,8 +41,12 @@ const store = new Vuex.Store({
       return state.user.virtualWallet.amount
     },
     portfolioNetWorth: state => {
-      return state.user.virtualWallet.amount + _.round(_.reduce(state.user.portfolio, function (sum, portfolio) {
-        return sum + portfolio.value
+      return state.user.virtualWallet.amount + _.round(_.reduce(state.user.portfolio, function (sum, currency) {
+        if (currency.value !== undefined && currency.value !== null) {
+          return sum + currency.value
+        } else {
+          return sum
+        }
       }, 0))
     },
     portfolio: state => {
@@ -78,6 +87,9 @@ const store = new Vuex.Store({
     },
     session: state => {
       return state.session
+    },
+    lastUpdated: state => {
+      return state.currencyDataLastUpdated
     }
   },
   mutations: {
@@ -139,6 +151,10 @@ const store = new Vuex.Store({
       if (state.user.transactions === null || state.user.transactions === undefined) {
         Vue.set(state.user, 'transactions', [])
       }
+
+      if (state.user.virtualWallet === null || state.user.virtualWallet === undefined) {
+        Vue.set(state.user, 'virtualWallet', {amount: 0})
+      }
     },
     setCurrencyData (state, currencyData) {
       let topCurrency = null
@@ -191,6 +207,9 @@ const store = new Vuex.Store({
         {pricing: data.ethereum, name: 'Ethereum'},
         {pricing: data.litecoin, name: 'Litecoin'}
       ]
+    },
+    setLastUpdated (state, key) {
+      state.currencyDataLastUpdated[key] = moment()
     }
   },
   actions: {
@@ -277,17 +296,18 @@ const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         this._vm.$axiosClient.get('/portfoliohistory/' + state.user.portfolioId).then((data) => {
           commit('setPortfolioHistoricData', data.data)
+          commit('setLastUpdated', 'portfolioHistoric')
           resolve()
         }).catch((err) => {
           reject(err)
         })
       })
     },
-    getCurrencyHistoricData ({ commit }, data) {
+    getCurrencyHistoricData ({ commit, state }, data) {
       return new Promise((resolve, reject) => {
         this._vm.$axiosClient.get('/currencyhistory').then((data) => {
           commit('setCurrencyHistoricData', data.data)
-
+          commit('setLastUpdated', 'currencyHistoric')
           resolve()
         }).catch((err) => {
           reject(err)
@@ -307,6 +327,7 @@ const store = new Vuex.Store({
             litecoin: litecoinCurrent.data[0]
           })
           commit('setPortfolioValue')
+          commit('setLastUpdated', 'currency')
 
           resolve()
         })).catch((err) => {

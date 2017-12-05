@@ -25,7 +25,7 @@
             <p style="font-size: 15px;">Net Worth</p>
             ${{portfolioNetWorth}}
           </div>
-          <div slot="footer" class="stats"><i class="ti-reload"></i> Updated now
+          <div slot="footer" class="stats"><i class="ti-reload"></i> Updated {{lastUpdatedCurrency()}}
           </div>
         </stats-card>
       </div>
@@ -72,7 +72,7 @@
               </div>
               <hr>
               <div class="stats">
-                <i class="ti-reload"></i> Updated 3 minutes ago
+                <i class="ti-reload"></i> Updated {{lastUpdatedPortfolioHistoric()}}
               </div>
               <div class="pull-right">
               </div>
@@ -90,15 +90,15 @@
             </p>
           </div>
           <div class="content">
-            <div id="portfolioHistoricChart" :v-if="portfolioHistoricChartData.length > 0"></div>
-            <p class="text-danger text-center">No data to be shown</p>
+            <div id="portfolioHistoricChart" v-if="portfolioHistoricChartData.length > 0"></div>
+            <p class="text-danger text-center" v-else="portfolioHistoricChartData.length === 0">No data to be shown</p>
             <div class="footer">
               <div class="chart-legend">
                 <slot name="legend"></slot>
               </div>
               <hr>
               <div class="stats">
-                <i class="ti-reload"></i> Updated 3 minutes ago
+                <i class="ti-reload"></i> Updated {{lastUpdatedCurrencyHistoric()}}
               </div>
               <div class="pull-right">
               </div>
@@ -290,7 +290,6 @@
           min: 0,
           height: '100%',
           floor: 0,
-          ceiling: 10000,
           title: {
             text: 'Exchange rate'
           }
@@ -345,7 +344,6 @@
             min: 0,
             height: '100%',
             floor: 0,
-            ceiling: 10000,
             title: {
               text: 'Exchange rate'
             }
@@ -471,6 +469,7 @@
         return _.map(this.portfolioHistoricData, (currency) => {
           return {
             type: 'spline',
+            // type: currency.name === 'Overall' ? 'area' : 'spline',
             name: currency.name,
             data: currency.pricing
           }
@@ -486,10 +485,23 @@
         'topCurrency',
         'worstCurrency',
         'portfolioHistoricData',
-        'currencyHistoricData'
+        'currencyHistoricData',
+        'lastUpdated'
       ])
     },
     methods: {
+      lastUpdatedCurrency () {
+        let temp = _.round(moment.duration(moment().diff(this.lastUpdated.currency)).asHours())
+        return temp === 0 ? 'now' : temp + 'min ago'
+      },
+      lastUpdatedPortfolioHistoric () {
+        let temp = _.round(moment.duration(moment().diff(this.lastUpdated.portfolioHistoric)).asHours())
+        return temp === 0 ? 'now' : temp + 'min ago'
+      },
+      lastUpdatedCurrencyHistoric () {
+        let temp = _.round(moment.duration(moment().diff(this.lastUpdated.currencyHistoric)).asHours())
+        return temp === 0 ? 'now' : temp + 'min ago'
+      },
       buySellCurrencySubmit () {
         let self = this
 

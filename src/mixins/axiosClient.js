@@ -36,7 +36,7 @@ Vue.mixin({
       if (error.response && error.response.status === 401) {
         self.$notify('Unauthorized User', 'ti-alert', 'danger')
         self.logout()
-      } else if (error.code === 'ECONNABORTED') {
+      } else if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         self.$notify('Please check your internet connection', 'ti-alert', 'danger')
       }
 
