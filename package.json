@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^3.4.1",
     "card": "^2.4.0",
     "chartist": "^0.10.1",
     "chartist-plugin-legend": "^0.6.2",
